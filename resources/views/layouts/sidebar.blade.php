@@ -14,5 +14,5 @@
             <div class="ps__thumb-y" tabindex="0" style="top: 0px; height: 369px;"></div>
         </div>
     </ul>
-    <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent" data-class="c-sidebar-minimized"></button>
+    <!-- <button class="c-sidebar-minimizer c-class-toggler" type="button" data-target="_parent" data-class="c-sidebar-minimized"></button> -->
 </div>

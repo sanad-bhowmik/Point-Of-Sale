@@ -20,7 +20,7 @@
 - run `` php artisan serve ``
 - then visit `` http://localhost:8000 or http://127.0.0.1:8000 ``.
 
-> **Important Note:** "Triangle POS" uses Laravel Snappy Package for PDFs. If you are using Linux then no configuration is needed. But in other Operating Systems please refer to [Laravel Snappy Documentation](https://github.com/barryvdh/laravel-snappy).
+> **Important Note:** "POS24" uses Laravel Snappy Package for PDFs. If you are using Linux then no configuration is needed. But in other Operating Systems please refer to [Laravel Snappy Documentation](https://github.com/barryvdh/laravel-snappy).
 
 # Docker Installation
 
@@ -34,10 +34,10 @@ This will start the application along with the mysql database using docker compo
 > Email: super.admin@test.com || Password: 12345678
 
 ## Demo
-![Triangle POS](public/images/screenshot.jpg)
+![POS24](public/images/screenshot.jpg)
 **Live Demo:** will update soon
 
-## Triangle POS Features
+## POS24 Features
 
 - **Products Management & Barcode Printing**
 - **Stock Management**
@@ -56,3 +56,4 @@ This will start the application along with the mysql database using docker compo
 
 # License
 **[Creative Commons Attribution 4.0	cc-by-4.0](https://creativecommons.org/licenses/by/4.0/)**
+# POS24
