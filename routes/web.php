@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SeasonalFruitController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,3 +29,12 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('payment-flow.chart');
 });
 
+
+// Seasonal Fruit
+Route::get('/seasonalfruit/create', [SeasonalFruitController::class, 'create'])->name('seasonalfruit.create');
+Route::post('/seasonalfruit/store', [SeasonalFruitController::class, 'store'])->name('seasonalfruit.store');
+Route::get('/seasonalfruit/show', [SeasonalFruitController::class, 'show'])->name('seasonalfruit.show');
+Route::delete('/seasonalfruit/{id}', [App\Http\Controllers\SeasonalFruitController::class, 'destroy'])
+    ->name('seasonalfruit.destroy');
+
+// Seasonal Fruit

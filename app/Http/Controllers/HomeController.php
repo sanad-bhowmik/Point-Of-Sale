@@ -17,7 +17,8 @@ use Modules\SalesReturn\Entities\SaleReturnPayment;
 class HomeController extends Controller
 {
 
-    public function index() {
+    public function index()
+    {
         $sales = Sale::completed()->sum('total_amount');
         $sale_returns = SaleReturn::completed()->sum('total_amount');
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
@@ -43,18 +44,19 @@ class HomeController extends Controller
     }
 
 
-    public function currentMonthChart() {
+    public function currentMonthChart()
+    {
         abort_if(!request()->ajax(), 404);
 
         $currentMonthSales = Sale::where('status', 'Completed')->whereMonth('date', date('m'))
-                ->whereYear('date', date('Y'))
-                ->sum('total_amount') / 100;
+            ->whereYear('date', date('Y'))
+            ->sum('total_amount') / 100;
         $currentMonthPurchases = Purchase::where('status', 'Completed')->whereMonth('date', date('m'))
-                ->whereYear('date', date('Y'))
-                ->sum('total_amount') / 100;
+            ->whereYear('date', date('Y'))
+            ->sum('total_amount') / 100;
         $currentMonthExpenses = Expense::whereMonth('date', date('m'))
-                ->whereYear('date', date('Y'))
-                ->sum('amount') / 100;
+            ->whereYear('date', date('Y'))
+            ->sum('amount') / 100;
 
         return response()->json([
             'sales'     => $currentMonthSales,
@@ -64,7 +66,8 @@ class HomeController extends Controller
     }
 
 
-    public function salesPurchasesChart() {
+    public function salesPurchasesChart()
+    {
         abort_if(!request()->ajax(), 404);
 
         $sales = $this->salesChartData();
@@ -74,7 +77,8 @@ class HomeController extends Controller
     }
 
 
-    public function paymentChart() {
+    public function paymentChart()
+    {
         abort_if(!request()->ajax(), 404);
 
         $dates = collect();
@@ -151,7 +155,8 @@ class HomeController extends Controller
         ]);
     }
 
-    public function salesChartData() {
+    public function salesChartData()
+    {
         $dates = collect();
         foreach (range(-6, 0) as $i) {
             $date = Carbon::now()->addDays($i)->format('d-m-y');
@@ -183,7 +188,8 @@ class HomeController extends Controller
     }
 
 
-    public function purchasesChartData() {
+    public function purchasesChartData()
+    {
         $dates = collect();
         foreach (range(-6, 0) as $i) {
             $date = Carbon::now()->addDays($i)->format('d-m-y');
@@ -212,6 +218,5 @@ class HomeController extends Controller
         }
 
         return response()->json(['data' => $data, 'days' => $days]);
-
     }
 }
