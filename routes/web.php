@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CostingController;
 use App\Http\Controllers\SeasonalFruitController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,5 +37,12 @@ Route::post('/seasonalfruit/store', [SeasonalFruitController::class, 'store'])->
 Route::get('/seasonalfruit/show', [SeasonalFruitController::class, 'show'])->name('seasonalfruit.show');
 Route::delete('/seasonalfruit/{id}', [App\Http\Controllers\SeasonalFruitController::class, 'destroy'])
     ->name('seasonalfruit.destroy');
-
 // Seasonal Fruit
+
+// Costing
+Route::get('/costing/addCosting', [CostingController::class, 'addCosting'])->name('costing.addCosting');
+Route::post('/costing/addCosting', [CostingController::class, 'storeCosting'])->name('costing.storeCosting');
+Route::get('/costing/viewCosting', [CostingController::class, 'viewCosting'])->name('costing.viewCosting');
+Route::delete('/costing/{id}', [\App\Http\Controllers\CostingController::class, 'destroy'])->name('costing.destroy');
+
+// Costing

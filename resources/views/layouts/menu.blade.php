@@ -275,6 +275,30 @@
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> Costing
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('costing.addCosting') ? 'c-active' : '' }}"
+                href="{{ route('costing.addCosting') }}">
+                <i class="c-sidebar-nav-icon bi bi-arrows-fullscreen" style="line-height: 1;"></i> Add Costing
+            </a>
+        </li>
+    </ul>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('costing.viewCosting') ? 'c-active' : '' }}"
+                href="{{ route('costing.viewCosting') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Costing List
+            </a>
+        </li>
+    </ul>
+</li>
+@endcan
+
+@can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-basket3-fill" style="line-height: 1;"></i> Seasonal Fruit
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
