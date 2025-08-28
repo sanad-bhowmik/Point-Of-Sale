@@ -278,41 +278,59 @@
             const totalBdt = total * exchange;
             totalBdtInput.value = formatNumber(totalBdt);
 
-            // 3) Insurance = 1% of Total BDT
-            const insurance = totalBdt * 0.01;
+            // 3) Insurance = 1% of Total (foreign currency)
+            const insurance = total * 0.01;
             insuranceInput.value = formatNumber(insurance);
 
             // 4) Insurance BDT = Insurance * Exchange
             const insuranceBdt = insurance * exchange;
             insuranceBdtInput.value = formatNumber(insuranceBdt);
 
-            // 5) Landing = 1% of (Total BDT + Insurance BDT)
-            const landing = (totalBdt + insuranceBdt) * 0.01;
-            landingInput.value = formatNumber(landing);
 
+            // 5) Landing = 1% of (Total + Insurance)
+            const landing = (total + insurance) * 0.01;
+            landingInput.value = formatNumber(landing);
             // 6) Landing BDT = Landing * Exchange
             const landingBdt = landing * exchange;
             landingBdtInput.value = formatNumber(landingBdt);
 
-            // 7) CD = 25% of (Total BDT + Insurance BDT + Landing)
-            const cd = 0.25 * (totalBdt + insuranceBdt + landing);
+            // 7) Custom Duty (CD) calculation
+            const result1 = totalBdt + insuranceBdt; // Total + Insurance in BDT
+            const result2 = result1 * 0.01; // 1% additional
+            const result3 = result1 + result2; // Sum of previous steps
+            const cd = result3 * 0.25; // 25% of result3
             cdInput.value = formatNumber(cd);
 
-            // 8) RD = 20% of CD
-            const rd = 0.2 * cd;
+            // 8) Regulatory Duty (RD) calculation
+            const rdResult1 = totalBdt + insuranceBdt; // Total + Insurance in BDT
+            const rdResult2 = rdResult1 * 0.01; // 1% additional
+            const rdResult3 = rdResult1 + rdResult2; // Sum of previous steps
+            const rd = rdResult3 * 0.20; // 20% of result3
             rdInput.value = formatNumber(rd);
 
-            // 9) SD = 30% of (Total BDT + CD + RD)
-            const sd = 0.3 * (totalBdt + cd + rd);
+
+            // 9) Supplementary Duty (SD) calculation
+            const sdResult1 = totalBdt + insuranceBdt; // Total + Insurance
+            const sdResult2 = sdResult1 * 0.01; // 1% additional
+            const sdResult3 = sdResult1 + sdResult2; // Sum of previous steps
+            const sd = (sdResult3 + cd + rd) * 0.30; // Include CD and RD, then 30%
             sdInput.value = formatNumber(sd);
 
-            // 10) VAT = 15% of (Total BDT + CD + RD + SD)
-            const vat = 0.15 * (totalBdt + cd + rd + sd);
+
+            // 10) VAT calculation
+            const vatResult1 = totalBdt + insuranceBdt; // Total + Insurance
+            const vatResult2 = vatResult1 * 0.01; // 1% additional
+            const vatResult3 = vatResult1 + vatResult2; // Sum of previous steps
+            const vat = (vatResult3 + cd + rd + sd) * 0.15; // Include CD, RD, SD, then 15%
             vatInput.value = formatNumber(vat);
 
-            // 11) AIT = 5% of Total BDT
-            const ait = 0.05 * totalBdt;
+            // 11) AIT calculation
+            const aitResult1 = totalBdt + insuranceBdt; // Total + Insurance
+            const aitResult2 = aitResult1 * 0.01; // 1% additional
+            const aitResult3 = aitResult1 + aitResult2; // Sum of previous steps
+            const ait = aitResult3 * 0.05; // 5% of result3
             aitInput.value = formatNumber(ait);
+
 
             // ---- TOTAL TAX ----
             const at = parseFloat(atInput.value) || 0;
@@ -402,3 +420,4 @@
 
     });
 </script>
+

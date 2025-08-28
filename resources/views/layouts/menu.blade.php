@@ -1,3 +1,34 @@
+<div class="p-2">
+    <input type="text" id="sidebar-search" class="form-control" placeholder="Search menu...">
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("sidebar-search");
+        const navItems = document.querySelectorAll(".c-sidebar-nav-item");
+
+        searchInput.addEventListener("keyup", function() {
+            let filter = searchInput.value.toLowerCase();
+
+            navItems.forEach(function(item) {
+                let text = item.textContent.toLowerCase();
+                let matches = text.includes(filter);
+
+                if (matches) {
+                    item.style.display = "";
+                    // expand parent dropdown if hidden item found inside
+                    let parent = item.closest(".c-sidebar-nav-dropdown");
+                    if (parent) {
+                        parent.classList.add("c-show");
+                        parent.style.display = "";
+                    }
+                } else {
+                    item.style.display = "none";
+                }
+            });
+        });
+    });
+</script>
+
 <li class="c-sidebar-nav-item {{ request()->routeIs('home') ? 'c-active' : '' }}">
     <a class="c-sidebar-nav-link" href="{{ route('home') }}">
         <i class="c-sidebar-nav-icon bi bi-house" style="line-height: 1;"></i> Home

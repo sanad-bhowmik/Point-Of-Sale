@@ -8948,6 +8948,7 @@ html:not([dir="rtl"]) .c-sidebar-nav-dropdown-toggle .badge {
     overflow-y: hidden;
     list-style: none;
     transition: max-height 0.3s ease-in-out;
+    background-color:#344951;
 }
 html:not([dir="rtl"]) .c-sidebar-nav-dropdown-items .c-sidebar-nav-link,
 html:not([dir="rtl"])
@@ -10860,7 +10861,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
 }
 .c-sidebar {
     color: #fff;
-    background: #0e3630;
+    background: #0e2b36;
 }
 *[dir="rtl"] .c-sidebar.c-sidebar-right {
     border: 0;
@@ -10912,7 +10913,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
     .c-sidebar .c-sidebar-nav-link:hover,
     .c-sidebar .c-sidebar-nav-dropdown-toggle:hover {
         color: #fff;
-        background: #321fdb;
+        background: #0000007d;
     }
     .c-sidebar .c-sidebar-nav-link:hover .c-sidebar-nav-icon,
     .c-sidebar .c-sidebar-nav-dropdown-toggle:hover .c-sidebar-nav-icon {
@@ -18386,7 +18387,7 @@ body {
 .c-sidebar .c-sidebar-nav-link.c-active,
 .c-sidebar .c-active.c-sidebar-nav-dropdown-toggle {
     color: #fff;
-    background: #321fdb;
+    background: #0000007d;
 }
 .btn:not([class*="ghost"]):not([class*="link"]):not([class*="outline"]):not(
         [class*="transparent"]
