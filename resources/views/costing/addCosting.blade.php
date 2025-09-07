@@ -54,7 +54,11 @@
                                         <select name="box_type" class="form-control" required>
                                             <option value="">Select Box Type</option>
                                             @foreach(\App\Models\Unit::all() as $unit)
-                                            <option value="{{ $unit->id }}">{{ $unit->name }} ({{ $unit->short_name }})</option>
+                                            @php
+                                            // Keep digits and decimal point only, e.g. "20 KG" -> "20", "23.72 kg" -> "23.72"
+                                            $numericName = preg_replace('/[^0-9.]+/', '', $unit->name);
+                                            @endphp
+                                            <option value="{{ $numericName }}">{{ $unit->name }} ({{ $unit->short_name }})</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -75,6 +79,7 @@
                                     <div class="col-md-6 mb-3">
                                         <label>Currency</label>
                                         <select name="currency" class="form-control">
+                                            <option value="">Select Currency</option>
                                             <option value="USD">USD</option>
                                             <option value="EUR">EUR</option>
                                             <option value="BDT">BDT</option>
@@ -101,33 +106,33 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Total</label>
-                                        <input type="number" step="0.01" class="form-control" name="total" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="total" placeholder="0.00" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Total (BDT)</label>
-                                        <input type="number" step="0.01" class="form-control" name="total_tk" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="total_tk" placeholder="0.00" readonly>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Insurance (%)</label>
-                                        <input type="number" step="0.01" class="form-control" name="insurance" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="insurance" placeholder="0.00" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Insurance (BDT)</label>
-                                        <input type="number" step="0.01" class="form-control" name="insurance_tk" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="insurance_tk" placeholder="0.00" readonly>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Landing Charge (%)</label>
-                                        <input type="number" step="0.01" class="form-control" name="landing_charge" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="landing_charge" placeholder="0.00" readonly>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Landing Charge (BDT)</label>
-                                        <input type="number" step="0.01" class="form-control" name="landing_charge_tk" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="landing_charge_tk" placeholder="0.00" readonly>
                                     </div>
                                 </div>
 
@@ -138,23 +143,23 @@
                                 <h5 class="mb-3 border-bottom pb-2">Tax Details</h5>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3"><label>CD</label><input type="number" step="0.01" class="form-control" name="cd" placeholder="0.00"></div>
-                                    <div class="col-md-6 mb-3"><label>RD</label><input type="number" step="0.01" class="form-control" name="rd" placeholder="0.00"></div>
+                                    <div class="col-md-6 mb-3"><label>CD</label><input type="number" step="0.01" class="form-control" name="cd" placeholder="0.00" readonly></div>
+                                    <div class="col-md-6 mb-3"><label>RD</label><input type="number" step="0.01" class="form-control" name="rd" placeholder="0.00" readonly></div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3"><label>SD</label><input type="number" step="0.01" class="form-control" name="sd" placeholder="0.00"></div>
-                                    <div class="col-md-6 mb-3"><label>VAT</label><input type="number" step="0.01" class="form-control" name="vat" placeholder="0.00"></div>
+                                    <div class="col-md-6 mb-3"><label>SD</label><input type="number" step="0.01" class="form-control" name="sd" placeholder="0.00" readonly></div>
+                                    <div class="col-md-6 mb-3"><label>VAT</label><input type="number" step="0.01" class="form-control" name="vat" placeholder="0.00" readonly></div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-md-6 mb-3"><label>AIT</label><input type="number" step="0.01" class="form-control" name="ait" placeholder="0.00"></div>
+                                    <div class="col-md-6 mb-3"><label>AIT</label><input type="number" step="0.01" class="form-control" name="ait" placeholder="0.00" readonly></div>
                                     <div class="col-md-6 mb-3"><label>AT</label><input type="number" step="0.01" class="form-control" name="at" placeholder="0.00"></div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3"><label>ATV</label><input type="number" step="0.01" class="form-control" name="atv" placeholder="0.00"></div>
-                                    <div class="col-md-6 mb-3"><label>Total Tax</label><input type="number" step="0.01" class="form-control" name="total_tax" placeholder="0.00"></div>
+                                    <div class="col-md-6 mb-3"><label>Total Tax</label><input type="number" step="0.01" class="form-control" name="total_tax" placeholder="0.00" readonly></div>
                                 </div>
                             </div>
                         </div>
@@ -177,9 +182,50 @@
                                 </div>
                             </div>
                             <div class="mb-3">
-                                <label>Total</label>
-                                <input type="number" step="0.01" class="form-control" name="others_total">
+                                <label>Others Total</label>
+                                <input type="number" step="0.01" class="form-control" name="others_total" readonly>
                             </div>
+                        </div>
+                        <!-- TOTALS SECTION -->
+                        <div class="mt-4 p-3 bg-light border rounded">
+                            <h5 class="mb-3 border-bottom pb-2">Totals</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label>Total Tariff based on LC</label>
+                                    <input type="number" step="0.01" class="form-control" name="total_tariff_lc" placeholder="0.00" readonly>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Tariff per Ton based on LC</label>
+                                    <input type="number" step="0.01" class="form-control" name="tariff_per_ton_lc" placeholder="0.00" readonly>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label>Tariff per Kg based on LC</label>
+                                    <input type="number" step="0.01" class="form-control" name="tariff_per_kg_lc" placeholder="0.00" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Actual Value (%)</label>
+                                    <input type="number" step="0.01" class="form-control" name="actual_value" placeholder="0.00">
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Actual Total Cost per Kg</label>
+                                    <input type="number" step="0.01" class="form-control" name="actual_cost_per_kg" placeholder="0.00" readonly>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label>Total Cost per Kg</label>
+                                    <input type="number" step="0.01" class="form-control" name="total_cost_per_kg" placeholder="0.00" readonly>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label>Total Cost per Box (20 KG)</label>
+                                    <input type="number" step="0.01" class="form-control" name="total_cost_per_box" placeholder="0.00" readonly>
+                                </div>
+                            </div>
+
                         </div>
 
                         <!-- SAVE BUTTON -->
@@ -193,6 +239,7 @@
     </div>
 </div>
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // --- DROPDOWNS ---
@@ -210,28 +257,32 @@
         boxTypeSelect.disabled = true;
         sizeSelect.disabled = true;
         currencySelect.disabled = true;
-        allInputs.forEach(input => input.disabled = true);
+        allInputs.forEach(input => {
+            if (!input.hasAttribute('readonly')) {
+                input.disabled = true;
+            }
+        });
 
         // Sequential enabling
         supplierSelect.addEventListener('change', function() {
             if (this.value) productSelect.disabled = false;
         });
-
         productSelect.addEventListener('change', function() {
             if (this.value) boxTypeSelect.disabled = false;
         });
-
         boxTypeSelect.addEventListener('change', function() {
             if (this.value) sizeSelect.disabled = false;
         });
-
         sizeSelect.addEventListener('change', function() {
             if (this.value) currencySelect.disabled = false;
         });
-
         currencySelect.addEventListener('change', function() {
             if (this.value) {
-                allInputs.forEach(input => input.disabled = false);
+                allInputs.forEach(input => {
+                    if (!input.hasAttribute('readonly')) {
+                        input.disabled = false;
+                    }
+                });
             }
         });
 
@@ -259,6 +310,14 @@
         const cnsInput = document.querySelector('input[name="cns_charge"]');
         const othersTotalInput = document.querySelector('input[name="others_total"]');
 
+        const totalTariffLcInput = document.querySelector('input[name="total_tariff_lc"]');
+        const tariffPerTonLcInput = document.querySelector('input[name="tariff_per_ton_lc"]');
+        const tariffPerKgLcInput = document.querySelector('input[name="tariff_per_kg_lc"]');
+        const actualValueInput = document.querySelector('input[name="actual_value"]');
+        const actualCostPerKgInput = document.querySelector('input[name="actual_cost_per_kg"]');
+        const totalCostPerKgInput = document.querySelector('input[name="total_cost_per_kg"]');
+        const totalCostPerBoxInput = document.querySelector('input[name="total_cost_per_box"]');
+
         // Format numbers without .00 if integer
         function formatNumber(num) {
             return Number.isInteger(num) ? num : parseFloat(num.toFixed(2));
@@ -269,6 +328,8 @@
             const baseValue = parseFloat(baseValueInput.value) || 0;
             const qty = parseFloat(qtyInput.value) || 0;
             const exchange = parseFloat(exchangeInput.value) || 0;
+            const actualValue = parseFloat(actualValueInput.value) || 0;
+            const boxTypeValue = parseFloat(boxTypeSelect.value) || 1; // fallback to 1 to avoid division by 0
 
             // 1) Base * Qty = Total
             const total = baseValue * qty;
@@ -286,77 +347,134 @@
             const insuranceBdt = insurance * exchange;
             insuranceBdtInput.value = formatNumber(insuranceBdt);
 
-
             // 5) Landing = 1% of (Total + Insurance)
             const landing = (total + insurance) * 0.01;
             landingInput.value = formatNumber(landing);
+
             // 6) Landing BDT = Landing * Exchange
             const landingBdt = landing * exchange;
             landingBdtInput.value = formatNumber(landingBdt);
 
-            // 7) Custom Duty (CD) calculation
-            const result1 = totalBdt + insuranceBdt; // Total + Insurance in BDT
-            const result2 = result1 * 0.01; // 1% additional
-            const result3 = result1 + result2; // Sum of previous steps
-            const cd = result3 * 0.25; // 25% of result3
+            // 7) Custom Duty (CD)
+            const result1 = totalBdt + insuranceBdt;
+            const result2 = result1 * 0.01;
+            const result3 = result1 + result2;
+            const cd = result3 * 0.25;
             cdInput.value = formatNumber(cd);
 
-            // 8) Regulatory Duty (RD) calculation
-            const rdResult1 = totalBdt + insuranceBdt; // Total + Insurance in BDT
-            const rdResult2 = rdResult1 * 0.01; // 1% additional
-            const rdResult3 = rdResult1 + rdResult2; // Sum of previous steps
-            const rd = rdResult3 * 0.20; // 20% of result3
+            // 8) Regulatory Duty (RD)
+            const rdResult1 = totalBdt + insuranceBdt;
+            const rdResult2 = rdResult1 * 0.01;
+            const rdResult3 = rdResult1 + rdResult2;
+            const rd = rdResult3 * 0.20;
             rdInput.value = formatNumber(rd);
 
-
-            // 9) Supplementary Duty (SD) calculation
-            const sdResult1 = totalBdt + insuranceBdt; // Total + Insurance
-            const sdResult2 = sdResult1 * 0.01; // 1% additional
-            const sdResult3 = sdResult1 + sdResult2; // Sum of previous steps
-            const sd = (sdResult3 + cd + rd) * 0.30; // Include CD and RD, then 30%
+            // 9) SD
+            const sdResult1 = totalBdt + insuranceBdt;
+            const sdResult2 = sdResult1 * 0.01;
+            const sdResult3 = sdResult1 + sdResult2;
+            const sd = (sdResult3 + cd + rd) * 0.30;
             sdInput.value = formatNumber(sd);
 
-
-            // 10) VAT calculation
-            const vatResult1 = totalBdt + insuranceBdt; // Total + Insurance
-            const vatResult2 = vatResult1 * 0.01; // 1% additional
-            const vatResult3 = vatResult1 + vatResult2; // Sum of previous steps
-            const vat = (vatResult3 + cd + rd + sd) * 0.15; // Include CD, RD, SD, then 15%
+            // 10) VAT
+            const vatResult1 = totalBdt + insuranceBdt;
+            const vatResult2 = vatResult1 * 0.01;
+            const vatResult3 = vatResult1 + vatResult2;
+            const vat = (vatResult3 + cd + rd + sd) * 0.15;
             vatInput.value = formatNumber(vat);
 
-            // 11) AIT calculation
-            const aitResult1 = totalBdt + insuranceBdt; // Total + Insurance
-            const aitResult2 = aitResult1 * 0.01; // 1% additional
-            const aitResult3 = aitResult1 + aitResult2; // Sum of previous steps
-            const ait = aitResult3 * 0.05; // 5% of result3
+            // 11) AIT
+            const aitResult1 = totalBdt + insuranceBdt;
+            const aitResult2 = aitResult1 * 0.01;
+            const aitResult3 = aitResult1 + aitResult2;
+            const ait = aitResult3 * 0.05;
             aitInput.value = formatNumber(ait);
 
-
-            // ---- TOTAL TAX ----
+            // Total Tax
             const at = parseFloat(atInput.value) || 0;
             const atv = parseFloat(atvInput.value) || 0;
             const totalTax = cd + rd + sd + vat + ait + at + atv;
             totalTaxInput.value = formatNumber(totalTax);
 
-            // ---- OTHERS TOTAL ----
+            // Others Total
             const transport = parseFloat(transportInput.value) || 0;
             const arrot = parseFloat(arrotInput.value) || 0;
             const cns = parseFloat(cnsInput.value) || 0;
             const othersTotal = transport + arrot + cns;
             othersTotalInput.value = formatNumber(othersTotal);
+
+            // Total Tariff LC
+            const totalTariffLc = totalBdt + insuranceBdt + landingBdt + totalTax + transport + arrot + cns;
+            totalTariffLcInput.value = Number(totalTariffLc.toFixed(3));
+
+            // Tariff per Ton LC
+            const tariffPerTonLc = totalTariffLc / 23.72;
+            tariffPerTonLcInput.value = Number(tariffPerTonLc.toFixed(3));
+
+            // Tariff per Kg LC
+            const tariffPerKgLc = tariffPerTonLc / 1000;
+            tariffPerKgLcInput.value = Number(tariffPerKgLc.toFixed(3));
+
+            // ---- ACTUAL TOTAL COST PER KG ----
+            const actualCostPerKg = (actualValue / boxTypeValue) * exchange;
+            actualCostPerKgInput.value = Number(actualCostPerKg.toFixed(3));
+
+            // ---- TOTAL COST PER KG (DIFFERENCE) ----
+            const totalCostPerKg = tariffPerKgLc - actualCostPerKg;
+            totalCostPerKgInput.value = Number(totalCostPerKg.toFixed(9));
+
+
+
+            // ---- TOTAL COST PER BOX (20 KG) ----
+            const totalCostPerBox = totalCostPerKg * 20;
+            totalCostPerBoxInput.value = Number(totalCostPerBox.toFixed(3));
         }
 
         // Trigger calculations on input changes
-        [baseValueInput, qtyInput, exchangeInput,
+        [baseValueInput, qtyInput, exchangeInput, actualValueInput, boxTypeSelect,
             atInput, atvInput, transportInput, arrotInput, cnsInput
         ].forEach(input => {
             input.addEventListener('input', calculateAll);
         });
     });
 </script>
+
 <!-- Custom Toast Container -->
 <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        function showToast(message, type = 'success', duration = 3000) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            toast.textContent = message;
+            container.appendChild(toast);
+
+            // Trigger animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Remove after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 500);
+            }, duration);
+        }
+
+        // Laravel session success
+        @if(session('success'))
+            showToast(@json(session('success')), 'success');
+        @endif
+
+        // Laravel validation errors
+        @if($errors->any())
+            @foreach($errors->all() as $error)
+                showToast(@json($error), 'error');
+            @endforeach
+        @endif
+    });
+</script>
 <style>
     .toast {
         background-color: #333;
@@ -385,39 +503,3 @@
         background-color: #dc3545;
     }
 </style>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-
-        function showToast(message, type = 'success', duration = 3000) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            toast.textContent = message;
-            container.appendChild(toast);
-
-            // Trigger animation
-            setTimeout(() => toast.classList.add('show'), 100);
-
-            // Remove after duration
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 500);
-            }, duration);
-        }
-
-        // Laravel session success
-    @if(session('success'))
-        showToast(@json(session('success')), 'success');
-    @endif
-
-    // Laravel validation errors
-    @if($errors->any())
-        @foreach($errors->all() as $error)
-            showToast(@json($error), 'error');
-        @endforeach
-    @endif
-
-    });
-</script>
-

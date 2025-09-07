@@ -51,6 +51,15 @@ class CostingController extends Controller
         $costing->arrot              = $request->arrot;
         $costing->cns_charge         = $request->cns_charge;
         $costing->others_total       = $request->others_total;
+
+        // ✅ New fields
+        $costing->total_tariff_lc    = $request->total_tariff_lc;
+        $costing->tariff_per_ton_lc  = $request->tariff_per_ton_lc;
+        $costing->tariff_per_kg_lc   = $request->tariff_per_kg_lc;
+        $costing->actual_cost_per_kg = $request->actual_cost_per_kg;
+        $costing->total_cost_per_kg  = $request->total_cost_per_kg;
+        $costing->total_cost_per_box = $request->total_cost_per_box;
+
         $costing->save();
 
         return redirect()->back()->with('success', '✔ Costing saved successfully!');
