@@ -44,5 +44,10 @@ Route::get('/costing/addCosting', [CostingController::class, 'addCosting'])->nam
 Route::post('/costing/addCosting', [CostingController::class, 'storeCosting'])->name('costing.storeCosting');
 Route::get('/costing/viewCosting', [CostingController::class, 'viewCosting'])->name('costing.viewCosting');
 Route::delete('/costing/{id}', [\App\Http\Controllers\CostingController::class, 'destroy'])->name('costing.destroy');
+Route::post('/costing/update', [CostingController::class, 'updateCosting'])->name('costing.update');
 
 // Costing
+
+// LC
+Route::post('/costing/lc/store', [CostingController::class, 'storeLc'])->name('costing.lc.store');
+// LC

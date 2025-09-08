@@ -38,14 +38,13 @@ class Costing extends Model
         'arrot',
         'cns_charge',
         'others_total',
-
-        // ✅ New fields
         'total_tariff_lc',
         'tariff_per_ton_lc',
         'tariff_per_kg_lc',
         'actual_cost_per_kg',
         'total_cost_per_kg',
         'total_cost_per_box',
+        'updated_attempt'
     ];
 
     // Relationship with Supplier
