@@ -78,7 +78,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Currency</label>
-                                        <select name="currency" class="form-control">
+                                        <select name="currency" class="form-control" required>
                                             <option value="">Select Currency</option>
                                             <option value="USD">USD</option>
                                             <option value="EUR">EUR</option>
@@ -87,7 +87,7 @@
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Exchange Rate</label>
-                                        <input type="number" step="0.01" class="form-control" name="exchange_rate" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="exchange_rate" placeholder="0.00" required>
                                     </div>
                                 </div>
 
@@ -95,11 +95,11 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Base Value</label>
-                                        <input type="number" step="0.01" class="form-control" name="base_value" placeholder="0.00">
+                                        <input type="number" step="0.01" class="form-control" name="base_value" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Quantity</label>
-                                        <input type="number" class="form-control" name="qty" placeholder="0.00">
+                                        <input type="number" class="form-control" name="qty" placeholder="0.00" required>
                                     </div>
                                 </div>
 
