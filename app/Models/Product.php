@@ -23,4 +23,8 @@ class Product extends Model
         'product_tax_type',
         'product_note',
     ];
+    public function sizes()
+    {
+        return $this->hasMany(Size::class);
+    }
 }

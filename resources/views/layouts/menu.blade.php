@@ -67,9 +67,32 @@
             </a>
         </li>
         @endcan
+
+        @can('create_sizes')
+        <!-- Sizes Submenu -->
+        <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('product.size.*') ? 'c-show' : '' }}">
+            <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+                <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Sizes
+            </a>
+            <ul class="c-sidebar-nav-dropdown-items">
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.create') ? 'c-active' : '' }}" href="{{ route('product.size.create') }}">
+                        Create Sizes
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.view') ? 'c-active' : '' }}" href="{{ route('product.size.view') }}">
+                        View Sizes
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endcan
+
     </ul>
 </li>
 @endcan
+
 
 @can('access_adjustments')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('adjustments.*') ? 'c-show' : '' }}">
