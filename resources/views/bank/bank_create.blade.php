@@ -62,13 +62,6 @@
                                         class="form-control" required>
                                 </div>
 
-                                <!-- Last Balance -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="last_balance" class="form-label">Last Balance</label>
-                                    <input type="number" step="0.01" name="last_balance" id="last_balance"
-                                        class="form-control" required>
-                                </div>
-
                                 <!-- Disclaimer -->
                                 <div class="col-md-6 mb-3">
                                     <label for="disclaimer" class="form-label">Disclaimer</label>

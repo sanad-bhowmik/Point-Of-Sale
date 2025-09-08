@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('owner');
             $table->date('date');
             $table->decimal('opening_balance', 15, 2)->default(0);
-            $table->decimal('last_balance', 15, 2)->default(0);
             $table->string('disclaimer')->nullable();
             $table->timestamps();
         });
