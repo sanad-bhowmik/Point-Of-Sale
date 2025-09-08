@@ -330,6 +330,30 @@
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> Banks
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('bank.create') ? 'c-active' : '' }}"
+                href="{{ route('bank.create') }}">
+                <i class="c-sidebar-nav-icon bi bi-arrows-fullscreen" style="line-height: 1;"></i> Add Bank
+            </a>
+        </li>
+    </ul>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('bank.index') ? 'c-active' : '' }}"
+                href="{{ route('bank.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Bank List
+            </a>
+        </li>
+    </ul>
+</li>
+@endcan
+
+@can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-basket3-fill" style="line-height: 1;"></i> Seasonal Fruit
     </a>
     <ul class="c-sidebar-nav-dropdown-items">

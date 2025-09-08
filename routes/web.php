@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\CostingController;
 use App\Http\Controllers\SeasonalFruitController;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,16 @@ Route::post('/costing/addCosting', [CostingController::class, 'storeCosting'])->
 Route::get('/costing/viewCosting', [CostingController::class, 'viewCosting'])->name('costing.viewCosting');
 Route::delete('/costing/{id}', [\App\Http\Controllers\CostingController::class, 'destroy'])->name('costing.destroy');
 Route::post('/costing/update', [CostingController::class, 'updateCosting'])->name('costing.update');
+
+// Costing
+Route::group(['prefix' => 'banks', 'as' => 'bank.', 'controller' => BankController::class], function () {
+    Route::get('/', 'index')->name('index');
+    Route::get('/create', 'create')->name('create');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/{bank}/edit', 'edit')->name('edit');
+    Route::post('/{bank}/update', 'update')->name('update');
+    Route::delete('/{bank}/delete', 'destroy')->name('destroy');
+});
 
 // Costing
 
