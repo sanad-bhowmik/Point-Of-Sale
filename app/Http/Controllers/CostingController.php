@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Costing;
+use App\Models\CostingLog;
 use Illuminate\Http\Request;
 
 class CostingController extends Controller
@@ -133,6 +134,7 @@ class CostingController extends Controller
         ]);
     }
 
+
     public function updateCosting(Request $request)
     {
         // Validation
@@ -149,6 +151,47 @@ class CostingController extends Controller
 
         // Find the costing
         $costing = Costing::findOrFail($request->id);
+
+        // Log previous state before updating
+        CostingLog::create([
+            'costing_id'            => $costing->id,
+            'supplier_id'           => $costing->supplier_id,
+            'product_id'            => $costing->product_id,
+            'box_type'              => $costing->box_type,
+            'size'                  => $costing->size,
+            'currency'              => $costing->currency,
+            'base_value'            => $costing->base_value,
+            'qty'                   => $costing->qty,
+            'exchange_rate'         => $costing->exchange_rate,
+            'total'                 => $costing->total,
+            'total_tk'              => $costing->total_tk,
+            'insurance'             => $costing->insurance,
+            'insurance_tk'          => $costing->insurance_tk,
+            'landing_charge'        => $costing->landing_charge,
+            'landing_charge_tk'     => $costing->landing_charge_tk,
+            'cd'                    => $costing->cd,
+            'rd'                    => $costing->rd,
+            'sd'                    => $costing->sd,
+            'vat'                   => $costing->vat,
+            'ait'                   => $costing->ait,
+            'at'                    => $costing->at,
+            'atv'                   => $costing->atv,
+            'total_tax'             => $costing->total_tax,
+            'transport'             => $costing->transport,
+            'arrot'                 => $costing->arrot,
+            'cns_charge'            => $costing->cns_charge,
+            'others_total'          => $costing->others_total,
+            'total_tariff_lc'       => $costing->total_tariff_lc,
+            'tariff_per_ton_lc'     => $costing->tariff_per_ton_lc,
+            'tariff_per_kg_lc'      => $costing->tariff_per_kg_lc,
+            'actual_cost_per_kg'    => $costing->actual_cost_per_kg,
+            'total_cost_per_kg'     => $costing->total_cost_per_kg,
+            'total_cost_per_box'    => $costing->total_cost_per_box,
+            'updated_attempt'       => $costing->updated_attempt ? $costing->updated_attempt + 1 : 1,
+        ]);
+
+        // Increment updated attempt
+        $costing->updated_attempt = $costing->updated_attempt ? $costing->updated_attempt + 1 : 1;
 
         // Update fields
         $costing->exchange_rate      = $request->exchange_rate;
@@ -167,7 +210,7 @@ class CostingController extends Controller
         $arrot = $costing->arrot;
         $cns = $costing->cns_charge;
         $actualValue = $costing->actual_cost_per_kg;
-        $boxTypeValue = $costing->box_type ?: 1; // fallback
+        $boxTypeValue = $costing->box_type ?: 1;
 
         $total = $baseValue * $qty;
         $total_tk = $total * $exchange;
@@ -212,8 +255,6 @@ class CostingController extends Controller
         $costing->tariff_per_kg_lc     = $tariff_per_kg_lc;
         $costing->total_cost_per_kg    = $total_cost_per_kg;
         $costing->total_cost_per_box   = $total_cost_per_box;
-
-        $costing->updated_attempt = 1;
 
         $costing->save();
 
