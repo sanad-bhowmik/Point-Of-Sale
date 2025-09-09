@@ -36,7 +36,6 @@ class BankController extends Controller
             'owner'         => 'required|string|max:255',
             'date'          => 'required|date',
             'opening_balance'  => 'required|numeric',
-            'last_balance'  => 'required|numeric',
             'disclaimer'    => 'nullable|string|max:255',
         ]);
 
@@ -49,7 +48,6 @@ class BankController extends Controller
             'owner'        => $request->owner,
             'date'         => $request->date,
             'opening_balance' => $request->opening_balance,
-            'last_balance' => $request->last_balance,
             'disclaimer'   => $request->disclaimer,
         ]);
 
@@ -96,7 +94,6 @@ class BankController extends Controller
             'branch_name'  => $request->branch_name,
             'owner'        => $request->owner,
             'date'         => $request->date,
-            'last_balance' => $request->last_balance,
             'disclaimer'   => $request->disclaimer,
         ]);
 

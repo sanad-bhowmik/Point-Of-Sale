@@ -16,8 +16,9 @@ return new class extends Migration
             $table->unsignedBigInteger('bank_id');
             $table->decimal('in_amount', 15, 2)->default(0);
             $table->decimal('out_amount', 15, 2)->default(0);
-            $table->string('purpose');
-            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
+            $table->text('purpose');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->date('date');
             $table->timestamps();
 
             $table->foreign('bank_id')->references('id')->on('banks')->onDelete('cascade');
