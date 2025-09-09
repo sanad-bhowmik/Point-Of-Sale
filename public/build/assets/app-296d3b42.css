@@ -8948,7 +8948,7 @@ html:not([dir="rtl"]) .c-sidebar-nav-dropdown-toggle .badge {
     overflow-y: hidden;
     list-style: none;
     transition: max-height 0.3s ease-in-out;
-    background-color:#344951;
+    background:linear-gradient(333deg, rgb(0 0 0) 0%, rgb(24 38 60) 35%, rgb(0 0 0) 100%);
 }
 html:not([dir="rtl"]) .c-sidebar-nav-dropdown-items .c-sidebar-nav-link,
 html:not([dir="rtl"])
@@ -10861,7 +10861,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
 }
 .c-sidebar {
     color: #fff;
-    background: #0e2b36;
+    background:linear-gradient(127deg, rgba(2, 0, 36, 1) 0%, rgb(37 9 121) 35%, rgb(0 0 0) 100%);
 }
 *[dir="rtl"] .c-sidebar.c-sidebar-right {
     border: 0;
@@ -10914,6 +10914,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
     .c-sidebar .c-sidebar-nav-dropdown-toggle:hover {
         color: #fff;
         background: #0000007d;
+        box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     }
     .c-sidebar .c-sidebar-nav-link:hover .c-sidebar-nav-icon,
     .c-sidebar .c-sidebar-nav-dropdown-toggle:hover .c-sidebar-nav-icon {
@@ -18387,7 +18388,8 @@ body {
 .c-sidebar .c-sidebar-nav-link.c-active,
 .c-sidebar .c-active.c-sidebar-nav-dropdown-toggle {
     color: #fff;
-    background: #0000007d;
+    background: linear-gradient(
+17deg, #4b6cb7 0%, #182848 100%);
 }
 .btn:not([class*="ghost"]):not([class*="link"]):not([class*="outline"]):not(
         [class*="transparent"]

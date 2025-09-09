@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\CostingController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
 use App\Http\Controllers\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -34,19 +35,23 @@ Route::group(['middleware' => 'auth'], function () {
 
 
 // Seasonal Fruit
-Route::get('/seasonalfruit/create', [SeasonalFruitController::class, 'create'])->name('seasonalfruit.create');
-Route::post('/seasonalfruit/store', [SeasonalFruitController::class, 'store'])->name('seasonalfruit.store');
-Route::get('/seasonalfruit/show', [SeasonalFruitController::class, 'show'])->name('seasonalfruit.show');
-Route::delete('/seasonalfruit/{id}', [App\Http\Controllers\SeasonalFruitController::class, 'destroy'])
-    ->name('seasonalfruit.destroy');
+Route::group(['prefix' => 'seasonalfruit', 'controller' => SeasonalFruitController::class], function () {
+    Route::get('/create', 'create')->name('seasonalfruit.create');
+    Route::post('/store', 'store')->name('seasonalfruit.store');
+    Route::get('/show', 'show')->name('seasonalfruit.show');
+    Route::delete('/{id}', 'destroy')->name('seasonalfruit.destroy');
+});
 // Seasonal Fruit
 
 // Costing
-Route::get('/costing/addCosting', [CostingController::class, 'addCosting'])->name('costing.addCosting');
-Route::post('/costing/addCosting', [CostingController::class, 'storeCosting'])->name('costing.storeCosting');
-Route::get('/costing/viewCosting', [CostingController::class, 'viewCosting'])->name('costing.viewCosting');
-Route::delete('/costing/{id}', [\App\Http\Controllers\CostingController::class, 'destroy'])->name('costing.destroy');
-Route::post('/costing/update', [CostingController::class, 'updateCosting'])->name('costing.update');
+Route::group(['prefix' => 'costing', 'controller' => CostingController::class], function () {
+    Route::get('/addCosting', 'addCosting')->name('costing.addCosting');
+    Route::post('/addCosting', 'storeCosting')->name('costing.storeCosting');
+    Route::get('/viewCosting', 'viewCosting')->name('costing.viewCosting');
+    Route::post('/update', 'updateCosting')->name('costing.update');
+    Route::delete('/{id}', 'destroy')->name('costing.destroy');
+    Route::post('/lc/store', 'storeLc')->name('costing.lc.store');
+});
 
 // Bank
 Route::group(['prefix' => 'banks', 'as' => 'bank.', 'controller' => BankController::class], function () {
@@ -57,6 +62,7 @@ Route::group(['prefix' => 'banks', 'as' => 'bank.', 'controller' => BankControll
     Route::post('/{bank}/update', 'update')->name('update');
     Route::delete('/{bank}/delete', 'destroy')->name('destroy');
 });
+// Bank
 
 // Transaction
 Route::group(['prefix' => 'transactions', 'as' => 'transaction.', 'controller' => TransactionController::class], function () {
@@ -70,8 +76,11 @@ Route::group(['prefix' => 'transactions', 'as' => 'transaction.', 'controller' =
     Route::get('/bank-ledgers', 'ledger')->name('ledger');
 });
 
-// Costing
-
-// LC
-Route::post('/costing/lc/store', [CostingController::class, 'storeLc'])->name('costing.lc.store');
-// LC
+// Size
+Route::group(['prefix' => 'products', 'as' => 'product.', 'controller' => ProductController::class], function () {
+    Route::get('/size/create', 'createSize')->name('size.create');
+    Route::post('/size/store', 'storeSize')->name('size.store');
+    Route::get('/size/view', 'viewSize')->name('size.view');
+    Route::delete('/size/{size}', 'destroySize')->name('size.destroy');
+    Route::put('/size/{size}/update', 'updateSize')->name('size.update');
+});
