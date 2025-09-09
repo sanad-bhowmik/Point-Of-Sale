@@ -45,13 +45,13 @@
                                 <a href="{{ route('transaction.ledger') }}" class="btn btn-secondary">Reset</a>
                             </div>
                         </form>
-                        @if (isset($selectedBank))
+                        {{-- @if (isset($selectedBank))
                             <div class="row">
                             <div class="col-mg-4">
                                 <h3 class="p-2">Opening Balance : {{ $selectedBank->opening_balance }}</h3>
                             </div>
                         </div>
-                        @endif
+                        @endif --}}
                         <div class="table-responsive">
                             <table class="table table-bordered table-striped">
                                 <thead class="table-dark">
@@ -65,6 +65,12 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <tr>
+                                        <td colspan="4"><h5>Opening Balance</h5></td>
+                                        <td colspan="2"><strong>
+                                                {{ isset($selectedBank) ? number_format($selectedBank->opening_balance, 2) : '0.00' }}
+                                            </strong></td>
+                                    </tr>
                                     @forelse($transactions as $index => $transaction)
                                         @php
                                             // Initialize ledger balance for this bank if not set
