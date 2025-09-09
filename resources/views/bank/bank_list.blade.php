@@ -17,8 +17,8 @@
                     <div class="card-body">
                         <h5 class="mb-3 border-bottom pb-2">Bank Records</h5>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead class="table-dark">
+                            <table class="table table-bordered table-hover">
+                                <thead >
                                     <tr>
                                         <th>#</th>
                                         <th>Institution</th>

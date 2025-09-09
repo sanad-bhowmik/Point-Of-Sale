@@ -57,8 +57,8 @@
                         </form>
 
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead class="table-dark">
+                            <table class="table table-bordered table-hover">
+                                <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Bank</th>
@@ -80,9 +80,9 @@
                                             <td>{{ $transaction->purpose }}</td>
                                             <td>
                                                 <button
-                                                    class="btn btn-sm 
-                                                    @if ($transaction->status == 'pending') btn-warning 
-                                                    @elseif($transaction->status == 'approved') btn-success 
+                                                    class="btn btn-sm
+                                                    @if ($transaction->status == 'pending') btn-warning
+                                                    @elseif($transaction->status == 'approved') btn-success
                                                     @else btn-danger @endif"
                                                     onclick="openStatusModal({{ $transaction->id }}, '{{ $transaction->status }}')">
                                                     {{ ucfirst($transaction->status) }}
