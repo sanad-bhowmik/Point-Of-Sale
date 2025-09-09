@@ -18,7 +18,7 @@
                     <h5 class="mb-3 border-bottom pb-2">Costing Records</h5>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
-                            <thead >
+                            <thead>
                                 <tr>
                                     <th>#</th>
                                     <th>Supplier</th>
@@ -105,7 +105,7 @@
                                     <!--   Status Column with Button -->
                                     <td>
                                         <button class="btn btn-sm btn-info status-btn" data-costing-id="{{ $costing->id }}">
-                                            LC Status
+                                           LC Status
                                         </button>
                                     </td>
 
@@ -113,16 +113,16 @@
                                     <!--  Actions -->
                                     <td>
                                         <button class="edit-btn btn btn-warning"
-                                            data-id="{{ $costing->id }}"
-                                            data-base_value="{{ $costing->base_value }}"
-                                            data-qty="{{ $costing->qty }}"
-                                            data-exchange_rate="{{ $costing->exchange_rate }}"
-                                            data-transport="{{ $costing->transport }}"
-                                            data-arrot="{{ $costing->arrot }}"
-                                            data-cns_charge="{{ $costing->cns_charge }}"
-                                            data-actual_cost_per_kg="{{ $costing->actual_cost_per_kg }}">
-                                            Edit
-                                        </button>
+    data-id="{{ $costing->id }}"
+    data-base_value="{{ $costing->base_value }}"
+    data-qty="{{ $costing->qty }}"
+    data-exchange_rate="{{ $costing->exchange_rate }}"
+    data-transport="{{ $costing->transport }}"
+    data-arrot="{{ $costing->arrot }}"
+    data-cns_charge="{{ $costing->cns_charge }}"
+    data-actual_cost_per_kg="{{ $costing->actual_cost_per_kg }}">
+    Edit
+</button>
 
                                         <form action="{{ route('costing.destroy', $costing->id) }}" method="POST" style="display:inline-block;">
                                             @csrf
@@ -208,79 +208,79 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
+document.addEventListener('DOMContentLoaded', function() {
+    const statusModal = new bootstrap.Modal(document.getElementById('statusModal'));
 
-        function showToast(message, type = 'success', duration = 3000) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            toast.textContent = message;
-            container.appendChild(toast);
+    function showToast(message, type = 'success', duration = 3000) {
+        const container = document.getElementById('toast-container');
+        const toast = document.createElement('div');
+        toast.classList.add('toast', type);
+        toast.textContent = message;
+        container.appendChild(toast);
 
-            setTimeout(() => toast.classList.add('show'), 100);
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 500);
-            }, duration);
-        }
+        setTimeout(() => toast.classList.add('show'), 100);
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => toast.remove(), 500);
+        }, duration);
+    }
 
-        // Open modal when status button clicked
-        document.querySelectorAll('.status-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const costingId = this.dataset.costingId;
-                document.getElementById('status_costing_id').value = costingId;
+    // Open modal when status button clicked
+    document.querySelectorAll('.status-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const costingId = this.dataset.costingId;
+            document.getElementById('status_costing_id').value = costingId;
 
-                // Reset form
-                document.getElementById('statusForm').reset();
+            // Reset form
+            document.getElementById('statusForm').reset();
 
-                // Show modal
-                statusModal.show();
-            });
+            // Show modal
+            statusModal.show();
         });
-
-        // Save LC via AJAX
-        document.getElementById('saveStatusBtn').addEventListener('click', function() {
-            const form = document.getElementById('statusForm');
-            const formData = new FormData(form);
-
-            fetch("{{ route('costing.lc.store') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
-                    },
-                    body: formData
-                })
-                .then(res => res.json())
-                .then(data => {
-                    if (data.success) {
-                        showToast(data.message, 'success'); // ✅ success toast
-                        statusModal.hide();
-                        location.reload(); // reload to reflect LC id update
-                    } else if (data.errors) {
-                        // show each validation error
-                        Object.values(data.errors).flat().forEach(err => showToast(err, 'error'));
-                    } else {
-                        showToast("Failed to save LC.", 'error');
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    showToast("Something went wrong.", 'error'); // toast for exceptions
-                });
-        });
-
-        // Laravel session / validation messages
-        @if(session('success'))
-        showToast(@json(session('success')), 'success');
-        @endif
-
-        @if($errors - > any())
-        @foreach($errors - > all() as $error)
-        showToast(@json($error), 'error');
-        @endforeach
-        @endif
     });
+
+    // Save LC via AJAX
+    document.getElementById('saveStatusBtn').addEventListener('click', function() {
+        const form = document.getElementById('statusForm');
+        const formData = new FormData(form);
+
+        fetch("{{ route('costing.lc.store') }}", {
+            method: "POST",
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+            },
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.success){
+                showToast(data.message, 'success'); // ✅ success toast
+                statusModal.hide();
+                location.reload(); // reload to reflect LC id update
+            } else if(data.errors) {
+                // show each validation error
+                Object.values(data.errors).flat().forEach(err => showToast(err, 'error'));
+            } else {
+                showToast("Failed to save LC.", 'error');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            showToast("Something went wrong.", 'error'); // toast for exceptions
+        });
+    });
+
+    // Laravel session / validation messages
+    @if(session('success'))
+        showToast(@json(session('success')), 'success');
+    @endif
+
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            showToast(@json($error), 'error');
+        @endforeach
+    @endif
+});
 </script>
 
 
@@ -340,140 +340,125 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const modal = new bootstrap.Modal(document.getElementById('editCostingModal'));
-        const editForm = document.getElementById('editCostingForm');
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = new bootstrap.Modal(document.getElementById('editCostingModal'));
+    const editForm = document.getElementById('editCostingForm');
 
-        // Inputs
-        const costingIdInput = document.getElementById('edit_id');
-        const baseInput = document.getElementById('edit_base_value');
-        const qtyInput = document.getElementById('edit_qty');
-        const exchangeInput = document.getElementById('edit_exchange_rate');
-        const transportInput = document.getElementById('edit_transport');
-        const arrotInput = document.getElementById('edit_arrot');
-        const cnsInput = document.getElementById('edit_cns_charge');
-        const actualCostInput = document.getElementById('edit_actual_cost_per_kg');
+    // Inputs
+    const costingIdInput = document.getElementById('edit_id');
+    const baseInput = document.getElementById('edit_base_value');
+    const qtyInput = document.getElementById('edit_qty');
+    const exchangeInput = document.getElementById('edit_exchange_rate');
+    const transportInput = document.getElementById('edit_transport');
+    const arrotInput = document.getElementById('edit_arrot');
+    const cnsInput = document.getElementById('edit_cns_charge');
+    const actualCostInput = document.getElementById('edit_actual_cost_per_kg');
 
-        // Calculation function
-        function calculateAll() {
-            const baseValue = parseFloat(baseInput.value) || 0;
-            const qty = parseFloat(qtyInput.value) || 0;
-            const exchange = parseFloat(exchangeInput.value) || 0;
-            const transport = parseFloat(transportInput.value) || 0;
-            const arrot = parseFloat(arrotInput.value) || 0;
-            const cns = parseFloat(cnsInput.value) || 0;
-            const actualCost = parseFloat(actualCostInput.value) || 0;
+    // Calculation function
+    function calculateAll() {
+        const baseValue = parseFloat(baseInput.value) || 0;
+        const qty = parseFloat(qtyInput.value) || 0;
+        const exchange = parseFloat(exchangeInput.value) || 0;
+        const transport = parseFloat(transportInput.value) || 0;
+        const arrot = parseFloat(arrotInput.value) || 0;
+        const cns = parseFloat(cnsInput.value) || 0;
+        const actualCost = parseFloat(actualCostInput.value) || 0;
 
-            const total = baseValue * qty;
-            const totalBdt = total * exchange;
-            const insurance = total * 0.01;
-            const insuranceBdt = insurance * exchange;
-            const landing = (total + insurance) * 0.01;
-            const landingBdt = landing * exchange;
+        const total = baseValue * qty;
+        const totalBdt = total * exchange;
+        const insurance = total * 0.01;
+        const insuranceBdt = insurance * exchange;
+        const landing = (total + insurance) * 0.01;
+        const landingBdt = landing * exchange;
 
-            const cd = (totalBdt + insuranceBdt + ((totalBdt + insuranceBdt) * 0.01)) * 0.25;
-            const rd = (totalBdt + insuranceBdt + ((totalBdt + insuranceBdt) * 0.01)) * 0.20;
-            const sd = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt) * 0.01)) + cd + rd) * 0.30;
-            const vat = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt) * 0.01)) + cd + rd + sd) * 0.15;
-            const ait = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt) * 0.01))) * 0.05;
+        const cd = (totalBdt + insuranceBdt + ((totalBdt + insuranceBdt)*0.01)) * 0.25;
+        const rd = (totalBdt + insuranceBdt + ((totalBdt + insuranceBdt)*0.01)) * 0.20;
+        const sd = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt)*0.01)) + cd + rd) * 0.30;
+        const vat = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt)*0.01)) + cd + rd + sd) * 0.15;
+        const ait = ((totalBdt + insuranceBdt + ((totalBdt + insuranceBdt)*0.01))) * 0.05;
 
-            const totalTax = cd + rd + sd + vat + ait;
-            const othersTotal = transport + arrot + cns;
-            const totalTariffLc = totalBdt + insuranceBdt + landingBdt + totalTax + othersTotal;
-            const tariffPerTonLc = totalTariffLc / 23.72;
-            const tariffPerKgLc = tariffPerTonLc / 1000;
-            const totalCostPerKg = tariffPerKgLc - actualCost;
-            const totalCostPerBox = totalCostPerKg * 20;
+        const totalTax = cd + rd + sd + vat + ait;
+        const othersTotal = transport + arrot + cns;
+        const totalTariffLc = totalBdt + insuranceBdt + landingBdt + totalTax + othersTotal;
+        const tariffPerTonLc = totalTariffLc / 23.72;
+        const tariffPerKgLc = tariffPerTonLc / 1000;
+        const totalCostPerKg = tariffPerKgLc - actualCost;
+        const totalCostPerBox = totalCostPerKg * 20;
 
-            console.log({
-                total,
-                totalBdt,
-                insurance,
-                insuranceBdt,
-                landing,
-                landingBdt,
-                cd,
-                rd,
-                sd,
-                vat,
-                ait,
-                totalTax,
-                othersTotal,
-                totalTariffLc,
-                tariffPerTonLc,
-                tariffPerKgLc,
-                totalCostPerKg,
-                totalCostPerBox
-            });
-        }
-
-        // Trigger recalculation on input changes
-        [baseInput, qtyInput, exchangeInput, transportInput, arrotInput, cnsInput, actualCostInput].forEach(input => {
-            input.addEventListener('input', calculateAll);
+        console.log({
+            total, totalBdt, insurance, insuranceBdt, landing, landingBdt,
+            cd, rd, sd, vat, ait, totalTax, othersTotal, totalTariffLc, tariffPerTonLc, tariffPerKgLc,
+            totalCostPerKg, totalCostPerBox
         });
+    }
 
-        // Populate modal on edit button click
-        document.querySelectorAll('.edit-btn').forEach(button => {
-            button.addEventListener('click', function() {
-                const data = button.dataset;
-
-                costingIdInput.value = data.id;
-                baseInput.value = data.base_value;
-                qtyInput.value = data.qty;
-                exchangeInput.value = data.exchange_rate;
-                transportInput.value = data.transport;
-                arrotInput.value = data.arrot;
-                cnsInput.value = data.cns_charge;
-                actualCostInput.value = data.actual_cost_per_kg;
-
-                calculateAll(); // Calculate immediately using DB values
-                modal.show();
-            });
-        });
-
-        // Submit form via AJAX
-        editForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const formData = new FormData(editForm);
-
-            fetch("{{ route('costing.update') }}", {
-                    method: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
-                    },
-                    body: formData
-                })
-                .then(async res => {
-                    const contentType = res.headers.get("content-type");
-                    let data;
-                    if (contentType && contentType.includes("application/json")) {
-                        data = await res.json();
-                    } else {
-                        const text = await res.text();
-                        console.error("Non-JSON response:", text);
-                        throw new Error(text);
-                    }
-                    return data;
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert(data.message);
-                        modal.hide();
-                        location.reload();
-                    } else if (data.errors) {
-                        Object.values(data.errors).flat().forEach(err => alert(err));
-                    } else {
-                        alert("Failed to update costing.");
-                    }
-                })
-                .catch(err => {
-                    console.error("AJAX Error:", err); // <-- exact error in console
-                    alert("Update Successfully.");
-                    location.reload();
-                });
-        });
-
+    // Trigger recalculation on input changes
+    [baseInput, qtyInput, exchangeInput, transportInput, arrotInput, cnsInput, actualCostInput].forEach(input => {
+        input.addEventListener('input', calculateAll);
     });
+
+    // Populate modal on edit button click
+    document.querySelectorAll('.edit-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const data = button.dataset;
+
+            costingIdInput.value = data.id;
+            baseInput.value = data.base_value;
+            qtyInput.value = data.qty;
+            exchangeInput.value = data.exchange_rate;
+            transportInput.value = data.transport;
+            arrotInput.value = data.arrot;
+            cnsInput.value = data.cns_charge;
+            actualCostInput.value = data.actual_cost_per_kg;
+
+            calculateAll(); // Calculate immediately using DB values
+            modal.show();
+        });
+    });
+
+  // Submit form via AJAX
+editForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    const formData = new FormData(editForm);
+
+    fetch("{{ route('costing.update') }}", {
+        method: "POST",
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('input[name=_token]').value
+        },
+        body: formData
+    })
+    .then(async res => {
+        const contentType = res.headers.get("content-type");
+        let data;
+        if(contentType && contentType.includes("application/json")){
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            console.error("Non-JSON response:", text);
+            throw new Error(text);
+        }
+        return data;
+    })
+    .then(data => {
+        if(data.success){
+            alert(data.message);
+            modal.hide();
+            location.reload();
+        } else if(data.errors){
+            Object.values(data.errors).flat().forEach(err => alert(err));
+        } else {
+            alert("Failed to update costing.");
+        }
+    })
+    .catch(err => {
+        console.error("AJAX Error:", err); // <-- exact error in console
+        alert("Update Successfully.");
+         location.reload();
+    });
+});
+
+});
 </script>
 
 
