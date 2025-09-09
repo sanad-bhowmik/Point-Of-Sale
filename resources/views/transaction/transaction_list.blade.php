@@ -20,8 +20,11 @@
                         <form action="{{ route('transaction.index') }}" method="GET" class="row mb-3">
                             <div class="col-md-4">
                                 <label for="date_range" class="form-label">Select Date Range</label>
-                                <input type="text" name="date_range" id="date_range" class="form-control"
-                                    placeholder="Select date range" value="{{ request('date_range') }}">
+                                <div class="input-group">
+                                    <input type="text" name="date_range" id="date_range" class="form-control"
+                                        placeholder="Select date range" value="{{ request('date_range') }}">
+                                    <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                                </div>
                             </div>
                             <div class="col-md-3">
                                 <label for="transaction_type" class="form-label">Transaction Type</label>
@@ -90,13 +93,13 @@
                                             <td>
                                                 <a href="{{ route('transaction.edit', $transaction->id) }}"
                                                     class="btn btn-sm btn-warning">Edit</a>
-                                                {{-- <form action="{{ route('transaction.destroy', $transaction->id) }}"
+                                                <form action="{{ route('transaction.destroy', $transaction->id) }}"
                                                     method="POST" class="d-block mt-1">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button class="btn btn-sm btn-danger"
                                                         onclick="return confirm('Are you sure?')">Delete</button>
-                                                </form> --}}
+                                                </form>
                                             </td>
                                         </tr>
                                     @empty
@@ -119,8 +122,8 @@
 
     <!-- Single Status Modal -->
     <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <form id="statusForm" action="" method="POST">
+        <div class="modal-dialog modal-dialog-centered custom-modal">
+            <form id="statusForm" action="" class="w-100" method="POST">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -263,5 +266,13 @@
 
     .toast.error {
         background-color: #dc3545;
+    }
+
+    .custom-modal {
+        max-width: 800px;
+    }
+
+    .custom-modal .modal-content {
+        height: 220px;
     }
 </style>

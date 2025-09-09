@@ -21,7 +21,7 @@
                             <div class="col-md-3 mb-3">
                                 <label for="bank_id" class="form-label">Select Bank</label>
                                 <select name="bank_id" id="bank_id" class="form-control">
-                                    <option value="">All Banks</option>
+                                    <option value="">Select Bank</option>
                                     @foreach ($banks as $bank)
                                         <option value="{{ $bank->id }}"
                                             {{ request('bank_id') == $bank->id ? 'selected' : '' }}>
