@@ -25,7 +25,8 @@ class ProductCart extends Component
     public $data;
     public $cart_units = [];
     private $product;
-
+    public $cart_sizes = [];
+    public $cartInstance = 'sale';
     public function mount($cartInstance, $data = null)
     {
         $this->cart_instance = $cartInstance;
@@ -72,6 +73,20 @@ class ProductCart extends Component
         return view('livewire.product-cart', [
             'cart_items' => $cart_items
         ]);
+    }
+    public function updateSize($rowId)
+    {
+        if (isset($this->cart_sizes[$rowId])) {
+            $cartItem = Cart::instance($this->cartInstance)->get($rowId);
+
+            // Ensure options is an array
+            $options = is_array($cartItem->options) ? $cartItem->options : $cartItem->options->toArray();
+            $options['size_id'] = $this->cart_sizes[$rowId];
+
+            Cart::instance($this->cartInstance)->update($rowId, [
+                'options' => $options
+            ]);
+        }
     }
 
     public function updateUnit($rowId)

@@ -77,6 +77,7 @@ class SaleController extends Controller
                     'product_discount_amount' => $cart_item->options->product_discount * 100,
                     'product_discount_type' => $cart_item->options->product_discount_type,
                     'product_tax_amount' => $cart_item->options->product_tax * 100,
+                    'size_id' => $cart_item->options['size_id'] ?? null, 
                 ]);
 
                 if ($request->status == 'Shipped' || $request->status == 'Completed') {

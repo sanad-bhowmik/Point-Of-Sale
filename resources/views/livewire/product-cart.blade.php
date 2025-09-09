@@ -26,7 +26,7 @@
                         <th class="align-middle text-center">Discount</th>
                         <th class="align-middle text-center">Tax</th>
                         <th class="align-middle text-center">Sub Total</th>
-
+                        <th class="align-middle text-center">Size</th>
                         <!-- 🔽 New Unit Column -->
                         <th class="align-middle text-center">Unit</th>
 
@@ -72,15 +72,35 @@
                         <td class="align-middle text-center">
                             {{ format_currency($cart_item->options->sub_total) }}
                         </td>
+                        <!-- Size -->
+                        <td class="align-middle text-center">
+                            @php
+                            $sizes = \App\Models\Size::where('product_id', $cart_item->id)->get();
+                            @endphp
+
+                            <select
+                                class="form-select form-select-sm"
+                                wire:model="cart_sizes.{{ $cart_item->rowId }}"
+                                wire:change="updateSize('{{ $cart_item->rowId }}')">
+                                <option value="" disabled selected>— Select Size —</option>
+                                @foreach($sizes as $size)
+                                <option value="{{ $size->id }}">{{ $size->size }}</option>
+                                @endforeach
+                            </select>
+                        </td>
+
+
 
                         <!-- 🔽 New Unit Dropdown -->
                         <td class="align-middle text-center">
                             <select
-                                class="form-select form-select-sm w-auto d-inline-block"
+                                class="form-select form-select-sm w-auto d-inline-block" style="min-width: 120px; padding: 4px 5px; border-radius: 6px; border: 1px solid #ccc; background-color: #f9f9f9; font-size: 14px; color: #333; transition: all 0.2s;"
+                                onfocus="this.style.borderColor='#007bff'; this.style.backgroundColor='#fff';"
+                                onblur="this.style.borderColor='#ccc'; this.style.backgroundColor='#f9f9f9';"
                                 wire:model="cart_units.{{ $cart_item->rowId }}"
                                 wire:change="updateUnit('{{ $cart_item->rowId }}')"
                                 style="color: #5c5656;">
-                                <option value="" disabled>Select Unit</option>
+                                <option value="" disabled>— Select Unit —</option>
                                 @foreach(\App\Models\Unit::all() as $unit)
                                 <option value="{{ $unit->id }}">
                                     {{ $unit->name }} ({{ $unit->short_name }})
