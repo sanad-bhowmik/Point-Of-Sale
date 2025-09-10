@@ -15,7 +15,9 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded-3">
                     <div class="card-body">
-                        <h5 class="mb-3 border-bottom pb-2">Bank Records</h5>
+                        <a href="{{ route('bank.create') }}" class="btn btn-primary mb-3">Add New Bank
+
+                        </a>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
                                 <thead >

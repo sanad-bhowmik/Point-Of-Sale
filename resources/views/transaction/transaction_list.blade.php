@@ -56,6 +56,10 @@
                             </div>
                         </form>
 
+                        <div>
+                            <a href="{{ route('transaction.create') }}" class="btn btn-primary mb-3">Add New Transaction</a>
+                        </div>
+
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
                                 <thead>
