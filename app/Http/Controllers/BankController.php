@@ -10,9 +10,16 @@ class BankController extends Controller
 
     public function index()
     {
-        return view('bank.bank_list', [
-            'banks' => Bank::all()
-        ]);
+        $banks = Bank::with('transactions')->orderBy('id', 'desc')->get();
+
+        foreach ($banks as $bank) {
+            $in  = $bank->transactions->sum('in_amount');
+            $out = $bank->transactions->sum('out_amount');
+
+            $bank->current_balance = ($bank->opening_balance ?? 0) + $in - $out;
+        }
+
+        return view('bank.bank_list', compact('banks'));
     }
 
     /**

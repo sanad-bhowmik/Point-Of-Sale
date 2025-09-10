@@ -15,12 +15,12 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded-3">
                     <div class="card-body">
-                        <a href="{{ route('bank.create') }}" class="btn btn-primary mb-3">Add New Bank
+                        <a href="{{ route('bank.create') }}" class="btn btn-primary mb-3">Add New Bank</a>
+                        <button id="downloadExcel" class="btn btn-success mb-3">Download Excel</button>
 
-                        </a>
                         <div class="table-responsive">
                             <table class="table table-bordered table-hover">
-                                <thead >
+                                <thead>
                                     <tr>
                                         <th>#</th>
                                         <th>Institution</th>
@@ -30,7 +30,7 @@
                                         <th>Owner</th>
                                         <th>Date</th>
                                         <th>Opening Balance</th>
-                                        <th>Last Balance</th>
+                                        <th>Current Balance</th>
                                         <th>Disclaimer</th>
                                         <th>Actions</th>
                                     </tr>
@@ -46,7 +46,7 @@
                                             <td>{{ $bank->owner }}</td>
                                             <td>{{ \Carbon\Carbon::parse($bank->date)->format('d-m-Y') }}</td>
                                             <td>{{ number_format($bank->opening_balance, 2) }}</td>
-                                            <td>{{ number_format($bank->last_balance, 2) }}</td>
+                                            <td>{{ number_format($bank->current_balance, 2) }}</td>
                                             <td>{{ $bank->disclaimer }}</td>
                                             <td>
                                                 <a href="{{ route('bank.edit', $bank->id) }}"
@@ -120,6 +120,40 @@
 
         // });
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script>
+        document.getElementById('downloadExcel').addEventListener('click', function() {
+            var table = document.querySelector('.table');
+
+            // Clone table to avoid altering original
+            var clone = table.cloneNode(true);
+
+            // Remove the last column (Actions)
+            clone.querySelectorAll('tr').forEach(tr => {
+                tr.removeChild(tr.lastElementChild);
+            });
+
+            // Convert to worksheet
+            var wb = XLSX.utils.book_new();
+            var ws = XLSX.utils.table_to_sheet(clone, {
+                raw: true
+            });
+
+            // Optional: adjust column widths
+            var colWidths = [];
+            clone.querySelectorAll('th').forEach(th => {
+                colWidths.push({
+                    wch: th.innerText.length + 5
+                });
+            });
+            ws['!cols'] = colWidths;
+
+            XLSX.utils.book_append_sheet(wb, ws, 'Banks');
+            XLSX.writeFile(wb, 'banks.xlsx');
+        });
+    </script>
+
 @endsection
 <style>
     .toast {

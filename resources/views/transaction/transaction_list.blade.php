@@ -97,13 +97,15 @@
                                             <td>
                                                 <a href="{{ route('transaction.edit', $transaction->id) }}"
                                                     class="btn btn-sm btn-warning">Edit</a>
-                                                <form action="{{ route('transaction.destroy', $transaction->id) }}"
-                                                    method="POST" class="d-block mt-1">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button class="btn btn-sm btn-danger"
-                                                        onclick="return confirm('Are you sure?')">Delete</button>
-                                                </form>
+                                                @if ($transaction->status != 'approved')
+                                                    <form action="{{ route('transaction.destroy', $transaction->id) }}"
+                                                        method="POST" class="d-block mt-1">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-sm btn-danger"
+                                                            onclick="return confirm('Are you sure?')">Delete</button>
+                                                    </form>
+                                                @endif
                                             </td>
                                         </tr>
                                     @empty
