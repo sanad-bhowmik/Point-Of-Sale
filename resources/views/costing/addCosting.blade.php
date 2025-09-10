@@ -95,7 +95,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Base Value</label>
-                                        <input type="number" step="0.01" class="form-control" name="base_value" placeholder="0.00" required>
+                                        <input type="text"  class="form-control" name="base_value" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Quantity</label>
@@ -211,7 +211,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label>Actual Value (%)</label>
-                                    <input type="number" step="0.01" class="form-control" name="actual_value" placeholder="0.00">
+                                    <input type="text"  class="form-control" name="actual_value" placeholder="0.00">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label>Actual Rate</label>

@@ -22,6 +22,8 @@ class Lc extends Model
         'bl_number',
         'doc_status',
         'bill_of_entry_amount',
+        'eta_date',
+        'etd_date',
     ];
 
     public $timestamps = true;
