@@ -10861,7 +10861,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
 }
 .c-sidebar {
     color: #fff;
-    background:linear-gradient(127deg, rgba(2, 0, 36, 1) 0%, rgb(44 99 120) 35%, rgb(0 0 0) 100%);
+    background:linear-gradient(127deg, #078282 0%, #078282 35%, rgb(2 26 75) 100%);
 }
 *[dir="rtl"] .c-sidebar.c-sidebar-right {
     border: 0;
@@ -10913,7 +10913,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
     .c-sidebar .c-sidebar-nav-link:hover,
     .c-sidebar .c-sidebar-nav-dropdown-toggle:hover {
         color: #fff;
-        background: #0000007d;
+        background: #bef1f161;
         box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
     }
     .c-sidebar .c-sidebar-nav-link:hover .c-sidebar-nav-icon,
