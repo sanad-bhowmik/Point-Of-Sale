@@ -95,7 +95,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Base Value</label>
-                                        <input type="number" step="0.01" class="form-control" name="base_value" placeholder="0.00" required>
+                                        <input type="text"  class="form-control" name="base_value" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Quantity</label>
@@ -168,17 +168,21 @@
                         <div class="mt-4 p-3 bg-light border rounded">
                             <h5 class="mb-3 border-bottom pb-2">Others</h5>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>Transport</label>
                                     <input type="number" step="0.01" class="form-control" name="transport" placeholder="0.00">
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>Arrot</label>
                                     <input type="number" step="0.01" class="form-control" name="arrot" placeholder="0.00">
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>CNS Charge</label>
                                     <input type="number" step="0.01" class="form-control" name="cns_charge" placeholder="0.00">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label>TT Amount</label>
+                                    <input type="number" step="0.01" class="form-control" name="tt_amount" placeholder="0.00">
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -205,11 +209,15 @@
                             </div>
 
                             <div class="row">
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
                                     <label>Actual Value (%)</label>
-                                    <input type="number" step="0.01" class="form-control" name="actual_value" placeholder="0.00">
+                                    <input type="text"  class="form-control" name="actual_value" placeholder="0.00">
                                 </div>
-                                <div class="col-md-6 mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label>Actual Rate</label>
+                                    <input type="number" step="0.01" class="form-control" name="actual_rate" placeholder="0.00">
+                                </div>
+                                <div class="col-md-4 mb-3">
                                     <label>Actual Total Cost per Kg</label>
                                     <input type="number" step="0.01" class="form-control" name="actual_cost_per_kg" placeholder="0.00" readonly>
                                 </div>
@@ -221,7 +229,7 @@
                                     <input type="number" step="0.01" class="form-control" name="total_cost_per_kg" placeholder="0.00" readonly>
                                 </div>
                                 <div class="col-md-6 mb-3">
-                                    <label>Total Cost per Box (20 KG)</label>
+                                    <label>Total Cost per Box</label>
                                     <input type="number" step="0.01" class="form-control" name="total_cost_per_box" placeholder="0.00" readonly>
                                 </div>
                             </div>
@@ -314,6 +322,7 @@
         const tariffPerTonLcInput = document.querySelector('input[name="tariff_per_ton_lc"]');
         const tariffPerKgLcInput = document.querySelector('input[name="tariff_per_kg_lc"]');
         const actualValueInput = document.querySelector('input[name="actual_value"]');
+        const actualRateInput = document.querySelector('input[name="actual_rate"]');
         const actualCostPerKgInput = document.querySelector('input[name="actual_cost_per_kg"]');
         const totalCostPerKgInput = document.querySelector('input[name="total_cost_per_kg"]');
         const totalCostPerBoxInput = document.querySelector('input[name="total_cost_per_box"]');
@@ -329,6 +338,7 @@
             const qty = parseFloat(qtyInput.value) || 0;
             const exchange = parseFloat(exchangeInput.value) || 0;
             const actualValue = parseFloat(actualValueInput.value) || 0;
+            const actualRate = parseFloat(actualRateInput.value) || 0;
             const boxTypeValue = parseFloat(boxTypeSelect.value) || 1; // fallback to 1 to avoid division by 0
 
             // 1) Base * Qty = Total
@@ -356,38 +366,23 @@
             landingBdtInput.value = formatNumber(landingBdt);
 
             // 7) Custom Duty (CD)
-            const result1 = totalBdt + insuranceBdt;
-            const result2 = result1 * 0.01;
-            const result3 = result1 + result2;
-            const cd = result3 * 0.25;
+            const cd = (totalBdt + insuranceBdt + (totalBdt + insuranceBdt) * 0.01) * 0.25;
             cdInput.value = formatNumber(cd);
 
             // 8) Regulatory Duty (RD)
-            const rdResult1 = totalBdt + insuranceBdt;
-            const rdResult2 = rdResult1 * 0.01;
-            const rdResult3 = rdResult1 + rdResult2;
-            const rd = rdResult3 * 0.20;
+            const rd = (totalBdt + insuranceBdt + (totalBdt + insuranceBdt) * 0.01) * 0.20;
             rdInput.value = formatNumber(rd);
 
             // 9) SD
-            const sdResult1 = totalBdt + insuranceBdt;
-            const sdResult2 = sdResult1 * 0.01;
-            const sdResult3 = sdResult1 + sdResult2;
-            const sd = (sdResult3 + cd + rd) * 0.30;
+            const sd = (rd + cd + landingBdt + totalBdt + insuranceBdt) * 0.25;
             sdInput.value = formatNumber(sd);
 
             // 10) VAT
-            const vatResult1 = totalBdt + insuranceBdt;
-            const vatResult2 = vatResult1 * 0.01;
-            const vatResult3 = vatResult1 + vatResult2;
-            const vat = (vatResult3 + cd + rd + sd) * 0.15;
+            const vat = ((totalBdt + insuranceBdt + (totalBdt + insuranceBdt) * 0.01) + cd + rd + sd) * 0.15;
             vatInput.value = formatNumber(vat);
 
             // 11) AIT
-            const aitResult1 = totalBdt + insuranceBdt;
-            const aitResult2 = aitResult1 * 0.01;
-            const aitResult3 = aitResult1 + aitResult2;
-            const ait = aitResult3 * 0.05;
+            const ait = ((totalBdt + insuranceBdt + (totalBdt + insuranceBdt) * 0.01)) * 0.05;
             aitInput.value = formatNumber(ait);
 
             // Total Tax
@@ -404,40 +399,45 @@
             othersTotalInput.value = formatNumber(othersTotal);
 
             // Total Tariff LC
-            const totalTariffLc = totalBdt + insuranceBdt + landingBdt + totalTax + transport + arrot + cns;
+            const totalTariffLc = totalBdt + insuranceBdt + landingBdt + totalTax + othersTotal;
             totalTariffLcInput.value = Number(totalTariffLc.toFixed(3));
 
             // Tariff per Ton LC
-            const tariffPerTonLc = totalTariffLc / 23.72;
-            tariffPerTonLcInput.value = Number(tariffPerTonLc.toFixed(3));
+            let tariffPerKgLc = 0; // declare outside if block
+            if (qty > 0 && boxTypeValue > 0) {
+                const totalTons = (qty * boxTypeValue) / 1000;
+                const tariffPerTonLc = totalTariffLc / totalTons;
+                tariffPerTonLcInput.value = Number(tariffPerTonLc.toFixed(3));
 
-            // Tariff per Kg LC
-            const tariffPerKgLc = tariffPerTonLc / 1000;
-            tariffPerKgLcInput.value = Number(tariffPerKgLc.toFixed(3));
+                tariffPerKgLc = tariffPerTonLc / 1000;
+                tariffPerKgLcInput.value = Number(tariffPerKgLc.toFixed(3));
+            } else {
+                tariffPerTonLcInput.value = 0;
+                tariffPerKgLcInput.value = 0;
+            }
 
             // ---- ACTUAL TOTAL COST PER KG ----
-            const actualCostPerKg = (actualValue / boxTypeValue) * exchange;
+            const actualCostPerKg = (actualValue / boxTypeValue) * actualRate;
             actualCostPerKgInput.value = Number(actualCostPerKg.toFixed(3));
 
-            // ---- TOTAL COST PER KG (DIFFERENCE) ----
-            const totalCostPerKg = tariffPerKgLc - actualCostPerKg;
-            totalCostPerKgInput.value = Number(totalCostPerKg.toFixed(9));
+            // ---- TOTAL COST PER KG (SUM) ----
+            const totalCostPerKg = tariffPerKgLc + actualCostPerKg; // sum instead of minus
+            totalCostPerKgInput.value = Number(totalCostPerKg.toFixed(3));
 
-
-
-            // ---- TOTAL COST PER BOX (20 KG) ----
-            const totalCostPerBox = totalCostPerKg * 20;
+            // ---- TOTAL COST PER BOX ----
+            const totalCostPerBox = totalCostPerKg * boxTypeValue; // use actual box weight
             totalCostPerBoxInput.value = Number(totalCostPerBox.toFixed(3));
         }
 
         // Trigger calculations on input changes
-        [baseValueInput, qtyInput, exchangeInput, actualValueInput, boxTypeSelect,
+        [baseValueInput, qtyInput, exchangeInput, actualValueInput, actualRateInput, boxTypeSelect,
             atInput, atvInput, transportInput, arrotInput, cnsInput
         ].forEach(input => {
             input.addEventListener('input', calculateAll);
         });
     });
 </script>
+
 
 <!-- Custom Toast Container -->
 <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>

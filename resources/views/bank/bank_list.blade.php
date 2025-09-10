@@ -19,8 +19,8 @@
 
                         </a>
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
-                                <thead class="table-dark">
+                            <table class="table table-bordered table-hover">
+                                <thead >
                                     <tr>
                                         <th>#</th>
                                         <th>Institution</th>

@@ -22,8 +22,8 @@
                         </a>
                     </div>
 
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
+                    <table class="table table-bordered table-hover">
+                        <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Fruit Name</th>

@@ -22,8 +22,8 @@
                         </a>
                     </div>
 
-                    <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
+                    <table class="table table-bordered table-hover">
+                        <thead class="">
                             <tr>
                                 <th>#</th>
                                 <th>Product Name</th>
@@ -41,15 +41,16 @@
                                         <form action="{{ route('product.size.destroy', $size->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this size?');">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger mb-1"style="font-size: 14px;">
+                                            <button type="submit" class="btn btn-sm btn-danger mb-1"style="font-size: 14px;"title="Click to Delete">
                                                 {{ $size->size }} &times;
                                             </button>
                                         </form>
                                         @endforeach
                                     </td>
+
                                     <td>
                                         @foreach($product->sizes as $size)
-                                            <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#editSizeModal{{ $size->id }}"style="font-size: 14px;">
+                                            <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#editSizeModal{{ $size->id }}"style="font-size: 14px;" title="Click to Edit">
                                                 Edit {{ $size->size }}
                                             </button>
 
@@ -59,7 +60,7 @@
                                                 <div class="modal-content">
                                                   <div class="modal-header">
                                                     <h5 class="modal-title" id="editSizeLabel{{ $size->id }}">Edit Size</h5>
-                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"style="border: none;background-color: white;">✖</button>
                                                   </div>
                                                   <form action="{{ route('product.size.update', $size->id) }}" method="POST">
                                                       @csrf

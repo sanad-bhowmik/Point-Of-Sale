@@ -10861,7 +10861,7 @@ html:not([dir="rtl"]) .c-sidebar.c-sidebar-show.c-sidebar-right {
 }
 .c-sidebar {
     color: #fff;
-    background:linear-gradient(127deg, rgba(2, 0, 36, 1) 0%, rgb(37 9 121) 35%, rgb(0 0 0) 100%);
+    background:linear-gradient(127deg, rgba(2, 0, 36, 1) 0%, rgb(44 99 120) 35%, rgb(0 0 0) 100%);
 }
 *[dir="rtl"] .c-sidebar.c-sidebar-right {
     border: 0;
