@@ -168,17 +168,21 @@
                         <div class="mt-4 p-3 bg-light border rounded">
                             <h5 class="mb-3 border-bottom pb-2">Others</h5>
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>Transport</label>
                                     <input type="number" step="0.01" class="form-control" name="transport" placeholder="0.00">
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>Arrot</label>
                                     <input type="number" step="0.01" class="form-control" name="arrot" placeholder="0.00">
                                 </div>
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-3 mb-3">
                                     <label>CNS Charge</label>
                                     <input type="number" step="0.01" class="form-control" name="cns_charge" placeholder="0.00">
+                                </div>
+                                <div class="col-md-3 mb-3">
+                                    <label>TT Amount</label>
+                                    <input type="number" step="0.01" class="form-control" name="tt_amount" placeholder="0.00">
                                 </div>
                             </div>
                             <div class="mb-3">

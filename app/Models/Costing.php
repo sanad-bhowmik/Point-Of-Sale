@@ -33,6 +33,7 @@ class Costing extends Model
         'ait',
         'at',
         'atv',
+        'tt_amount',
         'total_tax',
         'transport',
         'arrot',

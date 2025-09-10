@@ -47,6 +47,7 @@ class CostingController extends Controller
         $costing->ait                = $request->ait;
         $costing->at                 = $request->at;
         $costing->atv                = $request->atv;
+        $costing->tt_amount          = $request->tt_amount;
         $costing->total_tax          = $request->total_tax;
         $costing->transport          = $request->transport;
         $costing->arrot              = $request->arrot;
