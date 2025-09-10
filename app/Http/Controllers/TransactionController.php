@@ -37,7 +37,7 @@ class TransactionController extends Controller
             $query->where('status', $request->status);
         }
 
-        $transactions = $query->get();
+        $transactions = $query->orderBy('id', 'desc')->get();
 
         return view('transaction.transaction_list', compact('transactions'));
     }
@@ -152,30 +152,50 @@ class TransactionController extends Controller
                 'transactions' => [],
                 'banks' => $banks,
                 'selectedBank' => $selectedBank,
+                'openingBalance' => 0,
+                'request' => $request
             ]);
         }
 
-        // Filter by date range (YYYY-MM-DD to YYYY-MM-DD)
+        $openingBalance = $selectedBank->opening_balance ?? 0;
+
+        // Filter by date range
         if ($request->date_range) {
             $dates = explode(' to ', $request->date_range);
             if (count($dates) === 2) {
-                $query->whereBetween('date', [$dates[0], $dates[1]]);
-            }
+                $fromDate = $dates[0];
+                $toDate   = $dates[1];
+
+                $previousTransactions = Transaction::where('bank_id', $selectedBank->id)
+                    ->where('status', 'approved')
+                    ->where('date', '<', $fromDate)
+                    ->get();
+                    foreach ($previousTransactions as $pt) {
+                        $openingBalance += $pt->in_amount - $pt->out_amount;
+                    }
+                    
+                    $query->whereBetween('date', [$fromDate, $toDate]);
+                }
         }
+            
+        $transactions = $query->orderBy('date')->get();
 
-        $transactions = $query->orderBy('id')->get();
-
-        // Calculate running ledger balance per bank
+        // Running ledger balance per bank
         $ledger = [];
         foreach ($transactions as $transaction) {
             if (!isset($ledger[$transaction->bank_id])) {
-                $ledger[$transaction->bank_id] = $transaction->bank->opening_balance ?? 0;
+                $ledger[$transaction->bank_id] = $openingBalance;
             }
-            $ledger[$transaction->bank_id] += $transaction->in_amount - $transaction->out_amount;
-            $transaction->ledger_amount = $ledger[$transaction->bank_id];
         }
 
-        return view('transaction.bank_ledger', compact('transactions', 'banks', 'selectedBank'));
+        return view('transaction.bank_ledger', [
+            'transactions' => $transactions,
+            'banks' => $banks,
+            'selectedBank' => $selectedBank,
+            'openingBalance' => $openingBalance,
+            'request' => $request,
+            'ledger' => $ledger,
+        ]);
     }
 
     /**

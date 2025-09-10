@@ -24,4 +24,9 @@ class Bank extends Model
     protected $casts = [
         'date' => 'date',
     ];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'bank_id');
+    }
 }
