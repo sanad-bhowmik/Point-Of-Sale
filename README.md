@@ -34,7 +34,7 @@ This will start the application along with the mysql database using docker compo
 > Email: super.admin@test.com || Password: 12345678
 
 ## Demo
-![POS24](public/images/screenshot.jpg)
+![POS24](public/images/demoDash.png)
 **Live Demo:** will update soon
 
 ## POS24 Features
