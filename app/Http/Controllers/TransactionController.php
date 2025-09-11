@@ -78,7 +78,7 @@ class TransactionController extends Controller
             'date'       => Carbon::parse($request->date)->format('Y-m-d'),
         ]);
 
-        return redirect()->back()->with('success', 'Transaction saved and bank balance updated successfully.');
+        return redirect()->route('transaction.index')->with('success', 'Transaction saved and bank balance updated successfully.');
     }
 
     /**

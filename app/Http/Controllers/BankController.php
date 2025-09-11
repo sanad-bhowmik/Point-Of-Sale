@@ -59,7 +59,7 @@ class BankController extends Controller
         ]);
 
         // redirect back with success message
-        return redirect()->back()->with('success', 'Bank information saved successfully!');
+        return redirect()->route('bank.index')->with('success', 'Bank information saved successfully!');
     }
 
     /**
