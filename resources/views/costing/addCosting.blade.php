@@ -38,14 +38,13 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label>Product Name <span class="text-danger">*</span></label>
-                                        <select name="product_id" class="form-control" required>
+                                        <select id="product-dropdown" name="product_id" class="form-control" required>
                                             <option value="">Select Product</option>
                                             @foreach(\App\Models\Product::all() as $product)
                                             <option value="{{ $product->id }}">{{ $product->product_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
-
                                 </div>
 
                                 <div class="row">
@@ -54,10 +53,7 @@
                                         <select name="box_type" class="form-control" required>
                                             <option value="">Select Box Type</option>
                                             @foreach(\App\Models\Unit::all() as $unit)
-                                            @php
-                                            // Keep digits and decimal point only, e.g. "20 KG" -> "20", "23.72 kg" -> "23.72"
-                                            $numericName = preg_replace('/[^0-9.]+/', '', $unit->name);
-                                            @endphp
+                                            @php $numericName = preg_replace('/[^0-9.]+/', '', $unit->name); @endphp
                                             <option value="{{ $numericName }}">{{ $unit->name }} ({{ $unit->short_name }})</option>
                                             @endforeach
                                         </select>
@@ -65,15 +61,31 @@
 
                                     <div class="col-md-6 mb-3">
                                         <label>Size <span class="text-danger">*</span></label>
-                                        <select name="size" class="form-control" required>
+                                        <select id="size-dropdown" name="size" class="form-control" required>
                                             <option value="">Select Size</option>
-                                            <option value="32">32</option>
-                                            <option value="36">36</option>
-                                            <option value="42">42</option>
                                         </select>
                                     </div>
-
                                 </div>
+                                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                                <script>
+                                    $('#product-dropdown').on('change', function() {
+                                        var productId = $(this).val();
+                                        var sizeDropdown = $('#size-dropdown');
+                                        sizeDropdown.empty().append('<option value="">Loading...</option>');
+
+                                        if (productId) {
+                                            $.get('/get-sizes/' + productId, function(data) {
+                                                sizeDropdown.empty().append('<option value="">Select Size</option>');
+                                                $.each(data, function(index, size) {
+                                                    sizeDropdown.append('<option value="' + size.id + '">' + size.size + ' mm</option>');
+                                                });
+                                            });
+                                        } else {
+                                            sizeDropdown.empty().append('<option value="">Select Size</option>');
+                                        }
+                                    });
+                                </script>
+
 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
@@ -95,7 +107,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label>Base Value</label>
-                                        <input type="text"  class="form-control" name="base_value" placeholder="0.00" required>
+                                        <input type="text" class="form-control" name="base_value" placeholder="0.00" required>
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label>Quantity</label>
@@ -211,7 +223,7 @@
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <label>Actual Value (%)</label>
-                                    <input type="text"  class="form-control" name="actual_value" placeholder="0.00">
+                                    <input type="text" class="form-control" name="actual_value" placeholder="0.00">
                                 </div>
                                 <div class="col-md-4 mb-3">
                                     <label>Actual Rate</label>

@@ -33,6 +33,10 @@ Route::group(['middleware' => 'auth'], function () {
         ->name('payment-flow.chart');
 });
 
+Route::get('/get-sizes/{product_id}', function ($product_id) {
+    return \App\Models\Size::where('product_id', $product_id)
+            ->get(['id', 'size']);
+});
 
 // Seasonal Fruit
 Route::group(['prefix' => 'seasonalfruit', 'controller' => SeasonalFruitController::class], function () {
