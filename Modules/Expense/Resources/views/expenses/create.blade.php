@@ -79,45 +79,6 @@
                                 </div>
                             </div>
                             <div class="col-lg-6">
-                                <div class="form-group"><label for="cf_agent_fee">C&F Agent Fee</label><input type="text" class="form-control" name="cf_agent_fee"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="bl_verify">B/L Verify</label><input type="text" class="form-control" name="bl_verify"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="shipping_charge">Shipping/NOC Charge</label><input type="text" class="form-control" name="shipping_charge"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="port_bill">Port Bill Charge</label><input type="text" class="form-control" name="port_bill"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="labor_bill">Labor Bill</label><input type="text" class="form-control" name="labor_bill"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="transport_bill">Transport/Survey Bill</label><input type="text" class="form-control" name="transport_bill"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="other_receipt">Other Receipt Bill</label><input type="text" class="form-control" name="other_receipt"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="formalin_test">Formalin Test Purpose</label><input type="text" class="form-control" name="formalin_test"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="radiation_cert">Radiation Certificate</label><input type="text" class="form-control" name="radiation_cert"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="labor_tips">Labor Tips</label><input type="text" class="form-control" name="labor_tips"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="cf_commission">C&F Commission</label><input type="text" class="form-control" name="cf_commission"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="ip_absence">IP Absence Fee</label><input type="text" class="form-control" name="ip_absence"></div>
-                            </div>
-                            <div class="col-lg-6">
-                                <div class="form-group"><label for="special_delivery">Special Delivery Fee</label><input type="text" class="form-control" name="special_delivery"></div>
-                            </div>
-                            <div class="col-lg-12">
                                 <div class="form-group"><label for="details">Details</label><textarea class="form-control" rows="6" name="details"></textarea></div>
                             </div>
                         </div>

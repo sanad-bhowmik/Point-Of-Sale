@@ -196,14 +196,14 @@
                             <label>TT Amount</label>
                             <input type="number" step="0.01" class="form-control" name="tt_amount">
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>ETD Date</label>
-                            <input type="text" class="form-control flatpickr" name="etd_date" placeholder="Select ETD Date">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>ETA Date</label>
-                            <input type="text" class="form-control flatpickr" name="eta_date" placeholder="Select ETA Date">
-                        </div>
+                        <!--<div class="col-md-6 mb-3">-->
+                        <!--    <label>ETD Date</label>-->
+                        <!--    <input type="text" class="form-control flatpickr" name="etd_date" placeholder="Select ETD Date">-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6 mb-3">-->
+                        <!--    <label>ETA Date</label>-->
+                        <!--    <input type="text" class="form-control flatpickr" name="eta_date" placeholder="Select ETA Date">-->
+                        <!--</div>-->
                     </div>
                 </form>
             </div>
