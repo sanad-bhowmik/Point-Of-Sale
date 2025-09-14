@@ -48,6 +48,7 @@ class ExpenseNameDataTable extends DataTable
 
     protected function getColumns() {
         return [
+            Column::make('id')->title('ID'),
             Column::make('expense_name')
                 ->addClass('text-center'),
 

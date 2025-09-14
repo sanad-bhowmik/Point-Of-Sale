@@ -65,15 +65,18 @@ class ExpensesDataTable extends DataTable
 
             Column::make('category.category_name')
                 ->title('Category')
-                ->className('text-center align-middle'),
+                ->className('text-center align-middle')
+                ->searchable(false),
 
             Column::make('expense_name.expense_name')
                 ->title('Expense Name')
-                ->className('text-center align-middle'),
+                ->className('text-center align-middle')
+                ->searchable(false),
 
             Column::make('container.name')
                 ->title('Container Name')
-                ->className('text-center align-middle'),
+                ->className('text-center align-middle')
+                ->searchable(true),
 
             Column::make('amount')
                 ->title('Amount')
