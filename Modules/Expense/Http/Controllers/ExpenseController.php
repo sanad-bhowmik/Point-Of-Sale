@@ -52,7 +52,7 @@ class ExpenseController extends Controller
             'category_id' => $request->category_id,
             'expense_name_id' => $request->expense_name_id,
             'lc_id' => $request->lc_id,
-            'container_id' => $request->container_id,
+            'container_id' => $request->container_id,   
             'amount' => $request->amount,
             'date' => $request->date,
         ]);

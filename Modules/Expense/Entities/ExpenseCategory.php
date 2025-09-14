@@ -4,6 +4,7 @@ namespace Modules\Expense\Entities;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ExpenseCategory extends Model
 {
@@ -11,7 +12,8 @@ class ExpenseCategory extends Model
 
     protected $guarded = [];
 
-    public function expenses() {
-        return $this->hasMany(Expense::class, 'category_id', 'id');
+    public function expenses() : HasMany
+    {
+        return $this->hasMany(Expense::class, 'category_id');
     }
 }
