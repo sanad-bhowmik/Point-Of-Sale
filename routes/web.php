@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\CostingController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
@@ -35,7 +36,7 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::get('/get-sizes/{product_id}', function ($product_id) {
     return \App\Models\Size::where('product_id', $product_id)
-            ->get(['id', 'size']);
+        ->get(['id', 'size']);
 });
 
 // Seasonal Fruit
@@ -87,4 +88,13 @@ Route::group(['prefix' => 'products', 'as' => 'product.', 'controller' => Produc
     Route::get('/size/view', 'viewSize')->name('size.view');
     Route::delete('/size/{size}', 'destroySize')->name('size.destroy');
     Route::put('/size/{size}/update', 'updateSize')->name('size.update');
+});
+
+// Container
+Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => ContainerController::class], function () {
+    Route::get('/view', 'view')->name('view');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/containerTbl', 'containerTbl')->name('containerTbl');
+    Route::delete('/delete/{id}', 'destroy')->name('delete');
+    Route::put('/update/{id}', 'update')->name('update');
 });
