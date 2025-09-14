@@ -15,12 +15,12 @@ class CreateExpensesTable extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('category_id');
+            $table->foreignId('category_id')->constrained('expense_categories')->onDelete('cascade');
+            $table->foreignId('expense_name_id')->constrained('expense_names')->onDelete('cascade');
+            $table->foreignId('lc_id')->constrained('lc')->onDelete('cascade');
+            $table->foreignId('container_id')->constrained('container')->onDelete('cascade');
+            $table->decimal('amount', 15, 2);
             $table->date('date');
-            $table->string('reference');
-            $table->text('details')->nullable();
-            $table->integer('amount');
-            $table->foreign('category_id')->references('id')->on('expense_categories')->restrictOnDelete();
             $table->timestamps();
         });
     }

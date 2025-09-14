@@ -189,7 +189,7 @@
                                     <input type="number" step="0.01" class="form-control" name="arrot" placeholder="0.00">
                                 </div>
                                 <div class="col-md-3 mb-3">
-                                    <label>CNS Charge</label>
+                                    <label>CNF Charge</label>
                                     <input type="number" step="0.01" class="form-control" name="cns_charge" placeholder="0.00">
                                 </div>
                                 <div class="col-md-3 mb-3">

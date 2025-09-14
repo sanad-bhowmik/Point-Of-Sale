@@ -2,6 +2,8 @@
 
 namespace Modules\Expense\Entities;
 
+use App\Models\Container;
+use App\Models\ExpenseName;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Carbon;
@@ -20,14 +22,15 @@ class Expense extends Model
     {
         return $this->belongsTo(\App\Models\Lc::class, 'lc_id');
     }
-    public static function boot()
-    {
-        parent::boot();
 
-        static::creating(function ($model) {
-            $number = Expense::max('id') + 1;
-            $model->reference = make_reference_id('EXP', $number);
-        });
+    public function container()
+    {
+        return $this->belongsTo(Container::class, 'container_id');
+    }
+
+    public function expenseName()
+    {
+        return $this->belongsTo(ExpenseName::class, 'expense_name_id', 'id');
     }
 
     public function getDateAttribute($value)

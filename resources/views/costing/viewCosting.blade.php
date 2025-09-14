@@ -154,56 +154,28 @@
                     <input type="hidden" name="costing_id" id="status_costing_id">
                     <div class="row">
                         <!-- Existing fields -->
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6 mb-3" >
                             <label>LC Name</label>
-                            <input type="text" class="form-control" name="lc_name">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>LC Date</label>
-                            <input type="text" class="form-control flatpickr" name="lc_date" placeholder="Select LC Date">
+                            <input type="text" class="form-control input" name="lc_name">
                         </div>
                         <div class="col-md-6 mb-3">
                             <label>LC Number</label>
-                            <input type="number" class="form-control" name="lc_number">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Shipment Date</label>
-                            <input type="text" class="form-control flatpickr" name="shipment_date" placeholder="Select Shipment Date">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Arriving Date</label>
-                            <input type="text" class="form-control flatpickr" name="arriving_date" placeholder="Select Arriving Date">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>DHL Number</label>
-                            <input type="number" class="form-control" name="dhl_number">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>BL Number</label>
-                            <input type="number" class="form-control" name="bl_number">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Document Status</label>
-                            <input type="text" class="form-control" name="doc_status">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>Bill of Entry Amount</label>
-                            <input type="number" step="0.01" class="form-control" name="bill_of_entry_amount">
+                            <input type="number" class="form-control input" name="lc_number">
                         </div>
 
                         <!-- New Fields -->
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-12 mb-3">
                             <label>TT Amount</label>
-                            <input type="number" step="0.01" class="form-control" name="tt_amount">
+                            <input type="number" step="0.01" class="form-control input" name="tt_amount">
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label>ETD Date</label>
-                            <input type="text" class="form-control flatpickr" name="etd_date" placeholder="Select ETD Date">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label>ETA Date</label>
-                            <input type="text" class="form-control flatpickr" name="eta_date" placeholder="Select ETA Date">
-                        </div>
+                        <!--<div class="col-md-6 mb-3">-->
+                        <!--    <label>ETD Date</label>-->
+                        <!--    <input type="text" class="form-control flatpickr" name="etd_date" placeholder="Select ETD Date">-->
+                        <!--</div>-->
+                        <!--<div class="col-md-6 mb-3">-->
+                        <!--    <label>ETA Date</label>-->
+                        <!--    <input type="text" class="form-control flatpickr" name="eta_date" placeholder="Select ETA Date">-->
+                        <!--</div>-->
                     </div>
                 </form>
             </div>
@@ -567,6 +539,9 @@
 <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 @endsection
 <style>
+    .input{
+        box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+    }
     .toast {
         background-color: #333;
         color: #fff;

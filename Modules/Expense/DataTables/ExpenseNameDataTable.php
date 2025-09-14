@@ -2,6 +2,7 @@
 
 namespace Modules\Expense\DataTables;
 
+use App\Models\ExpenseName;
 use Modules\Expense\Entities\ExpenseCategory;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
@@ -20,13 +21,13 @@ class ExpenseNameDataTable extends DataTable
             });
     }
 
-    public function query(ExpenseCategory $model) {
-        return $model->newQuery()->withCount('expenses');
+    public function query(ExpenseName $model) {
+        return $model->newQuery()->with('category');
     }
 
     public function html() {
         return $this->builder()
-            ->setTableId('expensecategories-table')
+            ->setTableId('expensenames-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
@@ -47,10 +48,12 @@ class ExpenseNameDataTable extends DataTable
 
     protected function getColumns() {
         return [
-            Column::make('category_name')
+            Column::make('expense_name')
                 ->addClass('text-center'),
-            Column::make('expenses_count')
-                ->addClass('text-center'),
+
+            Column::make('category.category_name')
+            ->title('Category')
+            ->addClass('text-center'),
 
             Column::computed('action')
                 ->exportable(false)
@@ -63,6 +66,6 @@ class ExpenseNameDataTable extends DataTable
     }
 
     protected function filename(): string {
-        return 'ExpenseCategories_' . date('YmdHis');
+        return 'ExpenseNames_' . date('YmdHis');
     }
 }

@@ -269,7 +269,7 @@
         @can('access_expense_categories')
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
-                href="{{ route('expense-categories') }}">
+                href="{{ route('expense-names.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Expense Names
             </a>
         </li>
@@ -365,6 +365,7 @@
     </ul>
 </li>
 @endcan
+
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
@@ -381,6 +382,28 @@
             <a class="c-sidebar-nav-link {{ request()->routeIs('costing.viewCosting') ? 'c-active' : '' }}"
                 href="{{ route('costing.viewCosting') }}">
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Costing List
+            </a>
+        </li>
+    </ul>
+</li>
+@endcan
+
+@can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-calendar3-range" style="line-height: 1;"></i> Container
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('container.view') ? 'c-active' : '' }}"
+                href="{{ route('container.view') }}">
+                <i class="c-sidebar-nav-icon bi bi-cloud-plus" style="line-height: 1;"></i> Add Container
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('container.containerTbl') ? 'c-active' : '' }}"
+                href="{{ route('container.containerTbl') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Container List
             </a>
         </li>
     </ul>

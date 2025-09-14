@@ -11,6 +11,8 @@
 |
 */
 
+use Modules\Expense\Http\Controllers\ExpenseController;
+
 Route::group(['middleware' => 'auth'], function () {
 
     //Expense Category
@@ -18,5 +20,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('expense-names', 'ExpenseNameController');
     //Expense
     Route::resource('expenses', 'ExpenseController')->except('show');
+    Route::get('/expenses/expense-names/{category}', [ExpenseController::class, 'getExpenseNames']);
 
 });
