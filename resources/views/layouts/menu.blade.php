@@ -268,7 +268,7 @@
         @endcan
         @can('access_expense_categories')
         <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
                 href="{{ route('expense-names.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Expense Names
             </a>
