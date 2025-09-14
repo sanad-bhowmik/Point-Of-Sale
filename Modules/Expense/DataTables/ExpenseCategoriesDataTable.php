@@ -26,7 +26,7 @@ class ExpenseCategoriesDataTable extends DataTable
 
     public function html() {
         return $this->builder()
-            ->setTableId('expensecategories-table')
+            ->setTableId('expensecategory-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
@@ -47,10 +47,12 @@ class ExpenseCategoriesDataTable extends DataTable
 
     protected function getColumns() {
         return [
+            Column::make('id')->title('ID'),
             Column::make('category_name')
                 ->addClass('text-center'),
             Column::make('expenses_count')
-                ->addClass('text-center'),
+                ->addClass('text-center')
+                ->searchable(false),
 
             Column::computed('action')
                 ->exportable(false)
