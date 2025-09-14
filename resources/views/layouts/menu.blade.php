@@ -266,6 +266,14 @@
             </a>
         </li>
         @endcan
+        @can('access_expense_categories')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
+                href="{{ route('expense-categories') }}">
+                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Expense Names
+            </a>
+        </li>
+        @endcan
         @can('create_expenses')
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"

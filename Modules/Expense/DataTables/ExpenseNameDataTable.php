@@ -9,14 +9,14 @@ use Yajra\DataTables\Html\Editor\Editor;
 use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
-class ExpenseCategoriesDataTable extends DataTable
+class ExpenseNameDataTable extends DataTable
 {
 
     public function dataTable($query) {
         return datatables()
             ->eloquent($query)
             ->addColumn('action', function ($data) {
-                return view('expense::categories.partials.actions', compact('data'));
+                return view('expense::expense_name.partials.actions', compact('data'));
             });
     }
 

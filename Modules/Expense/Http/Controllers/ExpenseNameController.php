@@ -9,13 +9,13 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 use Modules\Expense\Entities\ExpenseCategory;
 
-class ExpenseCategoriesController extends Controller
+class ExpenseNameController extends Controller
 {
 
     public function index(ExpenseCategoriesDataTable $dataTable) {
         abort_if(Gate::denies('access_expense_categories'), 403);
 
-        return $dataTable->render('expense::categories.index');
+        return $dataTable->render('expense::expense_name.index');
     }
 
     public function store(Request $request) {
@@ -33,14 +33,14 @@ class ExpenseCategoriesController extends Controller
 
         toast('Expense Category Created!', 'success');
 
-        return redirect()->route('expense-categories.index');
+        return redirect()->route('expense-expense_name.index');
     }
 
 
     public function edit(ExpenseCategory $expenseCategory) {
         abort_if(Gate::denies('access_expense_categories'), 403);
 
-        return view('expense::categories.edit', compact('expenseCategory'));
+        return view('expense::expense_name.edit', compact('expenseCategory'));
     }
 
 
@@ -59,7 +59,7 @@ class ExpenseCategoriesController extends Controller
 
         toast('Expense Category Updated!', 'info');
 
-        return redirect()->route('expense-categories.index');
+        return redirect()->route('expense-expense_name.index');
     }
 
 
@@ -74,6 +74,6 @@ class ExpenseCategoriesController extends Controller
 
         toast('Expense Category Deleted!', 'warning');
 
-        return redirect()->route('expense-categories.index');
+        return redirect()->route('expense-expense_name.index');
     }
 }
