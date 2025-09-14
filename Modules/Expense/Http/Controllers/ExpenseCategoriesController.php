@@ -23,12 +23,12 @@ class ExpenseCategoriesController extends Controller
 
         $request->validate([
             'category_name' => 'required|string|max:255|unique:expense_categories,category_name',
-            'category_description' => 'nullable|string|max:1000'
+            // 'category_description' => 'nullable|string|max:1000'
         ]);
 
         ExpenseCategory::create([
             'category_name' => $request->category_name,
-            'category_description' => $request->category_description
+            // 'category_description' => $request->category_description
         ]);
 
         toast('Expense Category Created!', 'success');
@@ -49,12 +49,12 @@ class ExpenseCategoriesController extends Controller
 
         $request->validate([
             'category_name' => 'required|string|max:255|unique:expense_categories,category_name,' . $expenseCategory->id,
-            'category_description' => 'nullable|string|max:1000'
+            // 'category_description' => 'nullable|string|max:1000'
         ]);
 
         $expenseCategory->update([
             'category_name' => $request->category_name,
-            'category_description' => $request->category_description
+            // 'category_description' => $request->category_description
         ]);
 
         toast('Expense Category Updated!', 'info');

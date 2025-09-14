@@ -12,9 +12,10 @@
 
 @section('content')
     <div class="container-fluid">
-        <form id="expense-form" action="{{ route('expenses.update', $expense) }}" method="POST">
+        <form id="expense-form" action="{{ route('expenses.update', $expense->id) }}" method="POST">
             @csrf
-            @method('patch')
+            @method('PUT') <!-- Important for update -->
+
             <div class="row">
                 <div class="col-lg-12">
                     @include('utils.alerts')
@@ -22,71 +23,144 @@
                         <button class="btn btn-primary">Update Expense <i class="bi bi-check"></i></button>
                     </div>
                 </div>
+
                 <div class="col-lg-12">
                     <div class="card">
                         <div class="card-body">
-                            <div class="form-row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="reference">Reference <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control" name="reference" required value="{{ $expense->reference }}" readonly>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="date">Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" name="date" required value="{{ $expense->getAttributes()['date'] }}">
-                                    </div>
-                                </div>
-                            </div>
 
+                            <!-- Expense Category -->
                             <div class="form-row">
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="category_id">Category <span class="text-danger">*</span></label>
-                                        <select name="category_id" id="category_id" class="form-control" required>
-                                            @foreach(\Modules\Expense\Entities\ExpenseCategory::all() as $category)
-                                                <option {{ $category->id == $expense->category_id ? 'selected' : '' }} value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                        <label for="category_id">Expense Category <span class="text-danger">*</span></label>
+                                        <select name="category_id" id="category_id" class="form-control select2" required>
+                                            <option value="">Select Category</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}"
+                                                    {{ $expense->category_id == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->category_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
+
+                                <!-- Expense Name -->
                                 <div class="col-lg-6">
                                     <div class="form-group">
-                                        <label for="amount">Amount <span class="text-danger">*</span></label>
-                                        <input id="amount" type="text" class="form-control" name="amount" required value="{{ $expense->amount }}">
+                                        <label for="expense_name_id">Expense Name <span class="text-danger">*</span></label>
+                                        <select name="expense_name_id" id="expense_name_id" class="form-control select2"
+                                            required>
+                                            <option value="">Select Expense Name</option>
+                                            @foreach ($expenseNames as $ename)
+                                                <option value="{{ $ename->id }}"
+                                                    {{ $expense->expense_name_id == $ename->id ? 'selected' : '' }}>
+                                                    {{ $ename->expense_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="details">Details</label>
-                                <textarea class="form-control" rows="6" name="details">{{ $expense->details }}</textarea>
+                            <!-- LC -->
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="lc_id">LC Number <span class="text-danger">*</span></label>
+                                        <select name="lc_id" id="lc_id" class="form-control select2" required>
+                                            <option value="">Select LC</option>
+                                            @foreach ($lcs as $lc)
+                                                <option value="{{ $lc->id }}"
+                                                    {{ $expense->lc_id == $lc->id ? 'selected' : '' }}>
+                                                    {{ $lc->lc_name }}--({{ $lc->lc_number }})
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <!-- Container Name -->
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="container_id">Container Name <span class="text-danger">*</span></label>
+                                        <select name="container_id" id="container_id" class="form-control select2" required>
+                                            <option value="">Select Container</option>
+                                            @foreach ($containers as $container)
+                                                <option value="{{ $container->id }}"
+                                                    {{ $expense->container_id == $container->id ? 'selected' : '' }}>
+                                                    {{ $container->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
                             </div>
+
+                            <!-- Amount & Date -->
+                            <div class="form-row">
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="amount">Amount <span class="text-danger">*</span></label>
+                                        <input id="amount" type="text" class="form-control" name="amount"
+                                            value="{{ $expense->amount }}" required>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="date">Date <span class="text-danger">*</span></label>
+                                        <input type="date" class="form-control" name="date"
+                                            value="{{ \Carbon\Carbon::parse($expense->date)->format('Y-m-d') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
             </div>
         </form>
+
     </div>
 @endsection
 
+@push('page_css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
+
 @push('page_scripts')
-    <script src="{{ asset('js/jquery-mask-money.js') }}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#amount').maskMoney({
-                prefix:'{{ settings()->currency->symbol }}',
-                thousands:'{{ settings()->currency->thousand_separator }}',
-                decimal:'{{ settings()->currency->decimal_separator }}',
-            });
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-            $('#amount').maskMoney('mask');
+<script>
+$(document).ready(function() {
+    $('.select2').select2({
+        width: '100%',
+        placeholder: 'Select an option'
+    });
 
-            $('#expense-form').submit(function () {
-                var amount = $('#amount').maskMoney('unmasked')[0];
-                $('#amount').val(amount);
+    // When Category changes, load Expense Names
+    $('#category_id').on('change', function() {
+        var categoryId = $(this).val();
+        $('#expense_name_id').html('<option value="">Loading...</option>');
+
+        if(categoryId) {
+            $.ajax({
+                url: '/expenses/expense-names/' + categoryId,
+                type: 'GET',
+                success: function(data) {
+                    var options = '<option value="">Select Expense Name</option>';
+                    data.forEach(function(expense) {
+                        options += `<option value="${expense.id}">${expense.expense_name}</option>`;
+                    });
+                    $('#expense_name_id').html(options).trigger('change');
+                }
             });
-        });
-    </script>
+        } else {
+            $('#expense_name_id').html('<option value="">Select Expense Name</option>');
+        }
+    });
+
+});
+</script>
 @endpush

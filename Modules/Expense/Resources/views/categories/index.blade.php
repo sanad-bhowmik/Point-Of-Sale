@@ -54,10 +54,10 @@
                             <label for="category_name">Category Name <span class="text-danger">*</span></label>
                             <input class="form-control" type="text" name="category_name" required>
                         </div>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="category_description">Description</label>
                             <textarea class="form-control" name="category_description" id="category_description" rows="5"></textarea>
-                        </div>
+                        </div> --}}
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Create <i class="bi bi-check"></i></button>

@@ -2,12 +2,16 @@
 
 namespace Modules\Expense\Http\Controllers;
 
+use App\Models\Container;
+use App\Models\ExpenseName;
+use App\Models\Lc;
 use Modules\Expense\DataTables\ExpensesDataTable;
 use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 use Modules\Expense\Entities\Expense;
+use Modules\Expense\Entities\ExpenseCategory;
 use PhpOffice\PhpSpreadsheet\Calculation\MathTrig\Exp;
 
 class ExpenseController extends Controller
@@ -20,60 +24,37 @@ class ExpenseController extends Controller
         return $dataTable->render('expense::expenses.index');
     }
 
-
     public function create()
     {
         abort_if(Gate::denies('create_expenses'), 403);
+        $lcs = Lc::all();
+        $containers = Container::whereIn('status', [1, 2])->get();
 
-        return view('expense::expenses.create');
+        return view('expense::expenses.create', compact('lcs', 'containers'));
     }
 
     public function store(Request $request)
     {
         abort_if(Gate::denies('create_expenses'), 403);
 
+        // Validate the request
         $request->validate([
+            'category_id' => 'required|exists:expense_categories,id',
+            'expense_name_id' => 'required|exists:expense_names,id',
+            'lc_id' => 'required',
+            'container_id' => 'required',
+            'amount' => 'required|numeric',
             'date' => 'required|date',
-            'reference' => 'required|string|max:255',
-            'lc_id' => 'required|exists:lc,id',
-            'category_id' => 'required',
-            'amount' => 'required|numeric|max:2147483647',
-            'cf_agent_fee' => 'nullable|string|max:255',
-            'bl_verify' => 'nullable|string|max:255',
-            'shipping_charge' => 'nullable|string|max:255',
-            'port_bill' => 'nullable|string|max:255',
-            'labor_bill' => 'nullable|string|max:255',
-            'transport_bill' => 'nullable|string|max:255',
-            'other_receipt' => 'nullable|string|max:255',
-            'formalin_test' => 'nullable|string|max:255',
-            'radiation_cert' => 'nullable|string|max:255',
-            'labor_tips' => 'nullable|string|max:255',
-            'cf_commission' => 'nullable|string|max:255',
-            'ip_absence' => 'nullable|string|max:255',
-            'special_delivery' => 'nullable|string|max:255',
-            'details' => 'nullable|string|max:1000',
         ]);
 
+        // Create expense
         Expense::create([
-            'date' => $request->date,
-            'reference' => $request->reference,
-            'lc_id' => $request->lc_id,
             'category_id' => $request->category_id,
+            'expense_name_id' => $request->expense_name_id,
+            'lc_id' => $request->lc_id,
+            'container_id' => $request->container_id,
             'amount' => $request->amount,
-            'cf_agent_fee' => $request->cf_agent_fee,
-            'bl_verify' => $request->bl_verify,
-            'shipping_charge' => $request->shipping_charge,
-            'port_bill' => $request->port_bill,
-            'labor_bill' => $request->labor_bill,
-            'transport_bill' => $request->transport_bill,
-            'other_receipt' => $request->other_receipt,
-            'formalin_test' => $request->formalin_test,
-            'radiation_cert' => $request->radiation_cert,
-            'labor_tips' => $request->labor_tips,
-            'cf_commission' => $request->cf_commission,
-            'ip_absence' => $request->ip_absence,
-            'special_delivery' => $request->special_delivery,
-            'details' => $request->details,
+            'date' => $request->date,
         ]);
 
         toast('Expense Created!', 'success');
@@ -81,40 +62,46 @@ class ExpenseController extends Controller
         return redirect()->route('expenses.index');
     }
 
-
     public function edit(Expense $expense)
     {
         abort_if(Gate::denies('edit_expenses'), 403);
 
-        return view('expense::expenses.edit', compact('expense'));
-    }
+        $categories = ExpenseCategory::all();
+        $expenseNames = ExpenseName::where('expense_category_id', $expense->category_id)->get();
+        $lcs = Lc::all();
+        $containers = Container::whereIn('status', [1, 2])->get();
 
+        return view('expense::expenses.edit', compact('expense', 'categories', 'expenseNames', 'lcs', 'containers'));
+    }
 
     public function update(Request $request, Expense $expense)
     {
         abort_if(Gate::denies('edit_expenses'), 403);
 
+        // Validate the request
         $request->validate([
-            'date' => 'required|date',
-            'reference' => 'required|string|max:255',
-            'category_id' => 'required',
-            'amount' => 'required|numeric|max:2147483647',
-            'details' => 'nullable|string|max:1000'
+            'category_id'      => 'required|exists:expense_categories,id',
+            'expense_name_id'  => 'required|exists:expense_names,id',
+            'lc_id'            => 'required',
+            'container_id'     => 'required',
+            'amount'           => 'required|numeric',
+            'date'             => 'required|date',
         ]);
 
+        // Update expense
         $expense->update([
-            'date' => $request->date,
-            'reference' => $request->reference,
-            'category_id' => $request->category_id,
-            'amount' => $request->amount,
-            'details' => $request->details
+            'category_id'      => $request->category_id,
+            'expense_name_id'  => $request->expense_name_id,
+            'lc_id'            => $request->lc_id,
+            'container_id'     => $request->container_id,
+            'amount'           => $request->amount,
+            'date'             => $request->date,
         ]);
 
-        toast('Expense Updated!', 'info');
+        toast('Expense Updated!', 'success');
 
         return redirect()->route('expenses.index');
     }
-
 
     public function destroy(Expense $expense)
     {
@@ -122,8 +109,16 @@ class ExpenseController extends Controller
 
         $expense->delete();
 
-        toast('Expense Deleted!', 'warning');
+        toast('Expense Deleted!', 'success');
 
         return redirect()->route('expenses.index');
+    }
+
+    // ExpenseController.php
+    public function getExpenseNames($categoryId)
+    {
+        $expenseNames = ExpenseName::where('expense_category_id', $categoryId)->get();
+
+        return response()->json($expenseNames);
     }
 }

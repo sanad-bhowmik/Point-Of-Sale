@@ -25,10 +25,10 @@
                                 <label for="category_name">Category Name <span class="text-danger">*</span></label>
                                 <input class="form-control" type="text" name="category_name" required value="{{ $expenseCategory->category_name }}">
                             </div>
-                            <div class="form-group">
+                            {{-- <div class="form-group">
                                 <label for="category_description">Description</label>
                                 <textarea class="form-control" name="category_description" id="category_description" rows="5">{{ $expenseCategory->category_description }}</textarea>
-                            </div>
+                            </div> --}}
                             <div class="form-group">
                                 <button type="submit" class="btn btn-primary">Update <i class="bi bi-check"></i></button>
                             </div>

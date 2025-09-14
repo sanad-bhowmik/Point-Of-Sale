@@ -16,6 +16,9 @@ class ExpensesDataTable extends DataTable
             ->addColumn('amount', function ($data) {
                 return format_currency($data->amount);
             })
+            ->addColumn('lc_info', function($row) {
+                return $row->lc->lc_name . ' (' . $row->lc->lc_number . ')';
+            })
             ->addColumn('action', function ($data) {
                 return view('expense::expenses.partials.actions', compact('data'));
             });
@@ -24,7 +27,7 @@ class ExpensesDataTable extends DataTable
     public function query(Expense $model)
     {
         // Load both category and LC relation
-        return $model->newQuery()->with(['category', 'lc']);
+        return $model->newQuery()->with(['container', 'expenseName', 'lc', 'category']);
     }
 
     public function html()
@@ -52,44 +55,40 @@ class ExpensesDataTable extends DataTable
     protected function getColumns()
     {
         return [
-            Column::make('date')->className('text-center align-middle'),
+            Column::make('date')
+                ->title('Date')
+                ->className('text-center align-middle'),
 
-            Column::make('reference')->className('text-center align-middle'),
-
-            Column::make('lc.lc_name')
-                ->title('LC Name')
+            Column::make('lc_info')
+                ->title('LC Name & Number')
                 ->className('text-center align-middle'),
 
             Column::make('category.category_name')
                 ->title('Category')
                 ->className('text-center align-middle'),
 
-            Column::computed('amount')->className('text-center align-middle'),
+            Column::make('expense_name.expense_name')
+                ->title('Expense Name')
+                ->className('text-center align-middle'),
 
-            Column::make('cf_agent_fee')->title('C&F Agent Fee')->className('text-center align-middle'),
-            Column::make('bl_verify')->title('B/L Verify')->className('text-center align-middle'),
-            Column::make('shipping_charge')->title('Shipping/NOC Charge')->className('text-center align-middle'),
-            Column::make('port_bill')->title('Port Bill')->className('text-center align-middle'),
-            Column::make('labor_bill')->title('Labor Bill')->className('text-center align-middle'),
-            Column::make('transport_bill')->title('Transport/Survey Bill')->className('text-center align-middle'),
-            Column::make('other_receipt')->title('Other Receipt')->className('text-center align-middle'),
-            Column::make('formalin_test')->title('Formalin Test')->className('text-center align-middle'),
-            Column::make('radiation_cert')->title('Radiation Cert')->className('text-center align-middle'),
-            Column::make('labor_tips')->title('Labor Tips')->className('text-center align-middle'),
-            Column::make('cf_commission')->title('C&F Commission')->className('text-center align-middle'),
-            Column::make('ip_absence')->title('IP Absence')->className('text-center align-middle'),
-            Column::make('special_delivery')->title('Special Delivery')->className('text-center align-middle'),
+            Column::make('container.name')
+                ->title('Container Name')
+                ->className('text-center align-middle'),
 
-            Column::make('details')->className('text-center align-middle'),
+            Column::make('amount')
+                ->title('Amount')
+                ->className('text-center align-middle'),
 
             Column::computed('action')
                 ->exportable(false)
                 ->printable(false)
                 ->className('text-center align-middle'),
 
-            Column::make('created_at')->visible(false),
+            Column::make('created_at')
+                ->visible(false),
         ];
     }
+
 
     protected function filename(): string
     {
