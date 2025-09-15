@@ -14,18 +14,24 @@ class ContainerController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'lc_id' => 'required',
+            'lc_id' => 'required|exists:lc,id',
+            'lc_value' => 'nullable|numeric',
+            'lc_exchange_rate' => 'nullable|numeric',
+            'tt_value' => 'nullable|numeric',
+            'tt_exchange_rate' => 'nullable|numeric',
             'name' => 'required|string|max:255',
             'number' => 'required|string|max:100',
             'shipping_date' => 'nullable|date',
             'arriving_date' => 'nullable|date',
             'status' => 'nullable|numeric|in:0,1,2',
+            'qty' => 'nullable|numeric',
         ]);
 
         \App\Models\Container::create($validated);
 
         return redirect()->route('container.view')->with('success', 'Container added successfully!');
     }
+
     public function containerTbl()
     {
         $containers = \App\Models\Container::with('lc')->get();

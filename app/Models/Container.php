@@ -20,6 +20,11 @@ class Container extends Model
         'shipping_date',
         'arriving_date',
         'status',
+        'lc_value',
+        'lc_exchange_rate',
+        'tt_value',
+        'tt_exchange_rate',
+        'qty',
     ];
 
      public function lc()

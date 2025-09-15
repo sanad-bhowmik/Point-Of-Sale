@@ -22,7 +22,7 @@
 
                         <div class="form-row">
                             <!-- LC Name Dropdown -->
-                            <div class="col-lg-6 mb-3">
+                            <div class="col-lg-4 mb-3">
                                 <label for="lc_id">LC Name <span class="text-danger">*</span></label>
                                 <select name="lc_id" id="lc_id" class="form-control" required>
                                     <option value="">Select LC</option>
@@ -30,6 +30,27 @@
                                         <option value="{{ $lc->id }}">{{ $lc->lc_name }}</option>
                                     @endforeach
                                 </select>
+                            </div>
+
+                            <!-- New Fields after LC Name -->
+                            <div class="col-lg-4 mb-3">
+                                <label for="lc_value">LC Value</label>
+                                <input type="text" step="0.01" name="lc_value" id="lc_value" class="form-control" placeholder="Enter LC value">
+                            </div>
+
+                            <div class="col-lg-4 mb-3">
+                                <label for="lc_exchange_rate">LC Exchange Rate</label>
+                                <input type="text" step="0.0001" name="lc_exchange_rate" id="lc_exchange_rate" class="form-control" placeholder="Enter LC exchange rate">
+                            </div>
+
+                            <div class="col-lg-6 mb-3">
+                                <label for="tt_value">TT Value</label>
+                                <input type="text" step="0.01" name="tt_value" id="tt_value" class="form-control" placeholder="Enter TT value">
+                            </div>
+
+                            <div class="col-lg-6 mb-3">
+                                <label for="tt_exchange_rate">TT Exchange Rate</label>
+                                <input type="text" step="0.0001" name="tt_exchange_rate" id="tt_exchange_rate" class="form-control" placeholder="Enter TT exchange rate">
                             </div>
 
                             <!-- Container Name -->
@@ -42,6 +63,10 @@
                             <div class="col-lg-6 mb-3">
                                 <label for="number">Container Number <span class="text-danger">*</span></label>
                                 <input type="text" name="number" id="number" class="form-control" placeholder="Enter container number" required>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="number">Quantity <span class="text-danger">*</span></label>
+                                <input type="text" name="qty" id="qty"class="form-control" placeholder="Enter container number" required>
                             </div>
 
                             <!-- Shipping Date -->
@@ -71,15 +96,15 @@
                             </div>
 
                             <!-- Status Dropdown -->
-                                <div class="col-lg-6 mb-3">
-                                    <label for="status">Status</label>
-                                    <select name="status" id="status" class="form-control">
-                                        <option value="">-- Select Status --</option>
-                                        <option value="0">Pending</option>
-                                        <option value="1">Shipped</option>
-                                        <option value="2">Arrived</option>
-                                    </select>
-                                </div>
+                            <div class="col-lg-6 mb-3">
+                                <label for="status">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="">-- Select Status --</option>
+                                    <option value="0">Pending</option>
+                                    <option value="1">Shipped</option>
+                                    <option value="2">Arrived</option>
+                                </select>
+                            </div>
 
                         </div>
 
@@ -117,15 +142,12 @@
 
 <script>
 $(document).ready(function() {
-    // Initialize Flatpickr
     const shippingDate = flatpickr("#shipping_date", { dateFormat: "Y-m-d", allowInput: true });
     const arrivingDate = flatpickr("#arriving_date", { dateFormat: "Y-m-d", allowInput: true });
 
-    // Open datepicker on icon click
     $('#shipping_date_icon').click(() => shippingDate.open());
     $('#arriving_date_icon').click(() => arrivingDate.open());
 
-    // Toastr notifications
     toastr.options = { closeButton: true, progressBar: true, positionClass: "toast-top-right", timeOut: "5000" };
 
     @if(session('success'))
