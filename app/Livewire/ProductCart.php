@@ -117,22 +117,28 @@ class ProductCart extends Component
         // dd($unitIds);
     }
 
-    public function productSelected($product)
+    public function productSelected($payload)
     {
+        // Extract product, LC, and container from payload
+        $product = is_object($payload['product']) ? (array) $payload['product'] : $payload['product'];
+        $lc_id = $payload['lc_id'] ?? null;
+        $container_id = $payload['container_id'] ?? null;
+
         $cart = Cart::instance($this->cart_instance);
 
+        // Check if product already in cart
         $exists = $cart->search(function ($cartItem, $rowId) use ($product) {
             return $cartItem->id == $product['id'];
         });
 
         if ($exists->isNotEmpty()) {
             session()->flash('message', 'Product exists in the cart!');
-
             return;
         }
 
         $this->product = $product;
 
+        // Add product to cart including LC and container IDs
         $cart->add([
             'id'      => $product['id'],
             'name'    => $product['product_name'],
@@ -145,9 +151,11 @@ class ProductCart extends Component
                 'sub_total'             => $this->calculate($product)['sub_total'],
                 'code'                  => $product['product_code'],
                 'stock'                 => $product['product_quantity'],
-                'unit'                  => $product['product_unit'],
+                'unit'                  => $product['product_unit'] ?? null,
                 'product_tax'           => $this->calculate($product)['product_tax'],
-                'unit_price'            => $this->calculate($product)['unit_price']
+                'unit_price'            => $this->calculate($product)['unit_price'],
+                'lc_id'                 => $lc_id,
+                'container_id'          => $container_id,
             ]
         ]);
 
