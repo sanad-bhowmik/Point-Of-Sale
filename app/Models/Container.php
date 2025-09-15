@@ -25,6 +25,8 @@ class Container extends Model
         'tt_value',
         'tt_exchange_rate',
         'qty',
+        'lc_date',
+        'tt_date',
     ];
 
      public function lc()

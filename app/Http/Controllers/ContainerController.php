@@ -23,7 +23,9 @@ class ContainerController extends Controller
             'number' => 'required|string|max:100',
             'shipping_date' => 'nullable|date',
             'arriving_date' => 'nullable|date',
-            'status' => 'nullable|numeric|in:0,1,2',
+            'lc_date' => 'nullable|date',
+            'tt_date' => 'nullable|date',
+            'status' => 'nullable|numeric|in:0,1,2,3',
             'qty' => 'nullable|numeric',
         ]);
 
