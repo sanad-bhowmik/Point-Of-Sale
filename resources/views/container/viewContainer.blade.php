@@ -166,6 +166,7 @@
                                                                 <option value="0" {{ $container->status == 0 ? 'selected' : '' }}>Pending</option>
                                                                 <option value="1" {{ $container->status == 1 ? 'selected' : '' }}>Shipped</option>
                                                                 <option value="2" {{ $container->status == 2 ? 'selected' : '' }}>Arrived</option>
+                                                                <option value="3" {{ $container->status == 3 ? 'selected' : '' }}>Custom Done</option>
                                                             </select>
                                                         </div>
                                                     </div>
