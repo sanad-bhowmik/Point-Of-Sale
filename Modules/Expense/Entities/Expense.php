@@ -12,6 +12,10 @@ class Expense extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'category_id', 'expense_name_id', 'lc_id', 'container_id', 'amount', 'date', 'note'
+    ];
+
     protected $guarded = [];
 
     public function category()
@@ -36,15 +40,5 @@ class Expense extends Model
     public function getDateAttribute($value)
     {
         return Carbon::parse($value)->format('d M, Y');
-    }
-
-    public function setAmountAttribute($value)
-    {
-        $this->attributes['amount'] = ($value * 100);
-    }
-
-    public function getAmountAttribute($value)
-    {
-        return ($value / 100);
     }
 }

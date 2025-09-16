@@ -3,6 +3,7 @@
 namespace Modules\Expense\Http\Controllers;
 
 use App\Models\Container;
+use App\Models\Costing;
 use App\Models\ExpenseName;
 use App\Models\Lc;
 use Modules\Expense\DataTables\ExpensesDataTable;
@@ -45,6 +46,7 @@ class ExpenseController extends Controller
             'container_id' => 'required',
             'amount' => 'required|numeric',
             'date' => 'required|date',
+            'note' => 'nullable|string',
         ]);
 
         // Create expense
@@ -55,6 +57,7 @@ class ExpenseController extends Controller
             'container_id' => $request->container_id,   
             'amount' => $request->amount,
             'date' => $request->date,
+            'note' => $request->note,
         ]);
 
         toast('Expense Created!', 'success');
@@ -86,6 +89,7 @@ class ExpenseController extends Controller
             'container_id'     => 'required',
             'amount'           => 'required|numeric',
             'date'             => 'required|date',
+            'note'             => 'nullable|string',
         ]);
 
         // Update expense
@@ -96,6 +100,7 @@ class ExpenseController extends Controller
             'container_id'     => $request->container_id,
             'amount'           => $request->amount,
             'date'             => $request->date,
+            'note'             => $request->note,
         ]);
 
         toast('Expense Updated!', 'success');
@@ -120,5 +125,51 @@ class ExpenseController extends Controller
         $expenseNames = ExpenseName::where('expense_category_id', $categoryId)->get();
 
         return response()->json($expenseNames);
+    }
+
+     public function finalReport()
+    {
+        $lcs = Lc::get();
+        $containers = Container::whereIn('status', [1,2])->get();
+        
+        return view('expense::expenses.finalReport', [
+            'lcs' => $lcs,
+            'containers' => $containers,
+            'find_lc' => null,
+            'find_container' => null,
+        ]);
+    }
+
+    public function finalReportFilter(Request $request)
+    {
+        $request->validate([
+            'lc_id' => 'required',
+            'container_id' => 'required',
+        ]);
+
+        $lc = Lc::find($request->lc_id);
+        $container = Container::find($request->container_id);
+
+        if ($request->lc_id != $container->lc_id) {
+            return redirect()->back()->withErrors(['container_id' => 'The selected container does not belong to the selected LC.'])->withInput();
+        }
+
+        $costing = Costing::where('lc_id', $request->lc_id)->first();
+        $expenseGroup = Expense::with('category', 'expenseName', 'lc', 'container')
+                                ->where('lc_id', $request->lc_id)
+                                ->where('container_id', $request->container_id)
+                                ->get()
+                                ->groupBy(function ($item) {
+                                    return $item->category->category_name ?? 'Unknown';
+                                });
+      
+        return view('expense::expenses.finalReport', [
+            'find_lc' => $lc,
+            'find_container' => $container->load('lc.costing.product'),
+            'lcs' => Lc::get(),
+            'containers' => Container::whereIn('status', [1,2])->get(),
+            'costing' => $costing,
+            'expenseGroup' => $expenseGroup,
+        ]);
     }
 }

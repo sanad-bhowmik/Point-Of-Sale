@@ -288,6 +288,12 @@
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Expenses
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense.finalReport') ? 'c-active' : '' }}"
+                href="{{ route('expense.finalReport') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Final Report
+            </a>
+        </li>
     </ul>
 </li>
 @endcan
@@ -325,6 +331,12 @@
         <i class="c-sidebar-nav-icon bi bi-graph-up" style="line-height: 1;"></i> Reports
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('buying-selling-report.index') ? 'c-active' : '' }}"
+                href="{{ route('buying-selling-report.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Buying and Selling Report  
+            </a>
+        </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('profit-loss-report.index') ? 'c-active' : '' }}"
                 href="{{ route('profit-loss-report.index') }}">

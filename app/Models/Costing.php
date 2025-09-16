@@ -59,4 +59,9 @@ class Costing extends Model
     {
         return $this->belongsTo(\App\Models\Product::class, 'product_id');
     }
+
+    public function lc()
+    {
+        return $this->belongsTo(\App\Models\Lc::class);
+    }
 }

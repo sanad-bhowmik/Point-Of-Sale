@@ -114,53 +114,60 @@
                                             value="{{ \Carbon\Carbon::parse($expense->date)->format('Y-m-d') }}" required>
                                     </div>
                                 </div>
-                            </div>
 
+                                <div class="col-lg-6">
+                                    <div class="form-group">
+                                        <label for="note">Note (Optional)</label>
+                                        <textarea name="note" id="note" class="form-control" rows="3">{{ $expense->note }}</textarea>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
         </form>
 
     </div>
 @endsection
 
 @push('page_css')
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @push('page_scripts')
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
-<script>
-$(document).ready(function() {
-    $('.select2').select2({
-        width: '100%',
-        placeholder: 'Select an option'
-    });
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2({
+                width: '100%',
+                placeholder: 'Select an option'
+            });
 
-    // When Category changes, load Expense Names
-    $('#category_id').on('change', function() {
-        var categoryId = $(this).val();
-        $('#expense_name_id').html('<option value="">Loading...</option>');
+            // When Category changes, load Expense Names
+            $('#category_id').on('change', function() {
+                var categoryId = $(this).val();
+                $('#expense_name_id').html('<option value="">Loading...</option>');
 
-        if(categoryId) {
-            $.ajax({
-                url: '/expenses/expense-names/' + categoryId,
-                type: 'GET',
-                success: function(data) {
-                    var options = '<option value="">Select Expense Name</option>';
-                    data.forEach(function(expense) {
-                        options += `<option value="${expense.id}">${expense.expense_name}</option>`;
+                if (categoryId) {
+                    $.ajax({
+                        url: '/expenses/expense-names/' + categoryId,
+                        type: 'GET',
+                        success: function(data) {
+                            var options = '<option value="">Select Expense Name</option>';
+                            data.forEach(function(expense) {
+                                options +=
+                                    `<option value="${expense.id}">${expense.expense_name}</option>`;
+                            });
+                            $('#expense_name_id').html(options).trigger('change');
+                        }
                     });
-                    $('#expense_name_id').html(options).trigger('change');
+                } else {
+                    $('#expense_name_id').html('<option value="">Select Expense Name</option>');
                 }
             });
-        } else {
-            $('#expense_name_id').html('<option value="">Select Expense Name</option>');
-        }
-    });
 
-});
-</script>
+        });
+    </script>
 @endpush

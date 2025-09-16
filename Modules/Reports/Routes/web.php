@@ -12,6 +12,11 @@
 */
 
 Route::group(['middleware' => 'auth'], function () {
+    //Buying Selling Report
+    Route::get('/buying-selling-report', 'ReportsController@buyingSelling')
+        ->name('buying-selling-report.index');
+    Route::post('/buying-selling-report-filter', 'ReportsController@buyingSellingFilter')
+        ->name('buying-selling-report.filter');
     //Profit Loss Report
     Route::get('/profit-loss-report', 'ReportsController@profitLossReport')
         ->name('profit-loss-report.index');
