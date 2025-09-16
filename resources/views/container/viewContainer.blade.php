@@ -27,20 +27,22 @@
                                 <tr>
                                     <th>#</th>
                                     <th>LC Name</th>
+                                    <th>LC Date</th>
                                     <th>LC Value</th>
-                                    <th>LC Exchange Rate</th>
+                                    <th>LC Ex. Rate</th>
                                     <th>LC Amount</th>
+                                    <th>TT Date</th>
                                     <th>TT Value</th>
-                                    <th>TT Exchange Rate</th>
+                                    <th>TT Ex. Rate</th>
                                     <th>TT Amount</th>
-                                    <th>Container Name</th>
-                                    <th>Container Number</th>
-                                    <th>Quantity</th>
-                                    <th>LC Total Amount ৳</th>
-                                    <th>TT Total Amount ৳</th>
+                                    <th>Container</th>
+                                    <th>Number</th>
+                                    <th>Qty</th>
+                                    <th>LC Total ৳</th>
+                                    <th>TT Total ৳</th>
                                     <th>Grand Total ৳</th>
-                                    <th>Shipping Date</th>
-                                    <th>Arriving Date</th>
+                                    <th>Shipping</th>
+                                    <th>Arriving</th>
                                     <th>Status</th>
                                     <th>Action</th>
                                 </tr>
@@ -50,19 +52,21 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $container->lc->lc_name ?? '-' }}</td>
-                                    <td>{{ $container->lc_value ?? '-' }}</td>
+                                    <td>{{ $container->lc_date ?? '-' }}</td>
+                                    <td>{{ $container->lc_value ? number_format($container->lc_value, 2) : '-' }}</td>
                                     <td>{{ $container->lc_exchange_rate ?? '-' }}</td>
                                     <td>
                                         {{ isset($container->lc_value, $container->lc_exchange_rate)
-              ? number_format($container->lc_value * $container->lc_exchange_rate, 2)
-              : '-' }}
+                ? number_format($container->lc_value * $container->lc_exchange_rate, 2)
+                : '-' }}
                                     </td>
-                                    <td>{{ $container->tt_value ?? '-' }}</td>
+                                    <td>{{ $container->tt_date ?? '-' }}</td>
+                                    <td>{{ $container->tt_value ? number_format($container->tt_value, 2) : '-' }}</td>
                                     <td>{{ $container->tt_exchange_rate ?? '-' }}</td>
                                     <td>
                                         {{ isset($container->tt_value, $container->tt_exchange_rate)
-               ? number_format($container->tt_value * $container->tt_exchange_rate, 2)
-               : '-' }}
+                ? number_format($container->tt_value * $container->tt_exchange_rate, 2)
+                : '-' }}
                                     </td>
                                     <td>{{ $container->name }}</td>
                                     <td>{{ $container->number }}</td>
@@ -100,10 +104,11 @@
                                     <td>{{ $container->arriving_date ?? '-' }}</td>
                                     <td>
                                         @switch($container->status)
-                                        @case(0) Pending @break
-                                        @case(1) Shipped @break
-                                        @case(2) Arrived @break
-                                        @default -
+                                        @case(0) <span class="badge bg-warning">Pending</span> @break
+                                        @case(1) <span class="badge bg-info">Shipped</span> @break
+                                        @case(2) <span class="badge bg-success">Arrived</span> @break
+                                        @case(3) <span class="badge bg-primary">Custom Done</span> @break
+                                        @default <span class="badge bg-secondary">-</span>
                                         @endswitch
                                     </td>
                                     <td>
@@ -123,16 +128,18 @@
 
                                 <!-- Edit Container Modal -->
                                 <div class="modal fade" id="editContainerModal{{ $container->id }}" tabindex="-1" aria-labelledby="editContainerLabel{{ $container->id }}" aria-hidden="true">
-                                    <div class="modal-dialog">
+                                    <div class="modal-dialog modal-lg">
                                         <div class="modal-content">
                                             <div class="modal-header">
                                                 <h5 class="modal-title" id="editContainerLabel{{ $container->id }}">Edit Container</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="border: none;background-color: white;">✖</button>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                             </div>
                                             <form action="{{ route('container.update', $container->id) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
                                                 <div class="modal-body">
+
+                                                    <!-- Row 1 -->
                                                     <div class="row mb-3">
                                                         <div class="col-md-6">
                                                             <label>LC Name</label>
@@ -144,22 +151,44 @@
                                                         </div>
                                                     </div>
 
+                                                    <!-- Row 2 -->
                                                     <div class="row mb-3">
                                                         <div class="col-md-6">
                                                             <label>Container Number</label>
                                                             <input type="text" class="form-control" name="number" value="{{ $container->number }}" required>
                                                         </div>
                                                         <div class="col-md-6">
-                                                            <label>Shipping Date</label>
-                                                            <input type="date" class="form-control" name="shipping_date" value="{{ $container->shipping_date }}">
+                                                            <label>Quantity</label>
+                                                            <input type="number" class="form-control" name="qty" value="{{ $container->qty }}" required>
                                                         </div>
                                                     </div>
 
+                                                    <!-- Row 3 -->
                                                     <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label>LC Date</label>
+                                                            <input type="date" class="form-control" name="lc_date" value="{{ $container->lc_date }}">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label>TT Date</label>
+                                                            <input type="date" class="form-control" name="tt_date" value="{{ $container->tt_date }}">
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- Row 4 -->
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label>Shipping Date</label>
+                                                            <input type="date" class="form-control" name="shipping_date" value="{{ $container->shipping_date }}">
+                                                        </div>
                                                         <div class="col-md-6">
                                                             <label>Arriving Date</label>
                                                             <input type="date" class="form-control" name="arriving_date" value="{{ $container->arriving_date }}">
                                                         </div>
+                                                    </div>
+
+                                                    <!-- Row 5 -->
+                                                    <div class="row mb-3">
                                                         <div class="col-md-6">
                                                             <label>Status</label>
                                                             <select name="status" class="form-control" required>
@@ -169,7 +198,24 @@
                                                                 <option value="3" {{ $container->status == 3 ? 'selected' : '' }}>Custom Done</option>
                                                             </select>
                                                         </div>
+                                                        <div class="col-md-6">
+                                                            <label>Document Status</label>
+                                                            <input type="text" class="form-control" name="document_status" value="{{ $container->document_status }}">
+                                                        </div>
                                                     </div>
+
+                                                    <!-- Row 6 -->
+                                                    <div class="row mb-3">
+                                                        <div class="col-md-6">
+                                                            <label>DHL</label>
+                                                            <input type="text" class="form-control" name="dhl" value="{{ $container->dhl }}">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label>BL Number</label>
+                                                            <input type="text" class="form-control" name="bl_no" value="{{ $container->bl_no }}">
+                                                        </div>
+                                                    </div>
+
                                                 </div>
 
                                                 <div class="modal-footer">
@@ -177,12 +223,13 @@
                                                     <button type="submit" class="btn btn-primary">Save Changes</button>
                                                 </div>
                                             </form>
+
                                         </div>
                                     </div>
                                 </div>
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-muted">No containers found.</td>
+                                    <td colspan="20" class="text-center text-muted py-4">No containers found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>

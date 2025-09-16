@@ -45,23 +45,30 @@ class ContainerController extends Controller
         $container = \App\Models\Container::findOrFail($id);
         $container->delete();
 
-        return redirect()->route('container.Tblview')->with('success', 'Container deleted successfully!');
+        return redirect()->route('container.containerTbl')->with('success', 'Container deleted successfully!');
     }
 
-    public function update(Request $request, $id)
-    {
-        $container = \App\Models\Container::findOrFail($id);
+  public function update(Request $request, $id)
+{
+    $container = \App\Models\Container::findOrFail($id);
 
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'number' => 'required|string|max:100',
-            'shipping_date' => 'nullable|date',
-            'arriving_date' => 'nullable|date',
-            'status' => 'required|integer|in:0,1,2',
-        ]);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'number' => 'required|string|max:100',
+        'qty' => 'nullable',
+        'shipping_date' => 'nullable|date',
+        'arriving_date' => 'nullable|date',
+        'lc_date' => 'nullable|date',
+        'tt_date' => 'nullable|date',
+        'status' => 'required|integer|in:0,1,2,3',
+        'dhl' => 'nullable|string|max:255',
+        'bl_no' => 'nullable|string|max:255',
+        'document_status' => 'nullable|string|max:255',
+    ]);
 
-        $container->update($validated);
+    $container->update($validated);
 
-        return redirect()->back()->with('success', 'Container updated successfully!');
-    }
+    return redirect()->back()->with('success', 'Container updated successfully!');
+}
+
 }
