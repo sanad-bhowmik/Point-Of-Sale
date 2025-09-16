@@ -19,6 +19,12 @@ class ExpensesDataTable extends DataTable
             ->addColumn('lc_info', function($row) {
                 return $row->lc->lc_name . ' (' . $row->lc->lc_number . ')';
             })
+            ->filterColumn('lc_info', function($query, $keyword) {
+                $query->whereHas('lc', function($q) use ($keyword) {
+                    $q->where('lc_name', 'like', "%{$keyword}%")
+                    ->orWhere('lc_number', 'like', "%{$keyword}%");
+                });
+            })
             ->addColumn('action', function ($data) {
                 return view('expense::expenses.partials.actions', compact('data'));
             });
@@ -27,7 +33,7 @@ class ExpensesDataTable extends DataTable
     public function query(Expense $model)
     {
         // Load both category and LC relation
-        return $model->newQuery()->with(['container', 'expenseName', 'lc', 'category']);
+        return $model->newQuery()->with(['container', 'expenseName', 'lc', 'category'])->orderBy('id', 'desc');
     }
 
     public function html()
@@ -61,7 +67,8 @@ class ExpensesDataTable extends DataTable
 
             Column::make('lc_info')
                 ->title('LC Name & Number')
-                ->className('text-center align-middle'),
+                ->className('text-center align-middle')
+                ->searchable(true),
 
             Column::make('category.category_name')
                 ->title('Category')
@@ -81,6 +88,10 @@ class ExpensesDataTable extends DataTable
             Column::make('amount')
                 ->title('Amount')
                 ->className('text-center align-middle'),
+
+            Column::make('note')
+                ->title('Note')
+                ->className('text-left align-middle'),
 
             Column::computed('action')
                 ->exportable(false)

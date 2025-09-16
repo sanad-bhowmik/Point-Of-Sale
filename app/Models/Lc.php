@@ -27,4 +27,14 @@ class Lc extends Model
     ];
 
     public $timestamps = true;
+
+    public function containers()
+    {
+        return $this->hasMany(Container::class, 'lc_id');
+    }
+
+    public function costing()
+    {
+        return $this->belongsTo(Costing::class, 'costing_id');
+    }
 }

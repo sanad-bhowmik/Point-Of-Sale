@@ -21,6 +21,7 @@ class CreateExpensesTable extends Migration
             $table->foreignId('container_id')->constrained('container')->onDelete('cascade');
             $table->decimal('amount', 15, 2);
             $table->date('date');
+            $table->text('note')->nullable();
             $table->timestamps();
         });
     }
