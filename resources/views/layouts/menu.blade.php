@@ -344,6 +344,12 @@
             </a>
         </li>
         <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('cash-flow-report.index') ? 'c-active' : '' }}"
+                href="{{ route('cash-flow-report.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Details of cash flow
+            </a>
+        </li>
+        {{-- <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('profit-loss-report.index') ? 'c-active' : '' }}"
                 href="{{ route('profit-loss-report.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Profit / Loss Report
@@ -354,14 +360,14 @@
                 href="{{ route('payments-report.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Payments Report
             </a>
-        </li>
-        <li class="c-sidebar-nav-item">
+        </li> --}}
+        {{-- <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('sales-report.index') ? 'c-active' : '' }}"
                 href="{{ route('sales-report.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Sales Report
             </a>
-        </li>
-        <li class="c-sidebar-nav-item">
+        </li> --}}
+        {{-- <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('purchases-report.index') ? 'c-active' : '' }}"
                 href="{{ route('purchases-report.index') }}">
                 <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Purchases Report
@@ -379,13 +385,13 @@
                 <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Purchases Return
                 Report
             </a>
-        </li>
+        </li> --}}
     </ul>
 </li>
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-costing.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> Costing
     </a>
@@ -407,7 +413,7 @@
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-container.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-calendar3-range" style="line-height: 1;"></i> Container
     </a>
@@ -429,7 +435,7 @@
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-bank.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-bank" style="line-height: 1;"></i> Banks
     </a>
@@ -451,7 +457,7 @@
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-wallet2" style="line-height: 1;"></i> Transactions
     </a>

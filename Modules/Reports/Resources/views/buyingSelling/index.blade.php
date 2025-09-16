@@ -15,8 +15,7 @@
             <!-- Filter Form -->
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('buying-selling-report.filter') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form action="{{ route('buying-selling-report.index') }}" method="get" >
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
@@ -69,12 +68,12 @@
                                 <thead class="bg-success text-white">
                                     <tr>
                                         <th>SL</th>
+                                        <th>Lc Number</th>
+                                        <th>Container Number</th>
                                         <th>Product Name</th>
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
                                         <th>Our Company</th>
-                                        <th>Lc Number</th>
-                                        <th>Container Number</th>
                                         <th>Buying Date/LC</th>
                                         <th>TT Date</th>
                                         <th>Total Qty</th>
@@ -92,6 +91,8 @@
                                     @forelse($buyingSelling as $index => $item)
                                         <tr>
                                             <td>{{ $index+1 }}</td>
+                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->number }}</td>
                                             <td>{{ $item?->product?->product_name }}</td>
                                             @php
                                                 $size = \App\Models\Size::find($item->size)->first();
@@ -99,8 +100,6 @@
                                             <td>{{ $size->size }}</td>
                                             <td>{{ $item?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
-                                            <td>{{ $container->number }}</td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
                                             <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
@@ -117,11 +116,11 @@
                                             @endphp
                                             <td>{{ round(($total + $totalAmount) / $item->qty) }}
                                             </td>
-                                            <td>{{ round(($total + $totalCostAmoun) / $item->qty) }}</td>
+                                            <td>{{ round(($total + $totalCostAmount) / $item->qty) }}</td>
                                             <td>{{ $item->box_type }}</td>
                                             <td>{{ $dateRange }}</td>
                                             <td>{{ round($totalSale / $item->qty) }}</td>
-                                            <td>{{ round(($totalSale - ($total + $totalCostAmoun)) / $item->qty) }}</td>
+                                            <td>{{ round(($totalSale - ($total + $totalCostAmount)) / $item->qty) }}</td>
                                         </tr>
                                     @empty
                                         <tr>

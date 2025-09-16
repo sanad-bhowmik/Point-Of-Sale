@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Buying Selling Report')
+@section('title', 'Shipment Status Report')
 
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Buying Selling Report</li>
+        <li class="breadcrumb-item active">Shipment Status Report</li>
     </ol>
 @endsection
 
@@ -15,8 +15,7 @@
             <!-- Filter Form -->
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('shipment-status-report.filter') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form action="{{ route('shipment-status-report.index') }}" method="get">
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
@@ -69,6 +68,8 @@
                                 <thead class="bg-success text-white">
                                     <tr>
                                         <th>SL</th>
+                                        <th>Lc Number</th>
+                                        <th>Container Number</th>
                                         <th>Product Name</th>
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
@@ -76,8 +77,6 @@
                                         <th>Total Qty</th>
                                         <th>LC Date</th>
                                         <th>TT Date</th>
-                                        <th>Lc Number</th>
-                                        <th>Container Number</th>
                                         <th>Shipment Date</th>
                                         <th>Arrive date at CTG</th>
                                         <th>DHL</th>
@@ -89,6 +88,8 @@
                                     @forelse($shipmentStatus as $index => $item)
                                         <tr>
                                             <td>{{ $index+1 }}</td>
+                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->number }}</td>
                                             <td>{{ $item?->product?->product_name }}</td>
                                             @php
                                                 $size = \App\Models\Size::find($item->size)->first();
@@ -99,8 +100,6 @@
                                             <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
-                                            <td>{{ $container->number }}</td>
                                             <td>{{ $container->shipping_date }}</td>
                                             <td>{{ $container->arriving_date }}</td>
                                             <td>{{ $container->dhl }}</td>
