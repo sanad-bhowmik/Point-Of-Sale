@@ -15,7 +15,7 @@
             <!-- Filter Form -->
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('buying-selling-report.filter') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('shipment-status-report.filter') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <!-- LC Select -->
@@ -54,7 +54,7 @@
             </div>
 
             <!-- Table -->
-            @if (isset($buyingSelling))
+            @if (isset($shipmentStatus))
                 <div class="card border-0 shadow-sm">
                     <div class="card-body position-relative">
                         <div wire:loading.flex class="position-absolute justify-content-center align-items-center"
@@ -73,23 +73,20 @@
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
                                         <th>Our Company</th>
+                                        <th>Total Qty</th>
+                                        <th>LC Date</th>
+                                        <th>TT Date</th>
                                         <th>Lc Number</th>
                                         <th>Container Number</th>
-                                        <th>Buying Date/LC</th>
-                                        <th>TT Date</th>
-                                        <th>Total Qty</th>
-                                        <th>USD Price</th>
-                                        <th>CNF Price</th>
-                                        <th>CTG Price</th>
-                                        <th>Buying Price</th>
-                                        <th>KG/Box</th>
-                                        <th>Selling Date</th>
-                                        <th>Selling Price</th>
-                                        <th>Profit/Loss</th>
+                                        <th>Shipment Date</th>
+                                        <th>Arrive date at CTG</th>
+                                        <th>DHL</th>
+                                        <th>BL NO</th>
+                                        <th>Document Status</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($buyingSelling as $index => $item)
+                                    @forelse($shipmentStatus as $index => $item)
                                         <tr>
                                             <td>{{ $index+1 }}</td>
                                             <td>{{ $item?->product?->product_name }}</td>
@@ -99,29 +96,16 @@
                                             <td>{{ $size->size }}</td>
                                             <td>{{ $item?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
-                                            <td>{{ $container->number }}</td>
+                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
-                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
-                                            <td>{{ $container?->lc_value + $container?->tt_value }}</td>
-                                            <td>{{ round(($item->total_tk + $container?->tt_value * $container?->tt_exchange_rate * $container->qty) / $item->qty) }}
-                                            </td>
-                                            @php
-                                                $total = $item->total_tk + $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
-
-                                                $dates = $sales->pluck('sale.date')->sort();
-                                                $firstDate = \Carbon\Carbon::parse($dates->first())->format('d-m-y');
-                                                $lastDate = \Carbon\Carbon::parse($dates->last())->format('d-m-y');
-                                                $dateRange = $firstDate . ' to ' . $lastDate;
-                                            @endphp
-                                            <td>{{ round(($total + $totalAmount) / $item->qty) }}
-                                            </td>
-                                            <td>{{ round(($total + $totalCostAmoun) / $item->qty) }}</td>
-                                            <td>{{ $item->box_type }}</td>
-                                            <td>{{ $dateRange }}</td>
-                                            <td>{{ round($totalSale / $item->qty) }}</td>
-                                            <td>{{ round(($totalSale - ($total + $totalCostAmoun)) / $item->qty) }}</td>
+                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->number }}</td>
+                                            <td>{{ $container->shipping_date }}</td>
+                                            <td>{{ $container->arriving_date }}</td>
+                                            <td>{{ $container->dhl }}</td>
+                                            <td>{{ $container->bl_no }}</td>
+                                            <td>{{ $container->document_status }}</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -134,7 +118,7 @@
 
                         <!-- Pagination -->
                         {{-- <div class="mt-3">
-                {{ $buyingSelling->links() }}
+                {{ $shipmentStatus->links() }}
             </div> --}}
                     </div>
                 </div>

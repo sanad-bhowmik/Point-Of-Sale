@@ -252,7 +252,16 @@
                                                 <td class="text-center">
                                                     @php
                                                         $totalExpenses = $expenseGroup->flatten()->sum('amount');
-                                                        $priceOfGrapes = $costing && $container ? round($costing->total_tk + $container->tt_value * $container->tt_exchange_rate * $container->qty, 2) : 0;
+                                                        $priceOfGrapes =
+                                                            $costing && $container
+                                                                ? round(
+                                                                    $costing->total_tk +
+                                                                        $container->tt_value *
+                                                                            $container->tt_exchange_rate *
+                                                                            $container->qty,
+                                                                    2,
+                                                                )
+                                                                : 0;
                                                         $valueAfterCosts = $priceOfGrapes + $totalExpenses;
                                                     @endphp
                                                     {{ $valueAfterCosts }}
@@ -284,18 +293,55 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                           <tr>
+                                            <tr>
                                                 <td>Total Sales</td>
-                                                <td></td>
-                                           </tr>
-                                           <tr>
+                                                <td>{{ $totalSale }}</td>
+                                            </tr>
+                                            <tr>
                                                 <td>Value of Grapes after costs</td>
                                                 <td>{{ $valueAfterCosts }}</td>
-                                           </tr>
-                                           <tr style="background-color: #65ffaa;">
+                                            </tr>
+                                            <tr style="background-color: #65ffaa;">
                                                 <td>Profit or Loss</td>
-                                                <td></td>
-                                           </tr>
+                                                <td>{{ $totalSale - $valueAfterCosts }}</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header" style="background-color: #e3ff4a">
+                                    <h4 class="text-center">
+                                        Profit Margin Ratio of {{ $costing?->product?->product_name }}
+                                    </h4>
+                                </div>
+                                <div class="card-body">
+                                    <table class="table table-bordered table-striped text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>Discription</th>
+                                                <th>Ratio (%)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Profit Margin</td>
+                                                <td>
+                                                    @if ($totalSale > 0)
+                                                        {{ number_format(( ($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2)  }}
+                                                        %
+                                                    @else
+                                                        0 %
+                                                    @endif
+                                                </td>
+                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
