@@ -1,8 +1,4 @@
 <div>
-    <!-- Add hidden fields to store the selected values -->
-    <input type="hidden" name="lc_id" value="{{ $selected_lc }}">
-    <input type="hidden" name="container_id" value="{{ $selected_container }}">
-
     <!-- LC & Container Dropdowns -->
     <div class="position-relative">
         <div class="card mb-0 border-0 shadow-sm">

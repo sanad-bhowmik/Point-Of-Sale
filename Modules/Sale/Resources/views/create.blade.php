@@ -25,11 +25,6 @@
                         @include('utils.alerts')
                         <form id="sale-form" action="{{ route('sales.store') }}" method="POST">
                             @csrf
-
-                            <!-- ADD HIDDEN FIELDS HERE -->
-                            <input type="hidden" name="lc_id" id="lc_id" value="">
-                            <input type="hidden" name="container_id" id="container_id" value="">
-
                             <div class="form-row">
                                 <div class="col-lg-4">
                                     <div class="form-group">
@@ -140,15 +135,15 @@
             });
 
             // Listen for Livewire events to update the hidden fields
-            Livewire.on('containerSelected', (data) => {
-                $('#lc_id').val(data.lc_id);
-                $('#container_id').val(data.container_id);
-            });
+            // Livewire.on('containerSelected', (data) => {
+            //     $('#lc_id').val(data.lc_id);
+            //     $('#container_id').val(data.container_id);
+            // });
 
-            Livewire.on('productSelected', (data) => {
-                $('#lc_id').val(data.lc_id);
-                $('#container_id').val(data.container_id);
-            });
+            // Livewire.on('productSelected', (data) => {
+            //     $('#lc_id').val(data.lc_id);
+            //     $('#container_id').val(data.container_id);
+            // });
         });
     </script>
 @endpush
