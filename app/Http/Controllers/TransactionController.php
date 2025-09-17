@@ -69,6 +69,20 @@ class TransactionController extends Controller
         $inAmount = $request->in_amount ?? 0;
         $outAmount = $request->out_amount ?? 0;
 
+        $bank = Bank::findOrFail($request->bank_id);
+        $openingBalance = $bank->opening_balance;
+
+        $totalIn = Transaction::where('bank_id', $bank->id)->sum('in_amount');
+        $totalOut = Transaction::where('bank_id', $bank->id)->sum('out_amount');
+        $currentBalance = $openingBalance + $totalIn - $totalOut;
+
+        if ($outAmount > 0) {
+            $newBalance = $currentBalance - $outAmount;
+            if ($newBalance < 0) {
+                return redirect()->back()->withInput()->withErrors(['out_amount' => 'Insufficient balance!']);
+            }
+        }
+
         $transaction = Transaction::create([
             'bank_id'    => $request->bank_id,
             'in_amount'  => $inAmount,
@@ -113,6 +127,24 @@ class TransactionController extends Controller
 
         $newInAmount = $request->in_amount ?? 0;
         $newOutAmount = $request->out_amount ?? 0;
+
+        $bank = Bank::findOrFail($request->bank_id);
+        $openingBalance = $bank->opening_balance;
+
+        $totalIn = Transaction::where('bank_id', $bank->id)
+            ->where('id', '!=', $transaction->id)
+            ->sum('in_amount');
+        $totalOut = Transaction::where('bank_id', $bank->id)
+            ->where('id', '!=', $transaction->id)
+            ->sum('out_amount');
+        $currentBalance = $openingBalance + $totalIn - $totalOut;
+
+        if ($newOutAmount > 0) {
+            $newBalance = $currentBalance - $newOutAmount;
+            if ($newBalance < 0) {
+                return redirect()->back()->withInput()->withErrors(['out_amount' => 'Insufficient balance!']);
+            }
+        }
 
         $transaction->update([
             'bank_id'    => $request->bank_id,
@@ -189,6 +221,66 @@ class TransactionController extends Controller
         }
 
         return view('transaction.bank_ledger', [
+            'transactions' => $transactions,
+            'banks' => $banks,
+            'selectedBank' => $selectedBank,
+            'openingBalance' => $openingBalance,
+            'request' => $request,
+            'ledger' => $ledger,
+        ]);
+    }
+
+    public function bankReport(Request $request)
+    {
+        $banks = Bank::all();
+        $query = Transaction::with('bank')->where('status', 'approved');
+
+        if ($request->bank_id) {
+            $query->where('bank_id', $request->bank_id);
+            $selectedBank = Bank::find($request->bank_id);
+        } else {
+            $selectedBank = null;
+            return view('transaction.bank_report', [
+                'transactions' => [],
+                'banks' => $banks,
+                'selectedBank' => $selectedBank,
+                'openingBalance' => 0,
+                'request' => $request
+            ]);
+        }
+
+        $openingBalance = $selectedBank->opening_balance ?? 0;
+
+        // Filter by date range
+        if ($request->date_range) {
+            $dates = explode(' to ', $request->date_range);
+            if (count($dates) === 2) {
+                $fromDate = $dates[0];
+                $toDate   = $dates[1];
+
+                $previousTransactions = Transaction::where('bank_id', $selectedBank->id)
+                    ->where('status', 'approved')
+                    ->where('date', '<', $fromDate)
+                    ->get();
+                    foreach ($previousTransactions as $pt) {
+                        $openingBalance += $pt->in_amount - $pt->out_amount;
+                    }
+                    
+                    $query->whereBetween('date', [$fromDate, $toDate]);
+                }
+        }
+            
+        $transactions = $query->orderBy('date')->get();
+
+        // Running ledger balance per bank
+        $ledger = [];
+        foreach ($transactions as $transaction) {
+            if (!isset($ledger[$transaction->bank_id])) {
+                $ledger[$transaction->bank_id] = $openingBalance;
+            }
+        }
+
+        return view('transaction.bank_report', [
             'transactions' => $transactions,
             'banks' => $banks,
             'selectedBank' => $selectedBank,

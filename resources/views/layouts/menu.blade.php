@@ -480,6 +480,12 @@
                 <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
+                href="{{ route('transaction.bank_report') }}">
+                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Report
+            </a>
+        </li>
     </ul>
 
 </li>

@@ -79,6 +79,7 @@ Route::group(['prefix' => 'transactions', 'as' => 'transaction.', 'controller' =
     Route::delete('/{transaction}/delete', 'destroy')->name('destroy');
     Route::post('/{transaction}/status', 'updateStatus')->name('updateStatus');
     Route::get('/bank-ledgers', 'ledger')->name('ledger');
+    Route::get('/bank-report', 'bankReport')->name('bank_report');
 });
 
 // Size

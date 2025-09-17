@@ -24,6 +24,13 @@
                             <table id="cashflow-table" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
                                     <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th colspan="2">Details of cash flow</th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
                                         <th>SL</th>
                                         <th>Container Name</th>
                                         <th>Profit</th>
@@ -181,6 +188,37 @@
             let wb = XLSX.utils.table_to_book(table, {
                 sheet: "Cash Flow"
             });
+
+            // Increase row height for all rows
+            let ws = wb.Sheets["Cash Flow"];
+            let rowCount = table.rows.length;
+            ws['!rows'] = [];
+            for (let i = 0; i < rowCount; i++) {
+                ws['!rows'].push({
+                    hpt: 28
+                }); 
+            }
+
+            ws['!cols'] = [{
+                    wch: 10
+                }, // SL
+                {
+                    wch: 25
+                }, // Container Name
+                {
+                    wch: 18
+                }, // Profit
+                {
+                    wch: 18
+                }, // Loss
+                {
+                    wch: 18
+                }, // Profit/Loss
+                {
+                    wch: 30
+                } // Supplier
+            ];
+
             XLSX.writeFile(wb, "cash-flow.xlsx");
         });
     </script>
