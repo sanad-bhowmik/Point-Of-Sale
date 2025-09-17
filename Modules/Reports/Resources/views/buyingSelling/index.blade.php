@@ -63,13 +63,13 @@
                             <table id="buyingSellingTable" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">Buying & Selling Report</th>
+                                        <th colspan="17" style="font-size: 20px;">Buying & Selling Report</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">LC :-{{ $container?->lc?->lc_name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">LC :-{{ $container?->lc?->lc_name }}</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">Container :-{{ $container?->name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}</th>
                                     </tr>
                                     <tr>
                                         <th>SL</th>
@@ -176,32 +176,79 @@
         });
 
         // Excel Download
+        // document.getElementById("downloadExcel").addEventListener("click", function() {
+        //     var table = document.getElementById("buyingSellingTable");
+        //     var wb = XLSX.utils.table_to_book(table, {
+        //         sheet: "Buying Selling"
+        //     });
+
+        //     // Increase row height for all rows
+        //     var ws = wb.Sheets["Buying Selling"];
+        //     var rowCount = table.rows.length;
+        //     ws['!rows'] = [];
+        //     for (let i = 0; i < rowCount; i++) {
+        //         ws['!rows'].push({
+        //             hpt: 28
+        //         }); // 28 points height
+        //     }
+
+        //     // Optional: Increase column width for all columns
+        //     var colCount = table.rows[0].cells.length;
+        //     ws['!cols'] = [];
+        //     for (let i = 0; i < colCount; i++) {
+        //         ws['!cols'].push({
+        //             wch: 20
+        //         }); // 20 characters width
+        //     }
+
+        //     XLSX.writeFile(wb, "buying-selling-report.xlsx");
+        // });
+
         document.getElementById("downloadExcel").addEventListener("click", function() {
-            var table = document.getElementById("buyingSellingTable");
-            var wb = XLSX.utils.table_to_book(table, {
-                sheet: "Buying Selling"
-            });
-
-            // Increase row height for all rows
-            var ws = wb.Sheets["Buying Selling"];
-            var rowCount = table.rows.length;
-            ws['!rows'] = [];
-            for (let i = 0; i < rowCount; i++) {
-                ws['!rows'].push({
-                    hpt: 28
-                }); // 28 points height
+            let table = document.getElementById("buyingSellingTable");
+            if (!table) {
+                alert("Table not found!");
+                return;
             }
 
-            // Optional: Increase column width for all columns
-            var colCount = table.rows[0].cells.length;
-            ws['!cols'] = [];
-            for (let i = 0; i < colCount; i++) {
-                ws['!cols'].push({
-                    wch: 20
-                }); // 20 characters width
+            // Excel styling
+            let style = `
+        <style>
+            * {
+                font-family: Roboto, Arial, sans-serif;
             }
+            table, th, td {
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            th, td {
+                padding: 10px;
+                height: 35px; /* row height */
+                vertical-align: middle;
+            }
+            th {
+                font-weight: bold;
+            }
+        </style>
+    `;
 
-            XLSX.writeFile(wb, "buying-selling-report.xlsx");
+            let tableHTML = style + table.outerHTML;
+
+            let blob = new Blob(
+                ['\ufeff' + tableHTML], {
+                    type: "application/vnd.ms-excel"
+                }
+            );
+
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "bank_report.xls";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 @endpush
