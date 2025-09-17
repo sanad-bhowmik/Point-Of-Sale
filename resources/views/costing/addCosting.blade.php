@@ -222,11 +222,11 @@
 
                             <div class="row">
                                 <div class="col-md-4 mb-3">
-                                    <label>Actual Value (%)</label>
+                                    <label>TT Actual Value</label>
                                     <input type="text" class="form-control" name="actual_value" placeholder="0.00">
                                 </div>
                                 <div class="col-md-4 mb-3">
-                                    <label>Actual Rate</label>
+                                    <label>TT Actual Rate</label>
                                     <input type="number" step="0.01" class="form-control" name="actual_rate" placeholder="0.00">
                                 </div>
                                 <div class="col-md-4 mb-3">

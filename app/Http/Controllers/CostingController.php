@@ -94,10 +94,10 @@ class CostingController extends Controller
         $validated = $request->validate([
             'costing_id'           => 'required|exists:costing,id',
             'lc_name'              => 'required|string|max:255',
-            'lc_date'              => 'required|date',
+            // 'lc_date'              => 'required|date',
             'lc_number'            => 'required|string|max:255',
-            'shipment_date'        => 'required|date',
-            'arriving_date'        => 'required|date',
+            // 'shipment_date'        => 'required|date',
+            // 'arriving_date'        => 'required|date',
             'dhl_number'           => 'nullable|string|max:255',
             'bl_number'            => 'nullable|string|max:255',
             'doc_status'           => 'nullable|string|max:255',
