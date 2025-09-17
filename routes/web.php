@@ -56,6 +56,7 @@ Route::group(['prefix' => 'costing', 'controller' => CostingController::class], 
     Route::post('/update', 'updateCosting')->name('costing.update');
     Route::delete('/{id}', 'destroy')->name('costing.destroy');
     Route::post('/lc/store', 'storeLc')->name('costing.lc.store');
+    Route::get('/{id}/lc', 'getLc')->name('getLc');
 });
 
 // Bank
@@ -99,3 +100,4 @@ Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => Con
     Route::delete('/delete/{id}', 'destroy')->name('delete');
     Route::put('/update/{id}', 'update')->name('update');
 });
+// routes/web.php

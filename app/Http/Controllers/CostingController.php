@@ -87,61 +87,78 @@ class CostingController extends Controller
         return redirect()->back()->with('success', 'Costing deleted successfully!');
     }
 
-   public function storeLc(Request $request)
-{
-    // Validate the request
-    try {
-        $validated = $request->validate([
-            'costing_id'           => 'required|exists:costing,id',
-            'lc_name'              => 'required|string|max:255',
-            // 'lc_date'              => 'required|date',
-            'lc_number'            => 'required|string|max:255',
-            // 'shipment_date'        => 'required|date',
-            // 'arriving_date'        => 'required|date',
-            'dhl_number'           => 'nullable|string|max:255',
-            'bl_number'            => 'nullable|string|max:255',
-            'doc_status'           => 'nullable|string|max:255',
-            'bill_of_entry_amount' => 'nullable|numeric',
-            'etd_date'             => 'nullable|date',
-            'eta_date'             => 'nullable|date',
-            'tt_amount'            => 'nullable|numeric',
-        ]);
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        // Return JSON if validation fails
+    public function storeLc(Request $request)
+    {
+        try {
+            $validated = $request->validate([
+                'costing_id'           => 'required|exists:costing,id',
+                'lc_name'              => 'required|string|max:255',
+                'lc_number'            => 'required|string|max:255',
+                'dhl_number'           => 'nullable|string|max:255',
+                'bl_number'            => 'nullable|string|max:255',
+                'doc_status'           => 'nullable|string|max:255',
+                'bill_of_entry_amount' => 'nullable|numeric',
+                'etd_date'             => 'nullable|date',
+                'eta_date'             => 'nullable|date',
+                'tt_amount'            => 'nullable|numeric',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'errors'  => $e->errors()
+            ], 422);
+        }
+
+        // Check if LC already exists for this costing_id
+        $lc = \App\Models\Lc::where('costing_id', $request->costing_id)->first();
+
+        if ($lc) {
+            // Update existing LC
+            $lc->update([
+                'lc_name'              => $request->lc_name,
+                'lc_date'              => $request->lc_date,
+                'lc_number'            => $request->lc_number,
+                'shipment_date'        => $request->shipment_date,
+                'arriving_date'        => $request->arriving_date,
+                'dhl_number'           => $request->dhl_number,
+                'bl_number'            => $request->bl_number,
+                'doc_status'           => $request->doc_status,
+                'bill_of_entry_amount' => $request->bill_of_entry_amount,
+                'etd_date'             => $request->etd_date,
+                'eta_date'             => $request->eta_date,
+            ]);
+        } else {
+            // Create new LC
+            $lc = \App\Models\Lc::create([
+                'costing_id'           => $request->costing_id,
+                'lc_name'              => $request->lc_name,
+                'lc_date'              => $request->lc_date,
+                'lc_number'            => $request->lc_number,
+                'shipment_date'        => $request->shipment_date,
+                'arriving_date'        => $request->arriving_date,
+                'dhl_number'           => $request->dhl_number,
+                'bl_number'            => $request->bl_number,
+                'doc_status'           => $request->doc_status,
+                'bill_of_entry_amount' => $request->bill_of_entry_amount,
+                'etd_date'             => $request->etd_date,
+                'eta_date'             => $request->eta_date,
+            ]);
+        }
+
+        // Update costing record
+        $costing = \App\Models\Costing::findOrFail($request->costing_id);
+        $costing->lc_id    = $lc->id;
+        $costing->tt_amount = $request->tt_amount ?? 0;
+        $costing->save();
+
         return response()->json([
-            'success' => false,
-            'errors' => $e->errors()
-        ], 422);
+            'success' => true,
+            'message' => $lc->wasRecentlyCreated
+                ? '✔ LC created successfully!'
+                : '✔ LC updated successfully!',
+            'lc_id'   => $lc->id
+        ]);
     }
-
-    // Create LC record
-    $lc = \App\Models\Lc::create([
-        'lc_name'              => $request->lc_name,
-        'lc_date'              => $request->lc_date,
-        'lc_number'            => $request->lc_number,
-        'shipment_date'        => $request->shipment_date,
-        'arriving_date'        => $request->arriving_date,
-        'dhl_number'           => $request->dhl_number,
-        'bl_number'            => $request->bl_number,
-        'doc_status'           => $request->doc_status,
-        'bill_of_entry_amount' => $request->bill_of_entry_amount,
-        'etd_date'             => $request->etd_date,
-        'eta_date'             => $request->eta_date,
-    ]);
-
-    // Update the costing record with LC ID and TT amount
-    $costing = \App\Models\Costing::findOrFail($request->costing_id);
-    $costing->lc_id = $lc->id;
-    $costing->tt_amount = $request->tt_amount ?? 0; // default to 0 if null
-    $costing->save();
-
-    // Return JSON response
-    return response()->json([
-        'success' => true,
-        'message' => '✔ LC saved successfully!',
-        'lc_id'   => $lc->id
-    ]);
-}
 
 
 
@@ -266,6 +283,14 @@ class CostingController extends Controller
             'success' => true,
             'message' => 'Costing updated successfully!',
             'costing' => $costing
+        ]);
+    }
+    public function getLc($id)
+    {
+        $lc = \App\Models\Lc::where('costing_id', $id)->first();
+        return response()->json([
+            'success' => $lc ? true : false,
+            'lc' => $lc
         ]);
     }
 }

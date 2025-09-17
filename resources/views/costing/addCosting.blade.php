@@ -77,7 +77,7 @@
                                             $.get('/get-sizes/' + productId, function(data) {
                                                 sizeDropdown.empty().append('<option value="">Select Size</option>');
                                                 $.each(data, function(index, size) {
-                                                    sizeDropdown.append('<option value="' + size.id + '">' + size.size + ' mm</option>');
+                                                    sizeDropdown.append('<option value="' + size.id + '">' + size.size + '</option>');
                                                 });
                                             });
                                         } else {
