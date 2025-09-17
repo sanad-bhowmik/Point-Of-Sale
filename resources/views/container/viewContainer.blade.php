@@ -17,10 +17,17 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0">Container List</h5>
-                        <a href="{{ route('container.view') }}" class="btn btn-primary btn-sm">
-                            + Add Container
-                        </a>
+                        <div>
+                            <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
+                                <i class="bi bi-file-earmark-excel-fill"></i> Excel
+                            </button>
+                            <a href="{{ route('container.view') }}" class="btn btn-primary">
+                                + Add Container
+                            </a>
+                        </div>
                     </div>
+
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -57,16 +64,16 @@
                                     <td>{{ $container->lc_exchange_rate ?? '-' }}</td>
                                     <td>
                                         {{ isset($container->lc_value, $container->lc_exchange_rate)
-                ? number_format($container->lc_value * $container->lc_exchange_rate, 2)
-                : '-' }}
+                                      ? number_format($container->lc_value * $container->lc_exchange_rate, 2)
+                                    : '-' }}
                                     </td>
                                     <td>{{ $container->tt_date ?? '-' }}</td>
                                     <td>{{ $container->tt_value ? number_format($container->tt_value, 2) : '-' }}</td>
                                     <td>{{ $container->tt_exchange_rate ?? '-' }}</td>
                                     <td>
                                         {{ isset($container->tt_value, $container->tt_exchange_rate)
-                ? number_format($container->tt_value * $container->tt_exchange_rate, 2)
-                : '-' }}
+                                    ? number_format($container->tt_value * $container->tt_exchange_rate, 2)
+                                   : '-' }}
                                     </td>
                                     <td>{{ $container->name }}</td>
                                     <td>{{ $container->number }}</td>
@@ -276,3 +283,41 @@
     @endif
 </script>
 @endsection
+<script>
+    function downloadTableAsExcel() {
+        let table = document.querySelector("table"); // your main table
+        let rows = table.querySelectorAll("tr");
+
+        let excelContent = "<table border='1' style='border-collapse:collapse;'>";
+
+        rows.forEach((row, rowIndex) => {
+            let cells = row.querySelectorAll("th, td");
+            excelContent += "<tr>";
+
+            cells.forEach((cell, colIndex) => {
+                // Skip the last column (Action column)
+                if (colIndex === cells.length - 1) return;
+
+                let tag = (rowIndex === 0) ? "th" : "td"; // first row = header
+                excelContent += `<${tag} style="padding:5px;">${cell.innerText.trim()}</${tag}>`;
+            });
+
+            excelContent += "</tr>";
+        });
+
+        excelContent += "</table>";
+
+        // Generate today's date in dd_mm_yyyy format
+        let today = new Date();
+        let day = String(today.getDate()).padStart(2, '0');
+        let month = String(today.getMonth() + 1).padStart(2, '0');
+        let year = today.getFullYear();
+        let filename = `container_${day}_${month}_${year}_.xls`;
+
+        // Trigger download
+        let downloadLink = document.createElement("a");
+        downloadLink.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(excelContent);
+        downloadLink.download = filename;
+        downloadLink.click();
+    }
+</script>
