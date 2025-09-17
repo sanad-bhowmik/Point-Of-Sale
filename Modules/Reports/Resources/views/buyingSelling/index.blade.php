@@ -19,6 +19,7 @@
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
+                                <label for="">Select Lc</label>
                                 <select class="form-control" id="lcSelect" name="lc_id">
                                     <option value="">-- Select LC --</option>
                                     @foreach ($lcList as $lc)
@@ -32,20 +33,25 @@
 
                             <!-- Container Select -->
                             <div class="col-md-4">
+                                <label for="">Select Container</label>
                                 <select class="form-control" id="containerSelect" name="container_id">
                                     <option value="">-- Select Container --</option>
-                                    @foreach ($containerList as $container)
+                                    {{-- @foreach ($containerList as $container)
                                         <option value="{{ $container->id }}"
                                             {{ request('container_id') == $container->id ? 'selected' : '' }}>
                                             {{ $container->name }} ({{ $container->number }})
                                         </option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                             </div>
 
                             <!-- Filter Button -->
-                            <div class="col-md-4">
-                                <button class="btn btn-primary w-100" type="submit">Filter</button>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100 mt-4" type="submit">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('buying-selling-report.index') }}"
+                                    class="btn btn-warning w-100 mt-4">Reset</a>
                             </div>
                         </div>
                     </form>
@@ -53,7 +59,6 @@
             </div>
 
             <!-- Table -->
-            @if (isset($buyingSelling))
                 <div class="card border-0 shadow-sm">
                     <div class="card-body position-relative">
                         <div class="mb-3 mt-3">
@@ -66,10 +71,12 @@
                                         <th colspan="17" style="font-size: 20px;">Buying & Selling Report</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">LC :-{{ $container?->lc?->lc_name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">LC
+                                            :-{{ $container?->load('lc')->lc?->lc_name }}</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}
+                                        </th>
                                     </tr>
                                     <tr>
                                         <th>SL</th>
@@ -79,7 +86,7 @@
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
                                         <th>Our Company</th>
-                                        <th>Buying Date/LC</th>
+                                        <th>LC Date</th>
                                         <th>TT Date</th>
                                         <th>Total Qty</th>
                                         <th>USD Price</th>
@@ -93,46 +100,60 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($buyingSelling as $index => $item)
+                                    @if (isset($container))
                                         <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->id }}</td>
+                                            <td>{{ $container?->lc?->lc_number }}</td>
                                             <td>{{ $container->number }}</td>
-                                            <td>{{ $item?->product?->product_name }}</td>
+                                            <td>{{ $container?->lc?->costing?->product?->product_name }}</td>
                                             @php
-                                                $size = \App\Models\Size::find($item->size)->first();
+                                                $size = \App\Models\Size::find(
+                                                    $container?->lc?->costing?->size,
+                                                )->first();
                                             @endphp
                                             <td>{{ $size->size }}</td>
-                                            <td>{{ $item?->supplier?->supplier_name }}</td>
+                                            <td>{{ $container?->lc?->costing?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
-                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG
+                                            <td>{{ round($container?->qty) }} Box <br>
+                                                {{ $container?->qty * $container?->lc?->costing?->box_type }} KG
                                             </td>
                                             <td>{{ $container?->lc_value + $container?->tt_value }}</td>
-                                            <td>{{ round(($item->total_tk + $container?->tt_value * $container?->tt_exchange_rate * $container->qty) / $item->qty) }}
+                                            <td>{{ round(($container?->lc_value * $container?->lc_exchange_rate * $container->qty + $container?->tt_value * $container?->tt_exchange_rate * $container->qty) / $container?->qty) }}
                                             </td>
                                             @php
                                                 $total =
-                                                    $item->total_tk +
+                                                    $container?->lc_value *
+                                                        $container?->lc_exchange_rate *
+                                                        $container->qty +
                                                     $container?->tt_value *
                                                         $container?->tt_exchange_rate *
                                                         $container->qty;
 
                                                 $dates = $sales->pluck('sale.date')->sort();
-                                                $firstDate = \Carbon\Carbon::parse($dates->first())->format('d-m-y');
-                                                $lastDate = \Carbon\Carbon::parse($dates->last())->format('d-m-y');
-                                                $dateRange = $firstDate . ' to ' . $lastDate;
+
+                                                $first = $dates->first();
+                                                $last = $dates->last();
+
+                                                $firstDate = $first
+                                                    ? \Carbon\Carbon::parse($first)->format('d-m-y')
+                                                    : '';
+                                                $lastDate = $last ? \Carbon\Carbon::parse($last)->format('d-m-y') : '';
+
+                                                $dateRange =
+                                                    $firstDate && $lastDate ? $firstDate . ' to ' . $lastDate : '';
                                             @endphp
-                                            <td>{{ round(($total + $totalAmount) / $item->qty) }}
+                                            <td>{{ round(($total + $totalAmount) / $container?->qty) }}
                                             </td>
-                                            <td>{{ round(($total + $totalCostAmount) / $item->qty) }}</td>
-                                            <td>{{ $item->box_type }}</td>
+                                            <td>{{ round(($total + $totalCostAmount) / $container?->qty) }}</td>
+                                            <td>{{ $container?->lc?->costing?->box_type }}</td>
                                             <td>{{ $dateRange }}</td>
-                                            <td>{{ round($totalSale / $item->qty) }}</td>
-                                            <td>{{ round(($totalSale - ($total + $totalCostAmount)) / $item->qty) }}</td>
+                                            <td>{{ round($totalSale / $container?->qty) }}</td>
+                                            <td>{{ isset($totalSale) ? round(($totalSale - ($total + $totalCostAmount)) / $container?->qty) : '' }}
+                                            </td>
                                         </tr>
-                                    @empty
+                                    @else
                                         <tr>
                                             <td colspan="20">No data found</td>
                                         </tr>
@@ -147,7 +168,6 @@
             </div> --}}
                     </div>
                 </div>
-            @endif
         </div>
     </div>
 @endsection
@@ -173,6 +193,25 @@
         $(document).ready(function() {
             $('#lcSelect').select2();
             $('#containerSelect').select2();
+
+            $('#lcSelect').on('change', function() {
+                var lcId = $(this).val();
+                var $containerSelect = $('#containerSelect');
+                $containerSelect.html('<option value="">Loading...</option>');
+                if (lcId) {
+                    $.get('/get-containers-by-lc/' + lcId, function(data) {
+                        var options = '<option value="">-- Select Container --</option>';
+                        data.forEach(function(container) {
+                            options +=
+                                `<option value="${container.id}">${container.name} (${container.number})</option>`;
+                        });
+                        $containerSelect.html(options).trigger('change');
+                    });
+                } else {
+                    $containerSelect.html('<option value="">-- Select Container --</option>').trigger(
+                        'change');
+                }
+            });
         });
 
         // Excel Download
