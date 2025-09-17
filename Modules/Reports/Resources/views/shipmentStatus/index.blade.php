@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Buying Selling Report')
+@section('title', 'Shipment Status Report')
 
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Buying Selling Report</li>
+        <li class="breadcrumb-item active">Shipment Status Report</li>
     </ol>
 @endsection
 
@@ -15,8 +15,7 @@
             <!-- Filter Form -->
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('shipment-status-report.filter') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form action="{{ route('shipment-status-report.index') }}" method="get">
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
@@ -57,18 +56,26 @@
             @if (isset($shipmentStatus))
                 <div class="card border-0 shadow-sm">
                     <div class="card-body position-relative">
-                        <div wire:loading.flex class="position-absolute justify-content-center align-items-center"
-                            style="top:0;right:0;left:0;bottom:0;background-color: rgba(255,255,255,0.5);z-index: 99;">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
+                        <div class="mb-3 mt-3">
+                            <button id="downloadExcel" class="btn btn-success">Download Excel</button>
                         </div>
 
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
+                            <table id="shipmentStatusTable" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">Shipment Status Report</th>
+                                    </tr>
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">LC :-{{ $container?->lc?->lc_name }}</th>
+                                    </tr>
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">Container :-{{ $container?->name }}</th>
+                                    </tr>
                                     <tr>
                                         <th>SL</th>
+                                        <th>Lc Number</th>
+                                        <th>Container Number</th>
                                         <th>Product Name</th>
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
@@ -76,8 +83,6 @@
                                         <th>Total Qty</th>
                                         <th>LC Date</th>
                                         <th>TT Date</th>
-                                        <th>Lc Number</th>
-                                        <th>Container Number</th>
                                         <th>Shipment Date</th>
                                         <th>Arrive date at CTG</th>
                                         <th>DHL</th>
@@ -88,7 +93,9 @@
                                 <tbody>
                                     @forelse($shipmentStatus as $index => $item)
                                         <tr>
-                                            <td>{{ $index+1 }}</td>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->number }}</td>
                                             <td>{{ $item?->product?->product_name }}</td>
                                             @php
                                                 $size = \App\Models\Size::find($item->size)->first();
@@ -96,11 +103,10 @@
                                             <td>{{ $size->size }}</td>
                                             <td>{{ $item?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
-                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
+                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG
+                                            </td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
-                                            <td>{{ $container->number }}</td>
                                             <td>{{ $container->shipping_date }}</td>
                                             <td>{{ $container->arriving_date }}</td>
                                             <td>{{ $container->dhl }}</td>
@@ -143,11 +149,40 @@
 
 @push('page_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#lcSelect').select2();
             $('#containerSelect').select2();
+        });
+
+        // Excel Download
+        document.getElementById("downloadExcel").addEventListener("click", function() {
+            var table = document.getElementById("shipmentStatusTable");
+            var wb = XLSX.utils.table_to_book(table, {
+                sheet: "Shipment Status"
+            });
+
+            // Increase row height for all rows
+            var ws = wb.Sheets["Shipment Status"];
+            var rowCount = table.rows.length;
+            ws['!rows'] = [];
+            for (let i = 0; i < rowCount; i++) {
+                ws['!rows'].push({
+                    hpt: 28
+                }); // 28 points height
+            }
+
+            // Optional: Increase column width for all columns
+            var colCount = table.rows[0].cells.length;
+            ws['!cols'] = [];
+            for (let i = 0; i < colCount; i++) {
+                ws['!cols'].push({
+                    wch: 20
+                }); // 20 characters width
+            }
+
+            XLSX.writeFile(wb, "shipment-status-report.xlsx");
         });
     </script>
 @endpush

@@ -15,8 +15,7 @@
             <!-- Filter Form -->
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route('buying-selling-report.filter') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
+                    <form action="{{ route('buying-selling-report.index') }}" method="get">
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
@@ -57,24 +56,29 @@
             @if (isset($buyingSelling))
                 <div class="card border-0 shadow-sm">
                     <div class="card-body position-relative">
-                        <div wire:loading.flex class="position-absolute justify-content-center align-items-center"
-                            style="top:0;right:0;left:0;bottom:0;background-color: rgba(255,255,255,0.5);z-index: 99;">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="sr-only">Loading...</span>
-                            </div>
+                        <div class="mb-3 mt-3">
+                            <button id="downloadExcel" class="btn btn-success">Download Excel</button>
                         </div>
-
                         <div class="table-responsive">
-                            <table class="table table-bordered table-striped">
+                            <table id="buyingSellingTable" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">Buying & Selling Report</th>
+                                    </tr>
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">LC :-{{ $container?->lc?->lc_name }}</th>
+                                    </tr>
+                                    <tr style="background-color: #fff; color: #000;">
+                                        <th colspan="18">Container :-{{ $container?->name }}</th>
+                                    </tr>
                                     <tr>
                                         <th>SL</th>
+                                        <th>Lc Number</th>
+                                        <th>Container Number</th>
                                         <th>Product Name</th>
                                         <th>Product Description Size</th>
                                         <th>Supplier Name</th>
                                         <th>Our Company</th>
-                                        <th>Lc Number</th>
-                                        <th>Container Number</th>
                                         <th>Buying Date/LC</th>
                                         <th>TT Date</th>
                                         <th>Total Qty</th>
@@ -91,7 +95,9 @@
                                 <tbody>
                                     @forelse($buyingSelling as $index => $item)
                                         <tr>
-                                            <td>{{ $index+1 }}</td>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->number }}</td>
                                             <td>{{ $item?->product?->product_name }}</td>
                                             @php
                                                 $size = \App\Models\Size::find($item->size)->first();
@@ -99,16 +105,19 @@
                                             <td>{{ $size->size }}</td>
                                             <td>{{ $item?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
-                                            <td>{{ $container->number }}</td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
-                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG</td>
+                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG
+                                            </td>
                                             <td>{{ $container?->lc_value + $container?->tt_value }}</td>
                                             <td>{{ round(($item->total_tk + $container?->tt_value * $container?->tt_exchange_rate * $container->qty) / $item->qty) }}
                                             </td>
                                             @php
-                                                $total = $item->total_tk + $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+                                                $total =
+                                                    $item->total_tk +
+                                                    $container?->tt_value *
+                                                        $container?->tt_exchange_rate *
+                                                        $container->qty;
 
                                                 $dates = $sales->pluck('sale.date')->sort();
                                                 $firstDate = \Carbon\Carbon::parse($dates->first())->format('d-m-y');
@@ -117,11 +126,11 @@
                                             @endphp
                                             <td>{{ round(($total + $totalAmount) / $item->qty) }}
                                             </td>
-                                            <td>{{ round(($total + $totalCostAmoun) / $item->qty) }}</td>
+                                            <td>{{ round(($total + $totalCostAmount) / $item->qty) }}</td>
                                             <td>{{ $item->box_type }}</td>
                                             <td>{{ $dateRange }}</td>
                                             <td>{{ round($totalSale / $item->qty) }}</td>
-                                            <td>{{ round(($totalSale - ($total + $totalCostAmoun)) / $item->qty) }}</td>
+                                            <td>{{ round(($totalSale - ($total + $totalCostAmount)) / $item->qty) }}</td>
                                         </tr>
                                     @empty
                                         <tr>
@@ -159,11 +168,40 @@
 
 @push('page_scripts')
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
         $(document).ready(function() {
             $('#lcSelect').select2();
             $('#containerSelect').select2();
+        });
+
+        // Excel Download
+        document.getElementById("downloadExcel").addEventListener("click", function() {
+            var table = document.getElementById("buyingSellingTable");
+            var wb = XLSX.utils.table_to_book(table, {
+                sheet: "Buying Selling"
+            });
+
+            // Increase row height for all rows
+            var ws = wb.Sheets["Buying Selling"];
+            var rowCount = table.rows.length;
+            ws['!rows'] = [];
+            for (let i = 0; i < rowCount; i++) {
+                ws['!rows'].push({
+                    hpt: 28
+                }); // 28 points height
+            }
+
+            // Optional: Increase column width for all columns
+            var colCount = table.rows[0].cells.length;
+            ws['!cols'] = [];
+            for (let i = 0; i < colCount; i++) {
+                ws['!cols'].push({
+                    wch: 20
+                }); // 20 characters width
+            }
+
+            XLSX.writeFile(wb, "buying-selling-report.xlsx");
         });
     </script>
 @endpush

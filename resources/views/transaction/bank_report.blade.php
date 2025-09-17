@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Bank Ledger')
+@section('title', 'Bank Report')
 
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Bank Ledger</li>
+        <li class="breadcrumb-item active">Bank Report</li>
     </ol>
 @endsection
 
@@ -15,11 +15,11 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded-3">
                     <div class="card-body">
-                        <h5 class="mb-3 border-bottom pb-2">Bank Ledger</h5>
+                        <h5 class="mb-3 border-bottom pb-2">Bank Report</h5>
 
                         <div class="row">
                             <div class="col-md-9">
-                                <form action="{{ route('transaction.ledger') }}" method="GET"
+                                <form action="{{ route('transaction.bank_report') }}" method="GET"
                                     class="row mb-3 align-items-end" enctype="multipart/form-data">
                                     <div class="col-md-3 mb-3">
                                         <label for="bank_id" class="form-label">Select Bank</label>
@@ -83,14 +83,6 @@
                                         <td style="border: none;"></td>
                                     </tr>
                                     <tr>
-                                        <td>#</td>
-                                        <td>Date</td>
-                                        <td>Discription</td>
-                                        <td>In Amount</td>
-                                        <td>Out Amount</td>
-                                        <td>Balance</td>
-                                    </tr>
-                                    <tr>
                                         <td>
 
                                         </td>
@@ -105,6 +97,14 @@
                                         </td>
                                         <td colspan=""><strong>{{ number_format($openingBalance, 2) }}</strong></td>
                                     </tr>
+                                    <tr>
+                                        <td>#</td>
+                                        <td>Date</td>
+                                        <td>Discription</td>
+                                        <td>Debit</td>
+                                        <td>Credit</td>
+                                        <td>Current Balance</td>
+                                    </tr>
                                     @forelse($transactions as $index => $transaction)
                                         @php
                                             $ledger[$transaction->bank_id] +=
@@ -114,8 +114,8 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ \Carbon\Carbon::parse($transaction->date)->format('d-m-Y') }}</td>
                                             <td>{{ $transaction->purpose }}</td>
-                                            <td>{{ number_format($transaction->in_amount, 2) }}</td>
                                             <td>{{ number_format($transaction->out_amount, 2) }}</td>
+                                            <td>{{ number_format($transaction->in_amount, 2) }}</td>
                                             <td>{{ number_format($ledger[$transaction->bank_id], 2) }}</td>
                                         </tr>
                                     @empty

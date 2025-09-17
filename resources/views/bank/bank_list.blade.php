@@ -22,6 +22,17 @@
                             <table class="table table-bordered table-hover">
                                 <thead>
                                     <tr>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                        <td colspan="3" class="text-center" style="font-size: 20px;">Taifa & Tasbeeh</td>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                        <td style="border: none;"></td>
+                                    </tr>
+                                    <tr>
                                         <th>#</th>
                                         <th>Institution</th>
                                         <th>Account No</th>
@@ -148,6 +159,14 @@
                 });
             });
             ws['!cols'] = colWidths;
+
+            // Increase row height for all rows
+            ws['!rows'] = [];
+            for (let i = 0; i < clone.rows.length; i++) {
+                ws['!rows'].push({
+                    hpt: 28
+                }); // 28 points height
+            }
 
             XLSX.utils.book_append_sheet(wb, ws, 'Banks');
             XLSX.writeFile(wb, 'banks.xlsx');

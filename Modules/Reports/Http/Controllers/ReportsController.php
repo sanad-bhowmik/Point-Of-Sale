@@ -14,12 +14,53 @@ use Modules\Sale\Entities\SaleDetails;
 class ReportsController extends Controller
 {
 
-    public function buyingSelling()
+    public function buyingSelling(Request $request)
     {
         abort_if(Gate::denies('access_reports'), 403);
 
         $containerList = Container::whereIn('status', [1, 2])->get();
         $lcList = Lc::all();
+        $query = Costing::with(['lc', 'supplier', 'product']);
+        $container = Container::where('lc_id', $request->lc_id)->first();
+
+        if ($request->lc_id == $container?->lc_id) {
+            $query->where('lc_id', $request->lc_id);
+            $buyingSelling = $query->get();
+
+            $totalAmount = Expense::where('lc_id', $request->lc_id)
+                ->where('container_id', $request->container_id)
+                ->whereHas('category', function ($q) {
+                    $q->where('category_name', '!=', 'Dhaka Expense');
+                })
+                ->sum('amount');
+
+            $totalCostAmount = Expense::where('lc_id', $request->lc_id)
+                ->where('container_id', $request->container_id)
+                ->sum('amount');
+
+            $sales = SaleDetails::whereHas('sale', function ($q) use ($request) {
+                $q->where('lc_id', $request->lc_id)
+                    ->where('container_id', $request->container_id);
+            })
+                ->with('sale')
+                ->get();
+
+            $totalSale = SaleDetails::whereHas('sale', function ($q) use ($request) {
+                $q->where('lc_id', $request->lc_id)
+                    ->where('container_id', $request->container_id);
+            })
+                ->sum('sub_total');
+
+            return view('reports::buyingSelling.index', [
+                'containerList' => $containerList,
+                'lcList' => $lcList,
+                'totalAmount' => $totalAmount,
+                'totalCostAmount' => $totalCostAmount,
+                'buyingSelling' => $buyingSelling,
+                'totalSale' => $totalSale,
+                'sales' => $sales,
+            ]);
+        }
 
         return view('reports::buyingSelling.index', [
             'containerList' => $containerList,
@@ -27,65 +68,54 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function buyingSellingFilter(Request $request)
-    {
-        $containerList = Container::whereIn('status', [1, 2])->get();
-        $lcList = Lc::all();
-        $query = Costing::with(['lc', 'supplier', 'product']);
-        $container = Container::where('lc_id', $request->lc_id)->first();
-
-        if ($request->lc_id == $container->lc_id) {
-            $query->where('lc_id', $request->lc_id);
-            $buyingSelling = $query->get();
-
-             $totalAmount = Expense::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->whereHas('category', function ($q) {
-                                        $q->where('category_name', '!=', 'Dhaka Expense');
-                                    })
-                                    ->sum('amount');
-
-             $totalCostAmount = Expense::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->sum('amount');
-            
-            $sales = SaleDetails::whereHas('sale', function($q) use ($request) {
-                                        $q->where('lc_id', $request->lc_id)
-                                        ->where('container_id', $request->container_id);
-                                    })
-                                    ->with('sale')
-                                    ->get();
-
-            $totalSale = SaleDetails::whereHas('sale', function($q) use ($request) {
-                                        $q->where('lc_id', $request->lc_id)
-                                        ->where('container_id', $request->container_id);
-                                    })
-                                    ->sum('sub_total');
-                                    
-            return view('reports::buyingSelling.index', [
-                            'containerList' => $containerList,
-                            'lcList' => $lcList,
-                            'totalAmount' => $totalAmount,
-                            'totalCostAmoun' => $totalCostAmount,
-                            'buyingSelling' => $buyingSelling,
-                            'totalSale' => $totalSale,
-                            'sales' => $sales,
-                        ]);
-        }
-        else{
-            return view('reports::buyingSelling.index', [
-                'containerList' => $containerList,
-                'lcList' => $lcList,
-            ]);
-        }
-    }
-
-    public function shipmentStatus()
+    public function shipmentStatus(Request $request)
     {
         abort_if(Gate::denies('access_reports'), 403);
 
         $containerList = Container::whereIn('status', [1, 2])->get();
         $lcList = Lc::all();
+
+        $query = Costing::with(['lc', 'supplier', 'product']);
+        $container = Container::where('lc_id', $request->lc_id)->first();
+
+        if ($request->lc_id == $container?->lc_id) {
+            $query->where('lc_id', $request->lc_id);
+            $shipmentStatus = $query->get();
+
+            $totalAmount = Expense::where('lc_id', $request->lc_id)
+                ->where('container_id', $request->container_id)
+                ->whereHas('category', function ($q) {
+                    $q->where('category_name', '!=', 'Dhaka Expense');
+                })
+                ->sum('amount');
+
+            $totalCostAmount = Expense::where('lc_id', $request->lc_id)
+                ->where('container_id', $request->container_id)
+                ->sum('amount');
+
+            $sales = SaleDetails::whereHas('sale', function ($q) use ($request) {
+                $q->where('lc_id', $request->lc_id)
+                    ->where('container_id', $request->container_id);
+            })
+                ->with('sale')
+                ->get();
+
+            $totalSale = SaleDetails::whereHas('sale', function ($q) use ($request) {
+                $q->where('lc_id', $request->lc_id)
+                    ->where('container_id', $request->container_id);
+            })
+                ->sum('sub_total');
+
+            return view('reports::shipmentStatus.index', [
+                'containerList' => $containerList,
+                'lcList' => $lcList,
+                'totalAmount' => $totalAmount,
+                'totalCostAmount' => $totalCostAmount,
+                'shipmentStatus' => $shipmentStatus,
+                'totalSale' => $totalSale,
+                'sales' => $sales,
+            ]);
+        }
 
         return view('reports::shipmentStatus.index', [
             'containerList' => $containerList,
@@ -93,57 +123,14 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function shipmentStatusFilter(Request $request)
+    public function cashFlow()
     {
-        $containerList = Container::whereIn('status', [1, 2])->get();
-        $lcList = Lc::all();
-        $query = Costing::with(['lc', 'supplier', 'product']);
-        $container = Container::where('lc_id', $request->lc_id)->first();
+        abort_if(Gate::denies('access_reports'), 403);
+        $containers = Container::with(['lc.costing.supplier'])->get();
 
-        if ($request->lc_id == $container->lc_id) {
-            $query->where('lc_id', $request->lc_id);
-            $shipmentStatus = $query->get();
-
-             $totalAmount = Expense::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->whereHas('category', function ($q) {
-                                        $q->where('category_name', '!=', 'Dhaka Expense');
-                                    })
-                                    ->sum('amount');
-
-             $totalCostAmount = Expense::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->sum('amount');
-            
-            $sales = SaleDetails::whereHas('sale', function($q) use ($request) {
-                                        $q->where('lc_id', $request->lc_id)
-                                        ->where('container_id', $request->container_id);
-                                    })
-                                    ->with('sale')
-                                    ->get();
-
-            $totalSale = SaleDetails::whereHas('sale', function($q) use ($request) {
-                                        $q->where('lc_id', $request->lc_id)
-                                        ->where('container_id', $request->container_id);
-                                    })
-                                    ->sum('sub_total');
-                                    
-            return view('reports::shipmentStatus.index', [
-                            'containerList' => $containerList,
-                            'lcList' => $lcList,
-                            'totalAmount' => $totalAmount,
-                            'totalCostAmoun' => $totalCostAmount,
-                            'shipmentStatus' => $shipmentStatus,
-                            'totalSale' => $totalSale,
-                            'sales' => $sales,
-                        ]);
-        }
-        else{
-            return view('reports::shipmentStatus.index', [
-                'containerList' => $containerList,
-                'lcList' => $lcList,
-            ]);
-        }
+        return view('reports::cash-flow.index', [
+            'containers'  => $containers
+        ]);
     }
 
     public function profitLossReport()
