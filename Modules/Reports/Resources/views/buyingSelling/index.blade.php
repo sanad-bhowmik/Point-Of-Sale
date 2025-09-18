@@ -23,8 +23,7 @@
                                 <select class="form-control" id="lcSelect" name="lc_id">
                                     <option value="">-- Select LC --</option>
                                     @foreach ($lcList as $lc)
-                                        <option value="{{ $lc->id }}"
-                                            {{ request('lc_id') == $lc->id ? 'selected' : '' }}>
+                                        <option value="{{ $lc->id }}">
                                             {{ $lc->lc_name }} ({{ $lc->lc_number }})
                                         </option>
                                     @endforeach
@@ -150,7 +149,7 @@
                                             <td>{{ $container?->lc?->costing?->box_type }}</td>
                                             <td>{{ $dateRange }}</td>
                                             <td>{{ round($totalSale / $container?->qty) }}</td>
-                                            <td>{{ isset($totalSale) ? round(($totalSale - ($total + $totalCostAmount)) / $container?->qty) : '' }}
+                                            <td>{{ $totalSale > 0 ? round(($totalSale - ($total + $totalCostAmount)) / $container?->qty) : '' }}
                                             </td>
                                         </tr>
                                     @else
