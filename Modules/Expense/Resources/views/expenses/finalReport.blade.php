@@ -24,11 +24,10 @@
                             {{-- LC Dropdown --}}
                             <div class="col-md-4">
                                 <label for="lc_id" class="form-label">Select LC</label>
-                                <select name="lc_id" id="lc_id" class="form-control select2">
+                                <select name="lc_id" id="lcSelect" class="form-control select2">
                                     <option value="">-- All LC --</option>
                                     @foreach ($lcs as $lc)
-                                        <option value="{{ $lc->id }}"
-                                            {{ old('lc_id', $find_lc?->id) == $lc->id ? 'selected' : '' }}>
+                                        <option value="{{ $lc->id }}">
                                             {{ $lc->lc_name }}--({{ $lc->lc_number }})
                                         </option>
                                     @endforeach
@@ -38,14 +37,14 @@
                             {{-- Container Dropdown --}}
                             <div class="col-md-4">
                                 <label for="container_id" class="form-label">Select Container</label>
-                                <select name="container_id" id="container_id" class="form-control select2">
+                                <select name="container_id" id="containerSelect" class="form-control select2">
                                     <option value="">-- All Container --</option>
-                                    @foreach ($containers as $container)
+                                    {{-- @foreach ($containers as $container)
                                         <option value="{{ $container->id }}"
                                             {{ old('container_id', $find_container?->id) == $container->id ? 'selected' : '' }}>
                                             {{ $container->name }}--({{ $container->number }})
                                         </option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                             </div>
 
@@ -60,7 +59,7 @@
                 </div>
 
                 {{-- Report Content --}}
-                @if (isset($find_lc) && isset($find_container) && isset($costing))
+                @if (isset($find_container))
                     {{-- Report Section --}}
                     <div class="row">
                         <div class="col-md-3"></div>
@@ -79,7 +78,7 @@
                                                 <td class="td-font">FINAL REPORT</td>
                                             </tr>
                                             <tr>
-                                                <td class="" id="lc_name">LC NO : {{ $find_lc->lc_number }}</td>
+                                                <td class="" id="lc_name">LC NO : {{ $find_container?->lc?->lc_number }}</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -92,7 +91,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="text-center mb-4">Price of Grapes</h4>
+                                    <h4 class="text-center mb-4">Price of {{ $find_container?->lc?->costing?->product?->product_name }}</h4>
 
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped">
@@ -107,15 +106,15 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                @if ($costing)
+                                                @if (isset($find_container))
                                                     <tr>
-                                                        <td>{{ $costing->product->product_name ? 'Price of ' . $costing->product->product_name . ' (LC)' : 'N/A' }}
+                                                        <td>{{ $find_container?->lc?->costing?->product?->product_name ? 'Price of ' . $find_container?->lc?->costing?->product?->product_name . ' (LC)' : 'N/A' }}
                                                         </td>
-                                                        <td>{{ $costing->base_value }}</td>
-                                                        <td>{{ $costing->exchange_rate }}</td>
-                                                        <td>{{ $costing->base_value * $costing->exchange_rate }}</td>
-                                                        <td>{{ round($costing->qty) }}</td>
-                                                        <td>{{ $costing->total_tk }}</td>
+                                                        <td>{{ $find_container?->lc_value }}</td>
+                                                        <td>{{ $find_container?->lc_exchange_rate }}</td>
+                                                        <td>{{ number_format($find_container?->lc_value * $find_container?->lc_exchange_rate, 2) }}</td>
+                                                        <td>{{ $find_container->qty }}</td>
+                                                        <td>{{ number_format(($find_container?->lc_value * $find_container?->lc_exchange_rate) * $find_container->qty, 2) }}</td>
                                                     </tr>
                                                 @else
                                                     <tr>
@@ -123,16 +122,16 @@
                                                             found for this LC</td>
                                                     </tr>
                                                 @endif
-                                                @if ($container)
+                                                @if ($find_container)
                                                     <tr>
-                                                        <td>{{ $container->lc?->costing?->product?->product_name ? 'Price of ' . $costing->product->product_name . ' (TT)' : 'N/A' }}
+                                                        <td>{{ $find_container?->lc?->costing?->product?->product_name ? 'Price of ' . $find_container?->lc?->costing?->product?->product_name . ' (TT)' : 'N/A' }}
                                                         </td>
-                                                        <td>{{ $container->tt_value }}</td>
-                                                        <td>{{ number_format($container->tt_exchange_rate, 2) }}</td>
-                                                        <td>{{ number_format($container->tt_value * $container->tt_exchange_rate, 4) }}
+                                                        <td>{{ $find_container->tt_value }}</td>
+                                                        <td>{{ $find_container->tt_exchange_rate }}</td>
+                                                        <td>{{ number_format($find_container->tt_value * $find_container->tt_exchange_rate, 4) }}
                                                         </td>
-                                                        <td>{{ $container->qty }}</td>
-                                                        <td>{{ round($container->tt_value * $container->tt_exchange_rate * $container->qty, 2) }}
+                                                        <td>{{ $find_container->qty }}</td>
+                                                        <td>{{ number_format($find_container->tt_value * $find_container->tt_exchange_rate * $find_container->qty, 2) }}
                                                         </td>
                                                     </tr>
                                                 @else
@@ -142,12 +141,18 @@
                                                     </tr>
                                                 @endif
                                                 <tr>
-                                                    <td>Price of Grapes (Total)</td>
-                                                    <td>{{ number_format($costing->base_value + $container->tt_value, 1) }}
-                                                    </td>
-                                                    <td colspan="3">Total price of Grapess</td>
+                                                    <td>Price of {{ $find_container?->lc?->costing?->product?->product_name }} (Total)</td>
+                                                    <td>{{ number_format($find_container->lc_value + $find_container->tt_value, 2) }}</td>
+                                                    <td colspan="3">Total price of {{ $find_container?->lc?->costing?->product?->product_name }}</td>
+                                                    @php
+                                                        $lc_total = $find_container?->lc_value * $find_container?->lc_exchange_rate * $find_container->qty;
+
+                                                        $tt_total = $find_container->tt_value * $find_container->tt_exchange_rate * $find_container->qty;
+
+                                                        $total = $lc_total + $tt_total;
+                                                    @endphp
                                                     <td>
-                                                        {{ $costing && $container ? round($costing->total_tk + $container->tt_value * $container->tt_exchange_rate * $container->qty, 2) : '0' }}
+                                                        {{ $total }}
                                                     </td>
 
                                                 </tr>
@@ -210,7 +215,7 @@
                         <div class="col-md-6">
                             <div class="card">
                                 <div class="card-header" style="background-color: #e3ff4a">
-                                    <h4 class="text-center">Price of {{ $costing?->product?->product_name }}</h4>
+                                    <h4 class="text-center">Price of {{ $find_container?->lc?->costing?->product?->product_name }}</h4>
                                 </div>
                                 <div class="card-body">
                                     <table class="table table-bordered table-striped text-center">
@@ -242,27 +247,17 @@
                                                 </td>
                                             </tr>
                                             <tr style="background-color: #fffeb7;">
-                                                <td>Total price of Grapes</td>
+                                                <td>Total price of {{ $find_container?->lc?->costing?->product?->product_name }}</td>
                                                 <td class="text-center">
-                                                    {{ $costing && $container ? round($costing->total_tk + $container->tt_value * $container->tt_exchange_rate * $container->qty, 2) : '0' }}
+                                                    {{ $find_container ? round($total, 2) : '0' }}
                                                 </td>
                                             </tr>
                                             <tr style="background-color: #b7ffcd;">
-                                                <td>Value of Grapes after costs</td>
+                                                <td>Value of {{ $find_container?->lc?->costing?->product?->product_name }} after costs</td>
                                                 <td class="text-center">
                                                     @php
                                                         $totalExpenses = $expenseGroup->flatten()->sum('amount');
-                                                        $priceOfGrapes =
-                                                            $costing && $container
-                                                                ? round(
-                                                                    $costing->total_tk +
-                                                                        $container->tt_value *
-                                                                            $container->tt_exchange_rate *
-                                                                            $container->qty,
-                                                                    2,
-                                                                )
-                                                                : 0;
-                                                        $valueAfterCosts = $priceOfGrapes + $totalExpenses;
+                                                        $valueAfterCosts = $total + $totalExpenses;
                                                     @endphp
                                                     {{ $valueAfterCosts }}
                                                 </td>
@@ -281,7 +276,7 @@
                             <div class="card">
                                 <div class="card-header" style="background-color: #e3ff4a">
                                     <h4 class="text-center">
-                                        Final Calculation of {{ $costing?->product?->product_name }}
+                                        Final Calculation of {{ $find_container?->lc?->costing?->product?->product_name }}
                                     </h4>
                                 </div>
                                 <div class="card-body">
@@ -319,7 +314,7 @@
                             <div class="card">
                                 <div class="card-header" style="background-color: #e3ff4a">
                                     <h4 class="text-center">
-                                        Profit Margin Ratio of {{ $costing?->product?->product_name }}
+                                        Profit Margin Ratio of {{ $find_container?->lc?->costing?->product?->product_name }}
                                     </h4>
                                 </div>
                                 <div class="card-body">
@@ -334,8 +329,8 @@
                                             <tr>
                                                 <td>Profit Margin</td>
                                                 <td>
-                                                    @if ($totalSale > 0)
-                                                        {{ number_format(( ($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2)  }}
+                                                    @if ($totalSale > 0 && $valueAfterCosts)
+                                                        {{ number_format((($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2) }}
                                                         %
                                                     @else
                                                         0 %
@@ -380,6 +375,25 @@
             $('.select2').select2({
                 width: '100%',
                 placeholder: 'Select an option'
+            });
+
+            $('#lcSelect').on('change', function() {
+                var lcId = $(this).val();
+                var $containerSelect = $('#containerSelect');
+                $containerSelect.html('<option value="">Loading...</option>');
+                if (lcId) {
+                    $.get('/get-containers-by-lc/' + lcId, function(data) {
+                        var options = '<option value="">-- Select Container --</option>';
+                        data.forEach(function(container) {
+                            options +=
+                                `<option value="${container.id}">${container.name} (${container.number})</option>`;
+                        });
+                        $containerSelect.html(options).trigger('change');
+                    });
+                } else {
+                    $containerSelect.html('<option value="">-- Select Container --</option>').trigger(
+                        'change');
+                }
             });
         });
     </script>
