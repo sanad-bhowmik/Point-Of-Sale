@@ -67,14 +67,14 @@
                             <table id="buyingSellingTable" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">Buying & Selling Report</th>
+                                        <th colspan="18" style="font-size: 20px;">Buying & Selling Report</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">LC
+                                        <th colspan="18" style="font-size: 20px;">LC
                                             :-{{ $container?->load('lc')->lc?->lc_name }}</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}
+                                        <th colspan="18" style="font-size: 20px;">Container :-{{ $container?->name }}
                                         </th>
                                     </tr>
                                     <tr>
@@ -131,7 +131,8 @@
                                                         $container->qty;
 
                                                 $dates = $sales->pluck('sale.date')->sort();
-
+                                                $sale_qty = $sales->sum('quantity');
+                                               
                                                 $first = $dates->first();
                                                 $last = $dates->last();
 
@@ -148,7 +149,11 @@
                                             <td>{{ round(($total + $totalCostAmount) / $container?->qty) }}</td>
                                             <td>{{ $container?->lc?->costing?->box_type }}</td>
                                             <td>{{ $dateRange }}</td>
-                                            <td>{{ round($totalSale / $container?->qty) }}</td>
+                                            <td>
+                                                Qty : {{ $sale_qty }}
+                                                <br>
+                                                {{ $sale_qty ? number_format($totalSale / $sale_qty, 2) : '' }}
+                                            </td>
                                             <td>{{ $totalSale > 0 ? round(($totalSale - ($total + $totalCostAmount)) / $container?->qty) : '' }}
                                             </td>
                                         </tr>

@@ -67,14 +67,9 @@ class ReportsController extends Controller
 
         $containerList = Container::whereIn('status', [1, 2])->get();
         $lcList = Lc::all();
-
-        $query = Costing::with(['lc', 'supplier', 'product']);
-        $container = Container::where('lc_id', $request->lc_id)->first();
+        $container = Container::with(['lc.costing.product.sizes', 'lc.costing.supplier'])->where('id', $request->container_id)->first();
 
         if ($request->lc_id == $container?->lc_id) {
-            $query->where('lc_id', $request->lc_id);
-            $shipmentStatus = $query->get();
-
             $totalAmount = Expense::where('lc_id', $request->lc_id)
                 ->where('container_id', $request->container_id)
                 ->whereHas('category', function ($q) {
@@ -86,33 +81,30 @@ class ReportsController extends Controller
                 ->where('container_id', $request->container_id)
                 ->sum('amount');
 
-            $sales = SaleDetails::whereHas('sale', function ($q) use ($request) {
-                $q->where('lc_id', $request->lc_id)
-                    ->where('container_id', $request->container_id);
-            })
-                ->with('sale')
-                ->get();
+            $sales = SaleDetails::where('lc_id', $request->lc_id)
+                                ->where('container_id', $request->container_id)
+                                ->with('sale')
+                                ->get();
 
-            $totalSale = SaleDetails::whereHas('sale', function ($q) use ($request) {
-                $q->where('lc_id', $request->lc_id)
-                    ->where('container_id', $request->container_id);
-            })
-                ->sum('sub_total');
+            $totalSale = SaleDetails::where('lc_id', $request->lc_id)
+                                    ->where('container_id', $request->container_id)
+                                    ->sum('sub_total');
 
             return view('reports::shipmentStatus.index', [
                 'containerList' => $containerList,
                 'lcList' => $lcList,
                 'totalAmount' => $totalAmount,
                 'totalCostAmount' => $totalCostAmount,
-                'shipmentStatus' => $shipmentStatus,
                 'totalSale' => $totalSale,
                 'sales' => $sales,
+                'container' => $container?? null,
             ]);
         }
 
         return view('reports::shipmentStatus.index', [
             'containerList' => $containerList,
             'lcList' => $lcList,
+            'container' => $container,
         ]);
     }
 

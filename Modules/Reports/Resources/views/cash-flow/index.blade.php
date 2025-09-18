@@ -51,29 +51,17 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $container->name ?? '-' }}</td>
                                             @php
-                                                $totalCostAmount = \Modules\Expense\Entities\Expense::where(
-                                                    'lc_id',
-                                                    $container->lc_id,
-                                                )
-                                                    ->where('container_id', $container->id)
-                                                    ->sum('amount');
-                                                $locCost = $container?->lc?->costing?->total_tk;
-                                                $ttCost =
-                                                    $container?->tt_value *
-                                                    $container?->tt_exchange_rate *
-                                                    $container->qty;
+                                                $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id',$container->lc_id,)->where('container_id', $container->id)->sum('amount');
 
-                                                $totalSale = \Modules\Sale\Entities\SaleDetails::whereHas(
-                                                    'sale',
-                                                    function ($q) use ($container) {
-                                                        $q->where('lc_id', $container->lc_id)->where(
-                                                            'container_id',
-                                                            $container->id,
-                                                        );
-                                                    },
-                                                )->sum('sub_total');
+                                                $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
 
-                                                $totalCost = $locCost + $ttCost + $totalCostAmount;
+                                                $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+
+                                                $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
+                                                        ->where('container_id', $container->id)
+                                                        ->sum('sub_total');
+
+                                                $totalCost = $lcCost + $ttCost + $totalCostAmount;
 
                                                 $profit_loss = $totalSale - $totalCost;
 
