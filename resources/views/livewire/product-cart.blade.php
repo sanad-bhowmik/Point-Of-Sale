@@ -19,6 +19,7 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-hover">
                     <thead class="thead-dark">
+
                         <tr>
                             <th class="align-middle">Product</th>
                             <th class="align-middle text-center">Net Unit Price</th>
@@ -33,10 +34,11 @@
                         </tr>
                     </thead>
                     <tbody>
+
                         @if($cart_items->isNotEmpty())
                         @foreach($cart_items as $cart_item)
                         <tr>
-                            
+
                             <td class="align-middle">
                                 {{ $cart_item->name }} <br>
                                 <span class="badge badge-success">
