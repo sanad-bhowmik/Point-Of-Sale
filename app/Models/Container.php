@@ -27,9 +27,6 @@ class Container extends Model
         'qty',
         'lc_date',
         'tt_date',
-        'dhl',
-        'bl_no',
-        'document_status',
     ];
 
      public function lc()

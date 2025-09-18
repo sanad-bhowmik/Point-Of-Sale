@@ -67,7 +67,7 @@
                                         <th colspan="17" style="font-size: 20px;">Shipment Status Report</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="17" style="font-size: 20px;">LC :-{{ $container?->lc?->lc_name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">LC :-{{ $container?->load('lc')->lc?->lc_name }}</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
                                         <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}</th>

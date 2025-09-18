@@ -36,7 +36,6 @@
                         @if($cart_items->isNotEmpty())
                         @foreach($cart_items as $cart_item)
                         <tr>
-                            
                             <td class="align-middle">
                                 {{ $cart_item->name }} <br>
                                 <span class="badge badge-success">
