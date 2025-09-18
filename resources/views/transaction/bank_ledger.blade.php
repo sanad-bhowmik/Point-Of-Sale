@@ -56,7 +56,7 @@
                         </div>
 
                         <div class="table-responsive">
-                            <table id="downloadExcel" class="table table-bordered table-hover">
+                            <table id="reportTable" class="table table-bordered table-hover">
                                 <tbody>
                                     <tr>
                                         <td style="border: none;"></td>
@@ -165,51 +165,98 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script>
-        document.getElementById('downloadExcel').addEventListener('click', function() {
-            var table = document.querySelector('.table');
+        // document.getElementById('downloadExcel').addEventListener('click', function() {
+        //     var table = document.querySelector('.table');
 
-            var clone = table.cloneNode(true);
+        //     var clone = table.cloneNode(true);
 
-            var ws = XLSX.utils.table_to_sheet(clone, {
-                raw: true
-            });
+        //     var ws = XLSX.utils.table_to_sheet(clone, {
+        //         raw: true
+        //     });
 
-            Object.keys(ws).forEach(function(cell) {
-                if (cell[0] === '!') return;
-                ws[cell].s = ws[cell].s || {};
-                ws[cell].s.alignment = {
-                    horizontal: "center",
-                    vertical: "center"
-                };
-                ws[cell].s.font = {
-                    sz: 14
-                };
-            });
+        //     Object.keys(ws).forEach(function(cell) {
+        //         if (cell[0] === '!') return;
+        //         ws[cell].s = ws[cell].s || {};
+        //         ws[cell].s.alignment = {
+        //             horizontal: "center",
+        //             vertical: "center"
+        //         };
+        //         ws[cell].s.font = {
+        //             sz: 14
+        //         };
+        //     });
 
-            ws['!rows'] = [];
-            for (let i = 0; i < clone.rows.length; i++) {
-                ws['!rows'].push({
-                    hpt: 28
-                });
+        //     ws['!rows'] = [];
+        //     for (let i = 0; i < clone.rows.length; i++) {
+        //         ws['!rows'].push({
+        //             hpt: 28
+        //         });
+        //     }
+
+        //     ws['!cols'] = [{
+        //         wch: 8
+        //     }, {
+        //         wch: 16
+        //     }, {
+        //         wch: 30
+        //     }, {
+        //         wch: 18
+        //     }, {
+        //         wch: 18
+        //     }, {
+        //         wch: 18
+        //     }];
+
+        //     var wb = XLSX.utils.book_new();
+        //     XLSX.utils.book_append_sheet(wb, ws, 'Banks');
+        //     XLSX.writeFile(wb, 'banks.xlsx');
+        // });
+
+        document.getElementById("downloadExcel").addEventListener("click", function() {
+            let table = document.getElementById("reportTable");
+            if (!table) {
+                alert("Table not found!");
+                return;
             }
 
-            ws['!cols'] = [{
-                wch: 8
-            }, {
-                wch: 16
-            }, {
-                wch: 30
-            }, {
-                wch: 18
-            }, {
-                wch: 18
-            }, {
-                wch: 18
-            }];
+            // Excel styling
+            let style = `
+        <style>
+            * {
+                font-family: Roboto, Arial, sans-serif;
+            }
+            table, th, td {
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            th, td {
+                padding: 10px;
+                height: 35px; /* row height */
+                vertical-align: middle;
+            }
+            th {
+                font-weight: bold;
+            }
+        </style>
+    `;
 
-            var wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Banks');
-            XLSX.writeFile(wb, 'banks.xlsx');
+            let tableHTML = style + table.outerHTML;
+
+            let blob = new Blob(
+                ['\ufeff' + tableHTML], {
+                    type: "application/vnd.ms-excel"
+                }
+            );
+
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "bank_report.xls";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 @endpush

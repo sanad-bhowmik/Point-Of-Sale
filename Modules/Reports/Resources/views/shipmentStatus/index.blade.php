@@ -19,11 +19,11 @@
                         <div class="row">
                             <!-- LC Select -->
                             <div class="col-md-4">
+                                <label for="">Select Lc</label>
                                 <select class="form-control" id="lcSelect" name="lc_id">
                                     <option value="">-- Select LC --</option>
                                     @foreach ($lcList as $lc)
-                                        <option value="{{ $lc->id }}"
-                                            {{ request('lc_id') == $lc->id ? 'selected' : '' }}>
+                                        <option value="{{ $lc->id }}">
                                             {{ $lc->lc_name }} ({{ $lc->lc_number }})
                                         </option>
                                     @endforeach
@@ -32,20 +32,25 @@
 
                             <!-- Container Select -->
                             <div class="col-md-4">
+                                <label for="">Select Container</label>
                                 <select class="form-control" id="containerSelect" name="container_id">
                                     <option value="">-- Select Container --</option>
-                                    @foreach ($containerList as $container)
+                                    {{-- @foreach ($containerList as $container)
                                         <option value="{{ $container->id }}"
                                             {{ request('container_id') == $container->id ? 'selected' : '' }}>
                                             {{ $container->name }} ({{ $container->number }})
                                         </option>
-                                    @endforeach
+                                    @endforeach --}}
                                 </select>
                             </div>
 
                             <!-- Filter Button -->
-                            <div class="col-md-4">
-                                <button class="btn btn-primary w-100" type="submit">Filter</button>
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100 mt-4" type="submit">Filter</button>
+                            </div>
+                            <div class="col-md-2">
+                                <a href="{{ route('buying-selling-report.index') }}"
+                                    class="btn btn-warning w-100 mt-4">Reset</a>
                             </div>
                         </div>
                     </form>
@@ -53,7 +58,6 @@
             </div>
 
             <!-- Table -->
-            @if (isset($shipmentStatus))
                 <div class="card border-0 shadow-sm">
                     <div class="card-body position-relative">
                         <div class="mb-3 mt-3">
@@ -64,13 +68,14 @@
                             <table id="shipmentStatusTable" class="table table-bordered table-striped">
                                 <thead class="bg-success text-white">
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">Shipment Status Report</th>
+                                        <th colspan="17" style="font-size: 20px;">Shipment Status Report</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">LC :-{{ $container?->lc?->lc_name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">LC
+                                            :-{{ $container?->load('lc')->lc?->lc_name }}</th>
                                     </tr>
                                     <tr style="background-color: #fff; color: #000;">
-                                        <th colspan="18">Container :-{{ $container?->name }}</th>
+                                        <th colspan="17" style="font-size: 20px;">Container :-{{ $container?->name }}</th>
                                     </tr>
                                     <tr>
                                         <th>SL</th>
@@ -91,19 +96,22 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($shipmentStatus as $index => $item)
+                                    @if (isset($container))
                                         <tr>
-                                            <td>{{ $index + 1 }}</td>
-                                            <td>{{ $item->lc->lc_number }}</td>
+                                            <td>{{ $container->id }}</td>
+                                            <td>{{ $container?->lc?->lc_number }}</td>
                                             <td>{{ $container->number }}</td>
-                                            <td>{{ $item?->product?->product_name }}</td>
-                                            @php
-                                                $size = \App\Models\Size::find($item->size)->first();
+                                            <td>{{ $container?->lc?->costing?->product?->product_name }}</td>
+                                           @php
+                                                $size = \App\Models\Size::find(
+                                                    $container?->lc?->costing?->size,
+                                                )->first();
                                             @endphp
                                             <td>{{ $size->size }}</td>
-                                            <td>{{ $item?->supplier?->supplier_name }}</td>
+                                            <td>{{ $container?->lc?->costing?->supplier?->supplier_name }}</td>
                                             <td>Taifa Traders</td>
-                                            <td>{{ round($item->qty) }} Box <br> {{ $item->qty * $item->box_type }} KG
+                                            <td>{{ round($container?->qty) }} Box <br>
+                                                {{ $container?->qty * $container?->lc?->costing?->box_type }} KG
                                             </td>
                                             <td>{{ $container?->lc_date }}</td>
                                             <td>{{ $container?->tt_date }}</td>
@@ -113,7 +121,7 @@
                                             <td>{{ $container->bl_no }}</td>
                                             <td>{{ $container->document_status }}</td>
                                         </tr>
-                                    @empty
+                                    @else
                                         <tr>
                                             <td colspan="20">No data found</td>
                                         </tr>
@@ -128,7 +136,6 @@
             </div> --}}
                     </div>
                 </div>
-            @endif
         </div>
     </div>
 @endsection
@@ -154,35 +161,101 @@
         $(document).ready(function() {
             $('#lcSelect').select2();
             $('#containerSelect').select2();
+
+            $('#lcSelect').on('change', function() {
+                var lcId = $(this).val();
+                var $containerSelect = $('#containerSelect');
+                $containerSelect.html('<option value="">Loading...</option>');
+                if (lcId) {
+                    $.get('/get-containers-by-lc/' + lcId, function(data) {
+                        var options = '<option value="">-- Select Container --</option>';
+                        data.forEach(function(container) {
+                            options +=
+                                `<option value="${container.id}">${container.name} (${container.number})</option>`;
+                        });
+                        $containerSelect.html(options).trigger('change');
+                    });
+                } else {
+                    $containerSelect.html('<option value="">-- Select Container --</option>').trigger(
+                        'change');
+                }
+            });
         });
 
         // Excel Download
+        // document.getElementById("downloadExcel").addEventListener("click", function() {
+        //     var table = document.getElementById("shipmentStatusTable");
+        //     var wb = XLSX.utils.table_to_book(table, {
+        //         sheet: "Shipment Status"
+        //     });
+
+        //     // Increase row height for all rows
+        //     var ws = wb.Sheets["Shipment Status"];
+        //     var rowCount = table.rows.length;
+        //     ws['!rows'] = [];
+        //     for (let i = 0; i < rowCount; i++) {
+        //         ws['!rows'].push({
+        //             hpt: 28
+        //         }); // 28 points height
+        //     }
+
+        //     // Optional: Increase column width for all columns
+        //     var colCount = table.rows[0].cells.length;
+        //     ws['!cols'] = [];
+        //     for (let i = 0; i < colCount; i++) {
+        //         ws['!cols'].push({
+        //             wch: 20
+        //         }); // 20 characters width
+        //     }
+
+        //     XLSX.writeFile(wb, "shipment-status-report.xlsx");
+        // });
+
         document.getElementById("downloadExcel").addEventListener("click", function() {
-            var table = document.getElementById("shipmentStatusTable");
-            var wb = XLSX.utils.table_to_book(table, {
-                sheet: "Shipment Status"
-            });
-
-            // Increase row height for all rows
-            var ws = wb.Sheets["Shipment Status"];
-            var rowCount = table.rows.length;
-            ws['!rows'] = [];
-            for (let i = 0; i < rowCount; i++) {
-                ws['!rows'].push({
-                    hpt: 28
-                }); // 28 points height
+            let table = document.getElementById("shipmentStatusTable");
+            if (!table) {
+                alert("Table not found!");
+                return;
             }
 
-            // Optional: Increase column width for all columns
-            var colCount = table.rows[0].cells.length;
-            ws['!cols'] = [];
-            for (let i = 0; i < colCount; i++) {
-                ws['!cols'].push({
-                    wch: 20
-                }); // 20 characters width
+            // Excel styling
+            let style = `
+        <style>
+            * {
+                font-family: Roboto, Arial, sans-serif;
             }
+            table, th, td {
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            th, td {
+                padding: 10px;
+                height: 35px; /* row height */
+                vertical-align: middle;
+            }
+            th {
+                font-weight: bold;
+            }
+        </style>
+    `;
 
-            XLSX.writeFile(wb, "shipment-status-report.xlsx");
+            let tableHTML = style + table.outerHTML;
+
+            let blob = new Blob(
+                ['\ufeff' + tableHTML], {
+                    type: "application/vnd.ms-excel"
+                }
+            );
+
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "bank_report.xls";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 @endpush

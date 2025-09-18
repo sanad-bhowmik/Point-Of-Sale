@@ -26,7 +26,7 @@
                                     <tr>
                                         <th></th>
                                         <th></th>
-                                        <th colspan="2">Details of cash flow</th>
+                                        <th colspan="2" style="font-size: 20px;">Details of cash flow</th>
                                         <th></th>
                                         <th></th>
                                     </tr>
@@ -51,29 +51,17 @@
                                             <td>{{ $index + 1 }}</td>
                                             <td>{{ $container->name ?? '-' }}</td>
                                             @php
-                                                $totalCostAmount = \Modules\Expense\Entities\Expense::where(
-                                                    'lc_id',
-                                                    $container->lc_id,
-                                                )
-                                                    ->where('container_id', $container->id)
-                                                    ->sum('amount');
-                                                $locCost = $container?->lc?->costing?->total_tk;
-                                                $ttCost =
-                                                    $container?->tt_value *
-                                                    $container?->tt_exchange_rate *
-                                                    $container->qty;
+                                                $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id',$container->lc_id,)->where('container_id', $container->id)->sum('amount');
 
-                                                $totalSale = \Modules\Sale\Entities\SaleDetails::whereHas(
-                                                    'sale',
-                                                    function ($q) use ($container) {
-                                                        $q->where('lc_id', $container->lc_id)->where(
-                                                            'container_id',
-                                                            $container->id,
-                                                        );
-                                                    },
-                                                )->sum('sub_total');
+                                                $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
 
-                                                $totalCost = $locCost + $ttCost + $totalCostAmount;
+                                                $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+
+                                                $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
+                                                        ->where('container_id', $container->id)
+                                                        ->sum('sub_total');
+
+                                                $totalCost = $lcCost + $ttCost + $totalCostAmount;
 
                                                 $profit_loss = $totalSale - $totalCost;
 
@@ -183,43 +171,90 @@
         });
 
         // Excel Download
-        document.getElementById("download-excel").addEventListener("click", () => {
-            let table = document.getElementById("cashflow-table");
-            let wb = XLSX.utils.table_to_book(table, {
-                sheet: "Cash Flow"
-            });
+        // document.getElementById("download-excel").addEventListener("click", () => {
+        //     let table = document.getElementById("cashflow-table");
+        //     let wb = XLSX.utils.table_to_book(table, {
+        //         sheet: "Cash Flow"
+        //     });
 
-            // Increase row height for all rows
-            let ws = wb.Sheets["Cash Flow"];
-            let rowCount = table.rows.length;
-            ws['!rows'] = [];
-            for (let i = 0; i < rowCount; i++) {
-                ws['!rows'].push({
-                    hpt: 28
-                }); 
+        //     // Increase row height for all rows
+        //     let ws = wb.Sheets["Cash Flow"];
+        //     let rowCount = table.rows.length;
+        //     ws['!rows'] = [];
+        //     for (let i = 0; i < rowCount; i++) {
+        //         ws['!rows'].push({
+        //             hpt: 28
+        //         }); 
+        //     }
+
+        //     ws['!cols'] = [{
+        //             wch: 10
+        //         }, // SL
+        //         {
+        //             wch: 25
+        //         }, // Container Name
+        //         {
+        //             wch: 18
+        //         }, // Profit
+        //         {
+        //             wch: 18
+        //         }, // Loss
+        //         {
+        //             wch: 18
+        //         }, // Profit/Loss
+        //         {
+        //             wch: 30
+        //         } // Supplier
+        //     ];
+
+        //     XLSX.writeFile(wb, "cash-flow.xlsx");
+        // });
+        
+        document.getElementById("download-excel").addEventListener("click", function() {
+            let table = document.getElementById("cashflow-table");
+            if (!table) {
+                alert("Table not found!");
+                return;
             }
 
-            ws['!cols'] = [{
-                    wch: 10
-                }, // SL
-                {
-                    wch: 25
-                }, // Container Name
-                {
-                    wch: 18
-                }, // Profit
-                {
-                    wch: 18
-                }, // Loss
-                {
-                    wch: 18
-                }, // Profit/Loss
-                {
-                    wch: 30
-                } // Supplier
-            ];
+            // Excel styling
+            let style = `
+        <style>
+            * {
+                font-family: Roboto, Arial, sans-serif;
+            }
+            table, th, td {
+                border: 1px solid #000;
+                border-collapse: collapse;
+                text-align: center;
+            }
+            th, td {
+                padding: 10px;
+                height: 35px; /* row height */
+                vertical-align: middle;
+            }
+            th {
+                font-weight: bold;
+            }
+        </style>
+    `;
 
-            XLSX.writeFile(wb, "cash-flow.xlsx");
+            let tableHTML = style + table.outerHTML;
+
+            let blob = new Blob(
+                ['\ufeff' + tableHTML], {
+                    type: "application/vnd.ms-excel"
+                }
+            );
+
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement("a");
+            a.href = url;
+            a.download = "bank_report.xls";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 @endpush

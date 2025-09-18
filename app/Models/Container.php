@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Modules\Sale\Entities\SaleDetails;
 
 class Container extends Model
 {
@@ -27,13 +28,15 @@ class Container extends Model
         'qty',
         'lc_date',
         'tt_date',
-        'dhl',
-        'bl_no',
-        'document_status',
     ];
 
-     public function lc()
+    public function lc()
     {
         return $this->belongsTo(Lc::class, 'lc_id');
+    }
+
+    public function saleDetails()
+    {
+        return $this->belongsTo(SaleDetails::class);
     }
 }
