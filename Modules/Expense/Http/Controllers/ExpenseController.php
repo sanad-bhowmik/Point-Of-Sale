@@ -148,11 +148,9 @@ class ExpenseController extends Controller
             'container_id' => 'required',
         ]);
 
-        $lc = Lc::find($request->lc_id);
         $container = Container::find($request->container_id);
 
         if (isset($request->lc_id) && isset($container->lc_id)) {
-            $costing = Costing::where('lc_id', $request->lc_id)->first();
             $expenseGroup = Expense::with('category', 'expenseName', 'lc', 'container')
                 ->where('lc_id', $request->lc_id)
                 ->where('container_id', $request->container_id)
@@ -161,18 +159,14 @@ class ExpenseController extends Controller
                     return $item->category->category_name ?? 'Unknown';
                 });
 
-            $totalSale = SaleDetails::whereHas('sale', function($q) use ($request) {
-                                        $q->where('lc_id', $request->lc_id)
-                                        ->where('container_id', $request->container_id);
-                                    })
+            $totalSale = SaleDetails::where('lc_id', $request->lc_id)
+                                    ->where('container_id', $request->container_id)
                                     ->sum('sub_total');
 
             return view('expense::expenses.finalReport', [
-                'find_lc' => $lc,
-                'find_container' => $container->load('lc.costing.product'),
+                'find_container' => $container->load(['lc.costing.product', 'lc.costing.supplier']),
                 'lcs' => Lc::get(),
                 'containers' => Container::whereIn('status', [1, 2])->get(),
-                'costing' => $costing,
                 'expenseGroup' => $expenseGroup,
                 'totalSale' => $totalSale,
             ]);
@@ -181,7 +175,6 @@ class ExpenseController extends Controller
         return view('expense::expenses.finalReport', [
             'lcs' => Lc::get(),
             'containers' => Container::whereIn('status', [1, 2])->get(),
-            'find_lc' => null,
             'find_container' => null,
         ]);
     }
