@@ -27,6 +27,7 @@ class ProductCart extends Component
     private $product;
     public $cart_sizes = [];
     public $cartInstance = 'sale';
+
     public function mount($cartInstance, $data = null)
     {
         $this->cart_instance = $cartInstance;
@@ -74,6 +75,7 @@ class ProductCart extends Component
             'cart_items' => $cart_items
         ]);
     }
+
     public function updateSize($rowId)
     {
         if (isset($this->cart_sizes[$rowId])) {
@@ -193,8 +195,9 @@ class ProductCart extends Component
 
         $cart_item = Cart::instance($this->cart_instance)->get($row_id);
 
+        // Preserve all existing options while updating only the necessary fields
         Cart::instance($this->cart_instance)->update($row_id, [
-            'options' => [
+            'options' => array_merge((array)$cart_item->options, [
                 'sub_total'             => $cart_item->price * $cart_item->qty,
                 'code'                  => $cart_item->options->code,
                 'stock'                 => $cart_item->options->stock,
@@ -203,7 +206,10 @@ class ProductCart extends Component
                 'unit_price'            => $cart_item->options->unit_price,
                 'product_discount'      => $cart_item->options->product_discount,
                 'product_discount_type' => $cart_item->options->product_discount_type,
-            ]
+                // Keep existing lc_id and container_id
+                'lc_id'                 => $cart_item->options->lc_id ?? null,
+                'container_id'          => $cart_item->options->container_id ?? null,
+            ])
         ]);
     }
 
@@ -247,22 +253,27 @@ class ProductCart extends Component
     public function updatePrice($row_id, $product_id)
     {
         $product = Product::findOrFail($product_id);
-
         $cart_item = Cart::instance($this->cart_instance)->get($row_id);
 
         Cart::instance($this->cart_instance)->update($row_id, ['price' => $this->unit_price[$product['id']]]);
 
+        $calculated = $this->calculate($product, $this->unit_price[$product['id']]);
+
+        // Preserve all existing options while updating only the necessary fields
         Cart::instance($this->cart_instance)->update($row_id, [
-            'options' => [
-                'sub_total'             => $this->calculate($product, $this->unit_price[$product['id']])['sub_total'],
+            'options' => array_merge((array)$cart_item->options, [
+                'sub_total'             => $calculated['sub_total'],
                 'code'                  => $cart_item->options->code,
                 'stock'                 => $cart_item->options->stock,
                 'unit'                  => $cart_item->options->unit,
-                'product_tax'           => $this->calculate($product, $this->unit_price[$product['id']])['product_tax'],
-                'unit_price'            => $this->calculate($product, $this->unit_price[$product['id']])['unit_price'],
+                'product_tax'           => $calculated['product_tax'],
+                'unit_price'            => $calculated['unit_price'],
                 'product_discount'      => $cart_item->options->product_discount,
                 'product_discount_type' => $cart_item->options->product_discount_type,
-            ]
+                // Keep existing lc_id and container_id
+                'lc_id'                 => $cart_item->options->lc_id ?? null,
+                'container_id'          => $cart_item->options->container_id ?? null,
+            ])
         ]);
     }
 
@@ -304,15 +315,21 @@ class ProductCart extends Component
 
     public function updateCartOptions($row_id, $product_id, $cart_item, $discount_amount)
     {
-        Cart::instance($this->cart_instance)->update($row_id, ['options' => [
-            'sub_total'             => $cart_item->price * $cart_item->qty,
-            'code'                  => $cart_item->options->code,
-            'stock'                 => $cart_item->options->stock,
-            'unit'                  => $cart_item->options->unit,
-            'product_tax'           => $cart_item->options->product_tax,
-            'unit_price'            => $cart_item->options->unit_price,
-            'product_discount'      => $discount_amount,
-            'product_discount_type' => $this->discount_type[$product_id],
-        ]]);
+        // Preserve all existing options while updating only the necessary fields
+        Cart::instance($this->cart_instance)->update($row_id, [
+            'options' => array_merge((array)$cart_item->options, [
+                'sub_total'             => $cart_item->price * $cart_item->qty,
+                'code'                  => $cart_item->options->code,
+                'stock'                 => $cart_item->options->stock,
+                'unit'                  => $cart_item->options->unit,
+                'product_tax'           => $cart_item->options->product_tax,
+                'unit_price'            => $cart_item->options->unit_price,
+                'product_discount'      => $discount_amount,
+                'product_discount_type' => $this->discount_type[$product_id],
+                // Keep existing lc_id and container_id
+                'lc_id'                 => $cart_item->options->lc_id ?? null,
+                'container_id'          => $cart_item->options->container_id ?? null,
+            ])
+        ]);
     }
 }

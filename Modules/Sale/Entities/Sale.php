@@ -11,15 +11,18 @@ class Sale extends Model
 
     protected $guarded = [];
 
-    public function saleDetails() {
+    public function saleDetails()
+    {
         return $this->hasMany(SaleDetails::class, 'sale_id', 'id');
     }
 
-    public function salePayments() {
+    public function salePayments()
+    {
         return $this->hasMany(SalePayment::class, 'sale_id', 'id');
     }
 
-    public static function boot() {
+    public static function boot()
+    {
         parent::boot();
 
         static::creating(function ($model) {
@@ -28,31 +31,47 @@ class Sale extends Model
         });
     }
 
-    public function scopeCompleted($query) {
+    public function scopeCompleted($query)
+    {
         return $query->where('status', 'Completed');
     }
 
-    public function getShippingAmountAttribute($value) {
-        return $value / 100;
+    // public function getShippingAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+
+    // public function getPaidAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+
+    // public function getTotalAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+
+    // public function getDueAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+
+    // public function getTaxAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+
+    // public function getDiscountAmountAttribute($value)
+    // {
+    //     return $value / 100;
+    // }
+    public function lc()
+    {
+        return $this->belongsTo(\App\Models\Lc::class, 'lc_id', 'id');
     }
 
-    public function getPaidAmountAttribute($value) {
-        return $value / 100;
-    }
-
-    public function getTotalAmountAttribute($value) {
-        return $value / 100;
-    }
-
-    public function getDueAmountAttribute($value) {
-        return $value / 100;
-    }
-
-    public function getTaxAmountAttribute($value) {
-        return $value / 100;
-    }
-
-    public function getDiscountAmountAttribute($value) {
-        return $value / 100;
+    public function container()
+    {
+        return $this->belongsTo(\App\Models\Container::class, 'container_id', 'id');
     }
 }

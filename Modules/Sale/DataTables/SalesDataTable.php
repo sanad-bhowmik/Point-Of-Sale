@@ -5,14 +5,12 @@ namespace Modules\Sale\DataTables;
 use Modules\Sale\Entities\Sale;
 use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
-use Yajra\DataTables\Html\Editor\Editor;
-use Yajra\DataTables\Html\Editor\Fields;
 use Yajra\DataTables\Services\DataTable;
 
 class SalesDataTable extends DataTable
 {
-
-    public function dataTable($query) {
+    public function dataTable($query)
+    {
         return datatables()
             ->eloquent($query)
             ->addColumn('total_amount', function ($data) {
@@ -24,6 +22,14 @@ class SalesDataTable extends DataTable
             ->addColumn('due_amount', function ($data) {
                 return format_currency($data->due_amount);
             })
+            ->addColumn('lc', function ($data) {
+                // Show LC Name instead of ID
+                return $data->lc ? $data->lc->lc_name : '-';
+            })
+            ->addColumn('container', function ($data) {
+                // Show Container Name instead of ID
+                return $data->container ? $data->container->name : '-';
+            })
             ->addColumn('status', function ($data) {
                 return view('sale::partials.status', compact('data'));
             })
@@ -34,33 +40,31 @@ class SalesDataTable extends DataTable
                 return view('sale::partials.actions', compact('data'));
             });
     }
+public function query(Sale $model) {
+    $query = $model->newQuery()->with(['lc', 'container']);
 
-    public function query(Sale $model) {
-        return $model->newQuery();
+    if (request()->has('date') && !empty(request('date'))) {
+        $query->whereDate('date', request('date'));
     }
 
-    public function html() {
+    return $query;
+}
+
+
+    public function html()
+    {
         return $this->builder()
             ->setTableId('sales-table')
             ->columns($this->getColumns())
             ->minifiedAjax()
-            ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'B><'col-md-4'f>> .
-                                'tr' .
-                                <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(8)
-            ->buttons(
-                Button::make('excel')
-                    ->text('<i class="bi bi-file-earmark-excel-fill"></i> Excel'),
-                Button::make('print')
-                    ->text('<i class="bi bi-printer-fill"></i> Print'),
-                Button::make('reset')
-                    ->text('<i class="bi bi-x-circle"></i> Reset'),
-                Button::make('reload')
-                    ->text('<i class="bi bi-arrow-repeat"></i> Reload')
-            );
+            ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'><'col-md-4'f>> .
+                   'tr' .
+                   <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
+            ->orderBy(10); // ✅ removed the buttons()
     }
 
-    protected function getColumns() {
+    protected function getColumns()
+    {
         return [
             Column::make('reference')
                 ->className('text-center align-middle'),
@@ -81,6 +85,14 @@ class SalesDataTable extends DataTable
             Column::computed('due_amount')
                 ->className('text-center align-middle'),
 
+            Column::computed('lc')
+                ->title('LC')
+                ->className('text-center align-middle'),
+
+            Column::computed('container')
+                ->title('Container')
+                ->className('text-center align-middle'),
+
             Column::computed('payment_status')
                 ->className('text-center align-middle'),
 
@@ -94,7 +106,8 @@ class SalesDataTable extends DataTable
         ];
     }
 
-    protected function filename(): string {
+    protected function filename(): string
+    {
         return 'Sales_' . date('YmdHis');
     }
 }

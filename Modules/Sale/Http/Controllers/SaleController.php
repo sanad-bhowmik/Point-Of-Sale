@@ -49,6 +49,12 @@ class SaleController extends Controller
                 $payment_status = 'Paid';
             }
 
+            // Get first cart item for lc_id and container_id
+            $firstCartItem = Cart::instance('sale')->content()->first();
+            $lc_id = $firstCartItem->options['lc_id'] ?? null;
+            $container_id = $firstCartItem->options['container_id'] ?? null;
+
+            // Create Sale (also save lc_id and container_id)
             $sale = Sale::create([
                 'date' => $request->date,
                 'customer_id' => $request->customer_id,
@@ -56,17 +62,18 @@ class SaleController extends Controller
                 'tax_percentage' => $request->tax_percentage,
                 'discount_percentage' => $request->discount_percentage,
                 'shipping_amount' => $request->shipping_amount,
-                'paid_amount' => $request->paid_amount ,
+                'paid_amount' => $request->paid_amount,
                 'total_amount' => $request->total_amount,
-                'due_amount' => $due_amount ,
+                'due_amount' => $due_amount,
                 'status' => $request->status,
                 'payment_status' => $payment_status,
                 'payment_method' => $request->payment_method,
                 'note' => $request->note,
                 'tax_amount' => Cart::instance('sale')->tax() * 100,
                 'discount_amount' => Cart::instance('sale')->discount() * 100,
+                'lc_id' => $lc_id,
+                'container_id' => $container_id,
             ]);
-
             foreach (Cart::instance('sale')->content() as $cart_item) {
                 SaleDetails::create([
                     'sale_id' => $sale->id,
@@ -81,7 +88,7 @@ class SaleController extends Controller
                     'product_discount_type' => $cart_item->options->product_discount_type,
                     'product_tax_amount' => $cart_item->options->product_tax * 100,
                     'size_id' => $cart_item->options['size_id'] ?? null,
-                    'lc_id' => $cart_item->options['lc_id'] ?? null, // Get from cart options
+                    'lc_id' => $cart_item->options['lc_id'] ?? null,
                     'container_id' => $cart_item->options['container_id'] ?? null,
                 ]);
 
@@ -110,6 +117,7 @@ class SaleController extends Controller
 
         return redirect()->route('sales.index');
     }
+
 
     public function show(Sale $sale)
     {

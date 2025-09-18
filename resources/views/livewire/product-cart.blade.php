@@ -26,8 +26,8 @@
                             <th class="align-middle text-center">Stock</th>
                             <th class="align-middle text-center">Quantity</th>
                             <!-- <th class="align-middle text-center">Discount</th> -->
-                            <th class="align-middle text-center">Tax</th>
-                            <th class="align-middle text-center">Sub Total</th>
+                            <th class="align-middle text-center d-none">Tax</th>
+                            <th class="align-middle text-center d-none">Sub Total</th>
                             <th class="align-middle text-center">Size</th>
                             <th class="align-middle text-center">Unit</th>
                             <th class="align-middle text-center">Action</th>
@@ -63,11 +63,11 @@
                                 @include('livewire.includes.product-cart-quantity')
                             </td>
 
-                            <td class="align-middle text-center">
+                            <td class="align-middle text-center d-none">
                                 {{ format_currency($cart_item->options->product_tax) }}
                             </td>
 
-                            <td class="align-middle text-center">
+                            <td class="align-middle text-center d-none">
                                 {{ format_currency($cart_item->options->sub_total) }}
                             </td>
 
@@ -117,19 +117,19 @@
         <div class="col-md-4">
             <div class="table-responsive">
                 <table class="table table-striped">
-                    <tr>
+                    <!-- <tr>
                         <th>Tax ({{ $global_tax }}%)</th>
                         <td>(+) {{ format_currency(Cart::instance($cart_instance)->tax()) }}</td>
-                    </tr>
+                    </tr> -->
                     <!-- <tr>
                         <th>Discount ({{ $global_discount }}%)</th>
                         <td>(-) {{ format_currency(Cart::instance($cart_instance)->discount()) }}</td>
                     </tr> -->
-                    <tr>
+                    <!-- <tr>
                         <th>Shipping</th>
                         <input type="hidden" value="{{ $shipping }}" name="shipping_amount">
                         <td>(+) {{ format_currency($shipping) }}</td>
-                    </tr>
+                    </tr> -->
                     <tr>
                         <th>Grand Total</th>
                         @php
@@ -148,7 +148,7 @@
 
     <div class="form-row">
         <div class="col-lg-6">
-            <div class="form-group">
+            <div class="form-group d-none">
                 <label for="tax_percentage">Tax (%)</label>
                 <input wire:model.blur="global_tax" type="number" class="form-control" name="tax_percentage" min="0" max="100" value="{{ $global_tax }}" required>
             </div>
@@ -160,7 +160,7 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="form-group">
+            <div class="form-group d-none">
                 <label for="shipping_amount">Shipping</label>
                 <input wire:model.blur="shipping" type="number" class="form-control" name="shipping_amount" min="0" value="0" required step="0.01">
             </div>

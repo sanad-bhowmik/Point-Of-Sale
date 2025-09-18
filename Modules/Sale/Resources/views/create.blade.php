@@ -90,7 +90,7 @@
                                     <div class="form-group">
                                         <label for="paid_amount">Amount Received <span class="text-danger">*</span></label>
                                         <div class="input-group">
-                                            <input id="paid_amount" type="text" class="form-control" name="paid_amount" required>
+                                            <input id="paid_amount" type="text" class="form-control" name="paid_amount" required value="0">
                                             <div class="input-group-append">
                                                 <button id="getTotalAmount" class="btn btn-primary" type="button">
                                                     <i class="bi bi-check-square"></i>
@@ -123,7 +123,7 @@
     <script src="{{ asset('js/jquery-mask-money.js') }}"></script>
     <script>
         $(document).ready(function () {
-           
+
             $('#getTotalAmount').click(function () {
                 $('#paid_amount').maskMoney('mask', {{ Cart::instance('sale')->total() }});
             });
