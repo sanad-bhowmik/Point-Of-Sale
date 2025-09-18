@@ -474,16 +474,16 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Transaction List
             </a>
         </li>
-        <li class="c-sidebar-nav-item">
+        {{-- <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.ledger') ? 'c-active' : '' }}"
                 href="{{ route('transaction.ledger') }}">
                 <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
             </a>
-        </li>
+        </li> --}}
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
                 href="{{ route('transaction.bank_report') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Report
+                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
             </a>
         </li>
     </ul>
