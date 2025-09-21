@@ -14,20 +14,39 @@ class InputPermitController extends Controller
     {
         $query = InputPermit::query();
 
-        // Search by reference
-        if ($request->filled('reference')) {
-            $query->where('reference', 'like', '%' . $request->reference . '%');
+        // Global search across all text fields (except date)
+        if ($request->filled('search')) {
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('to_text', 'like', "%{$search}%")
+                    ->orWhere('reference', 'like', "%{$search}%")
+                    ->orWhere('no', 'like', "%{$search}%")
+                    ->orWhere('importer_name', 'like', "%{$search}%")
+                    ->orWhere('importer_address', 'like', "%{$search}%")
+                    ->orWhere('means_of_transport', 'like', "%{$search}%")
+                    ->orWhere('consignor_name', 'like', "%{$search}%")
+                    ->orWhere('consignor_address', 'like', "%{$search}%")
+                    ->orWhere('country_of_origin', 'like', "%{$search}%")
+                    ->orWhere('country_of_export', 'like', "%{$search}%")
+                    ->orWhere('point_of_entry', 'like', "%{$search}%")
+                    ->orWhere('plant_name_and_products', 'like', "%{$search}%")
+                    ->orWhere('variety_or_category', 'like', "%{$search}%")
+                    ->orWhere('pack_size', 'like', "%{$search}%")
+                    ->orWhere('quantity', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            });
         }
 
-        // Search by date
+        // Separate Date filter
         if ($request->filled('date')) {
             $query->whereDate('date', $request->date);
         }
 
-        // Order by creation date and paginate (10 per page)
+        // Paginate results
         $inputPermits = $query->orderBy('created_at', 'desc')->paginate(10);
 
-        // Preserve search query in pagination links
+        // Preserve filters in pagination
         $inputPermits->appends($request->all());
 
         return view('inputPermit.viewInputPermit', compact('inputPermits'));
@@ -38,17 +57,17 @@ class InputPermitController extends Controller
         return view('inputPermit.addInputPermit');
     }
 
+public function store(Request $request)
+{
+    // Validation
+    $validated = $request->validate([
+        'date' => 'nullable|date',
+        'quantity' => 'nullable|numeric',
+        'status' => 'nullable|in:0,1,2',
+        'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf,doc,docx|max:5048',
+    ]);
 
-
-    public function store(Request $request)
-    {
-        // Optional: Basic validation
-        $validated = $request->validate([
-            'date' => 'nullable|date',
-            'quantity' => 'nullable|numeric',
-            'status' => 'nullable|in:0,1,2',
-        ]);
-
+    try {
         // Create new InputPermit record
         $inputPermit = new InputPermit();
         $inputPermit->to_text = $request->to;
@@ -69,11 +88,24 @@ class InputPermitController extends Controller
         $inputPermit->quantity = $request->quantity;
         $inputPermit->status = $request->status;
 
+        // ✅ Handle attachment upload
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $path = $file->store('uploads/input_permits', 'public');
+            $inputPermit->attachment = '/storage/' . $path;
+        }
+
         $inputPermit->save();
 
         return redirect()->route('input_permit.create')
             ->with('success', 'Input Permit added successfully!');
+    } catch (\Exception $e) {
+        dd('Store Failed', $e->getMessage(), $e->getTraceAsString());
+        return redirect()->route('input_permit.create')
+            ->with('error', 'Failed to add Input Permit.');
     }
+}
+
 
     /**
      * Display the specified resource.

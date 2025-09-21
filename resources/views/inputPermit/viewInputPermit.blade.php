@@ -26,13 +26,17 @@
                             + Add Import Permit
                         </a>
                         <form method="GET" action="{{ route('input_permit.view') }}" class="mb-3 d-flex gap-2" style="gap: 10px;">
-                            <input type="text" name="reference" value="{{ request('reference') }}" class="form-control" placeholder="Search Reference">
-                            <input type="date" name="date" value="{{ request('date') }}" class="form-control">
-                            <button type="submit" class="btn btn-primary">Search</button>
+                            <input type="text" name="search" class="form-control" placeholder="Search permits..." value="{{ request('search') }}">
+                            <input type="date" name="date" class="form-control"
+                                value="{{ request('date') }}">
+
+                            <button type="submit" class="btn btn-primary">Filter</button>
+                            <a href="{{ route('input_permit.view') }}" class="btn btn-secondary w-10"><i class="bi bi-x-octagon"></i></a>
                         </form>
                         <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
                             <i class="bi bi-file-earmark-excel-fill"></i> Excel
                         </button>
+
                         {{ $inputPermits->links() }}
                     </div>
 

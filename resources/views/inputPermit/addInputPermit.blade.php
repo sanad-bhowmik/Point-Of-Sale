@@ -17,7 +17,7 @@
             <div class="card">
                 <div class="card-body">
 
-                    <form action="{{ route('input_permit.store') }}" method="POST">
+                    <form action="{{ route('input_permit.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
 
                         <div class="row g-3">
@@ -100,7 +100,11 @@
                                 <label for="quantity">Quantity</label>
                                 <input type="number" name="quantity" id="quantity" class="form-control">
                             </div>
-
+                            <div class="col-lg-6 mb-3">
+                                <label for="attachment">Attachment</label>
+                                <input type="file" name="attachment" id="attachment" class="form-control"
+                                    accept=".jpg,.jpeg,.png,.pdf,.doc,.docx">
+                            </div>
                             <div class="col-lg-6 mb-3">
                                 <label for="status">Status</label>
                                 <select name="status" id="status" class="form-control">

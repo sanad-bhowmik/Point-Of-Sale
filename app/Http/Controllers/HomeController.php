@@ -19,7 +19,7 @@ class HomeController extends Controller
 
     public function index()
     {
-        $sales = Sale::completed()->sum('total_amount');
+        $sales = Sale::sum('total_amount');
         $sale_returns = SaleReturn::completed()->sum('total_amount');
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
         $product_costs = 0;
@@ -37,7 +37,7 @@ class HomeController extends Controller
 
         return view('home', [
             'revenue'          => $revenue,
-            'sale_returns'     => $sale_returns / 100,
+            'sales'     => $sales,
             'purchase_returns' => $purchase_returns / 100,
             'profit'           => $profit
         ]);

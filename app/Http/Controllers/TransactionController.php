@@ -205,11 +205,11 @@ class TransactionController extends Controller
                     foreach ($previousTransactions as $pt) {
                         $openingBalance += $pt->in_amount - $pt->out_amount;
                     }
-                    
+
                     $query->whereBetween('date', [$fromDate, $toDate]);
                 }
         }
-            
+
         $transactions = $query->orderBy('date')->get();
 
         // Running ledger balance per bank
@@ -253,7 +253,7 @@ class TransactionController extends Controller
 
         // Filter by date range
         if ($request->date_range) {
-            $dates = explode(' to ', $request->date_range);
+            $dates = explode(' - ', $request->date_range);
             if (count($dates) === 2) {
                 $fromDate = $dates[0];
                 $toDate   = $dates[1];
@@ -265,11 +265,11 @@ class TransactionController extends Controller
                     foreach ($previousTransactions as $pt) {
                         $openingBalance += $pt->in_amount - $pt->out_amount;
                     }
-                    
+
                     $query->whereBetween('date', [$fromDate, $toDate]);
                 }
         }
-            
+
         $transactions = $query->orderBy('date')->get();
 
         // Running ledger balance per bank

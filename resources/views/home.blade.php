@@ -12,7 +12,7 @@
 <div class="container-fluid">
     @can('show_total_stats')
     <div class="row">
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-primary p-4 mfe-3 rounded-left">
@@ -26,21 +26,21 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-warning p-4 mfe-3 rounded-left">
                         <i class="bi bi-arrow-return-left font-2xl"></i>
                     </div>
                     <div>
-                        <div class="text-value text-warning">{{ format_currency($sale_returns) }}</div>
-                        <div class="text-muted text-uppercase font-weight-bold small">Sales Return</div>
+                        <div class="text-value text-warning">{{ format_currency($sales) }}</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Total Sales</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-3 d-none">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-success p-4 mfe-3 rounded-left">
@@ -54,7 +54,7 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3">
+        <div class="col-md-6 col-lg-4">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-info p-4 mfe-3 rounded-left">
@@ -279,8 +279,24 @@
 
                 <div class="card-body">
                     @php
+                    $banks = DB::table('banks')
+                    ->select('id', 'bank_name', 'account_no', 'opening_balance')
+                    ->get();
 
-                    $banks = DB::table('banks')->select('id','bank_name','account_no','last_balance','opening_balance')->get();
+                    foreach ($banks as $bank) {
+                    $transactions = DB::table('transactions')
+                    ->where('bank_id', $bank->id)
+                    ->select(
+                    DB::raw('SUM(in_amount) as total_in'),
+                    DB::raw('SUM(out_amount) as total_out')
+                    )
+                    ->first();
+
+                    $bank->last_balance = $bank->opening_balance
+                    + ($transactions->total_in ?? 0)
+                    - ($transactions->total_out ?? 0);
+                    }
+
                     $totalBalance = $banks->sum('last_balance');
                     @endphp
 
@@ -291,21 +307,20 @@
                                     <th>Bank</th>
                                     <th>Account No.</th>
                                     <th class="text-end">Opening Balance</th>
-                                    <!--<th class="text-end">Last Balance</th>-->
+                                    <th class="text-end">Last Balance</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($banks as $bank)
-                                <tr>
+                                <tr style="font-weight: 500;font-family: auto;font-size: large;">
                                     <td>
-                                       <a href="https://wholesale.uzanvati.com/banks">
+                                        <a href="https://wholesale.uzanvati.com/banks">
                                             <div class="d-flex align-items-center">
-
-                                            <div>
-                                                <span class="fw-semibold">{{ $bank->bank_name }}</span>
+                                                <div>
+                                                    <span class="fw-semibold">{{ $bank->bank_name }}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                       </a>
+                                        </a>
                                     </td>
                                     <td>
                                         <span class="text-muted">{{ $bank->account_no }}</span>
@@ -314,73 +329,73 @@
                                     <td class="text-end fw-bold {{ $bank->opening_balance < 0 ? 'text-danger' : 'text-success' }}">
                                         {{ format_currency($bank->opening_balance) }}
                                     </td>
-                                    <!--<td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">-->
-                                    <!--    {{ format_currency($bank->last_balance) }}-->
-                                    <!--</td>-->
+                                    <td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">
+                                        {{ format_currency($bank->last_balance) }}
+                                    </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted">No banks available</td>
+                                    <td colspan="4" class="text-center text-muted">No banks available</td>
                                 </tr>
                                 @endforelse
                             </tbody>
-
                         </table>
                     </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <!-- Live Charts Section -->
+    <div class="row mb-4">
+        <!-- Container Status Chart -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="bi bi-bar-chart-line me-2"></i> Live Container Status
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="containerChart" height="100"></canvas>
                 </div>
             </div>
         </div>
 
-    </div>
-<!-- Live Charts Section -->
-<div class="row mb-4">
-    <!-- Container Status Chart -->
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold">
-                    <i class="bi bi-bar-chart-line me-2"></i> Live Container Status
-                </h6>
-            </div>
-            <div class="card-body">
-                <canvas id="containerChart" height="100"></canvas>
+        <!-- Container Costing Chart -->
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold">
+                        <i class="bi bi-currency-dollar me-2"></i> Container Costing
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="costingChart" height="100"></canvas>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Container Costing Chart -->
-    <div class="col-lg-6">
-        <div class="card border-0 shadow-sm">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                <h6 class="mb-0 fw-bold">
-                    <i class="bi bi-currency-dollar me-2"></i> Container Costing
-                </h6>
-            </div>
-            <div class="card-body">
-                <canvas id="costingChart" height="100"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
+    @php
 
-@php
+    // Container counts (already in your code)
+    $pending = DB::table('container')->where('status', 0)->count();
+    $shipped = DB::table('container')->where('status', 1)->count();
+    $arrived = DB::table('container')->where('status', 2)->count();
+    $customDone = DB::table('container')->where('status', 3)->count();
 
-// Container counts (already in your code)
-$pending = DB::table('container')->where('status', 0)->count();
-$shipped = DB::table('container')->where('status', 1)->count();
-$arrived = DB::table('container')->where('status', 2)->count();
-$customDone = DB::table('container')->where('status', 3)->count();
-
-// Costing data (sum total_cost_per_box by box_type)
-$costingData = DB::table('costing')
+    // Costing data (sum total_cost_per_box by box_type)
+    $costingData = DB::table('costing')
     ->select('box_type', DB::raw('SUM(total_cost_per_box) as total_cost'))
     ->groupBy('box_type')
     ->get();
-@endphp
+    @endphp
 
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    // Container Status Chart
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Container Status Chart
     const containerData = {
         pending: {{ $pending }},
         shipped: {{ $shipped }},
@@ -417,27 +432,49 @@ document.addEventListener("DOMContentLoaded", function () {
     const costingLabels = @json($costingData->pluck('box_type'));
     const costingValues = @json($costingData->pluck('total_cost'));
 
-    new Chart(document.getElementById("costingChart").getContext("2d"), {
-        type: "bar",
-        data: {
-            labels: costingLabels,
-            datasets: [{
-                label: "Total Cost per Box",
-                data: costingValues,
-                backgroundColor: "#1552FA",
-                borderRadius: 6,
-                barPercentage: 0.5
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            plugins: { legend: { display: false }, tooltip: { callbacks: { label: function(ctx){ return "TK " + ctx.raw; } } } },
-            scales: { x: { beginAtZero: true }, y: { ticks: { font: { size: 14 } } } }
-        }
-    });
-});
-</script>
+            new Chart(document.getElementById("costingChart").getContext("2d"), {
+                type: "bar",
+                data: {
+                    labels: costingLabels,
+                    datasets: [{
+                        label: "Total Cost per Box",
+                        data: costingValues,
+                        backgroundColor: "#1552FA",
+                        borderRadius: 6,
+                        barPercentage: 0.5
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(ctx) {
+                                    return "TK " + ctx.raw;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true
+                        },
+                        y: {
+                            ticks: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
 
     @can('show_weekly_sales_purchases|show_month_overview')
     <div class="row mb-4">
