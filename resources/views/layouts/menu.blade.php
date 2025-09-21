@@ -104,7 +104,7 @@
 
 
 @can('access_adjustments')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('adjustments.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown d-none {{ request()->routeIs('adjustments.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-clipboard-check" style="line-height: 1;"></i> Stock Adjustments
     </a>
@@ -128,7 +128,7 @@
 @endcan
 
 @can('access_quotations')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('quotations.*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown  d-none {{ request()->routeIs('quotations.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-cart-check" style="line-height: 1;"></i> Quotations
     </a>
@@ -178,7 +178,7 @@
 
 @can('access_purchase_returns')
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('purchase-returns.*') || request()->routeIs('purchase-return-payments.*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown  d-none {{ request()->routeIs('purchase-returns.*') || request()->routeIs('purchase-return-payments.*') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-arrow-return-right" style="line-height: 1;"></i> Purchase Returns
     </a>
@@ -494,7 +494,7 @@
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Input Permit
+        <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Import Permit
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
         <li class="c-sidebar-nav-item">
@@ -506,7 +506,7 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('input_permit.view') ? 'c-active' : '' }}"
                 href="{{ route('input_permit.view') }}">
-                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Permit List
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Import Permit List
             </a>
         </li>
 

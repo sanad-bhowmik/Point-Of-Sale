@@ -5,7 +5,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb border-0 m-0">
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-    <li class="breadcrumb-item active">Input Permits</li>
+    <li class="breadcrumb-item active">Import Permits</li>
 </ol>
 @endsection
 
@@ -23,16 +23,16 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <a href="{{ route('input_permit.create') }}" class="btn btn-primary btn-sm">
-                            + Add Input Permit
+                            + Add Import Permit
                         </a>
-                        <form method="GET" action="{{ route('input_permit.view') }}" class="mb-3 d-flex gap-2" style="
-    gap: 10px;
-">
+                        <form method="GET" action="{{ route('input_permit.view') }}" class="mb-3 d-flex gap-2" style="gap: 10px;">
                             <input type="text" name="reference" value="{{ request('reference') }}" class="form-control" placeholder="Search Reference">
                             <input type="date" name="date" value="{{ request('date') }}" class="form-control">
                             <button type="submit" class="btn btn-primary">Search</button>
                         </form>
-
+                        <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
+                            <i class="bi bi-file-earmark-excel-fill"></i> Excel
+                        </button>
                         {{ $inputPermits->links() }}
                     </div>
 
@@ -123,7 +123,7 @@
                                             <div class="modal-dialog modal-lg">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Input Permit</h5>
+                                                        <h5 class="modal-title">Edit Import Permit</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <form action="{{ route('input_permit.update', $permit->id) }}" method="POST" enctype="multipart/form-data">
@@ -243,6 +243,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
+    function downloadTableAsExcel() {
+        let table = document.querySelector("table");
+        let rows = table.querySelectorAll("tr");
+
+        let excelContent = "<table border='1' style='border-collapse:collapse;'>";
+
+        let totalCols = rows[0].querySelectorAll("th, td").length - 2;
+        excelContent += `<tr>
+                        <th colspan="${totalCols}" rowspan="3"
+                            style="text-align:center; vertical-align:middle; font-size:28px; font-weight:bold; padding:15px;">
+                            Import Permit
+                        </th>
+                     </tr>`;
+        excelContent += `<tr></tr><tr></tr>`;
+
+        rows.forEach((row, rowIndex) => {
+            let cells = row.querySelectorAll("th, td");
+            excelContent += "<tr>";
+
+            cells.forEach((cell, colIndex) => {
+                if (colIndex >= cells.length - 2) return;
+                let tag = (rowIndex === 0) ? "th" : "td";
+                excelContent += `<${tag} style="padding:5px;">${cell.innerText.trim()}</${tag}>`;
+            });
+
+            excelContent += "</tr>";
+        });
+
+        excelContent += "</table>";
+
+        let today = new Date();
+        let day = String(today.getDate()).padStart(2, '0');
+        let month = String(today.getMonth() + 1).padStart(2, '0');
+        let year = today.getFullYear();
+        let filename = `Import_Permit_${day}_${month}_${year}_.xls`;
+
+        let downloadLink = document.createElement("a");
+        downloadLink.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(excelContent);
+        downloadLink.download = filename;
+        downloadLink.click();
+    }
     toastr.options = {
         "closeButton": true,
         "progressBar": true,

@@ -291,19 +291,21 @@
                                     <th>Bank</th>
                                     <th>Account No.</th>
                                     <th class="text-end">Opening Balance</th>
-                                    <th class="text-end">Last Balance</th>
+                                    <!--<th class="text-end">Last Balance</th>-->
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse ($banks as $bank)
                                 <tr>
                                     <td>
-                                        <div class="d-flex align-items-center">
+                                       <a href="https://wholesale.uzanvati.com/banks">
+                                            <div class="d-flex align-items-center">
 
                                             <div>
                                                 <span class="fw-semibold">{{ $bank->bank_name }}</span>
                                             </div>
                                         </div>
+                                       </a>
                                     </td>
                                     <td>
                                         <span class="text-muted">{{ $bank->account_no }}</span>
@@ -312,9 +314,9 @@
                                     <td class="text-end fw-bold {{ $bank->opening_balance < 0 ? 'text-danger' : 'text-success' }}">
                                         {{ format_currency($bank->opening_balance) }}
                                     </td>
-                                    <td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">
-                                        {{ format_currency($bank->last_balance) }}
-                                    </td>
+                                    <!--<td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">-->
+                                    <!--    {{ format_currency($bank->last_balance) }}-->
+                                    <!--</td>-->
                                 </tr>
                                 @empty
                                 <tr>

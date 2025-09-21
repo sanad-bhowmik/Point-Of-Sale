@@ -5,7 +5,7 @@
 @section('breadcrumb')
 <ol class="breadcrumb border-0 m-0">
     <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-    <li class="breadcrumb-item"><a href="{{ route('seasonalfruit.create') }}">Input Permit</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('seasonalfruit.create') }}">Import Permit</a></li>
     <li class="breadcrumb-item active">Create</li>
 </ol>
 @endsection
@@ -115,10 +115,9 @@
 
                         <div class="mt-3">
                             <button type="submit" class="btn btn-primary">
-                                Add Input Permit <i class="bi bi-check"></i>
+                                Add Import Permit <i class="bi bi-check"></i>
                             </button>
                         </div>
-
                     </form>
 
                 </div>
