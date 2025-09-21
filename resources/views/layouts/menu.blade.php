@@ -334,13 +334,13 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('buying-selling-report.index') ? 'c-active' : '' }}"
                 href="{{ route('buying-selling-report.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Buying and Selling Report  
+                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Buying and Selling Report
             </a>
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('shipment-status-report.index') ? 'c-active' : '' }}"
                 href="{{ route('shipment-status-report.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Shipment Status Report  
+                <i class="c-sidebar-nav-icon bi bi-clipboard-data" style="line-height: 1;"></i> Shipment Status Report
             </a>
         </li>
         <li class="c-sidebar-nav-item">
@@ -486,6 +486,30 @@
                 <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
             </a>
         </li>
+    </ul>
+
+</li>
+@endcan
+
+@can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Input Permit
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('input_permit.create') ? 'c-active' : '' }}"
+                href="{{ route('input_permit.create') }}">
+                <i class="c-sidebar-nav-icon bi bi-arrows-fullscreen" style="line-height: 1;"></i> Add Permit
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('input_permit.view') ? 'c-active' : '' }}"
+                href="{{ route('input_permit.view') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Permit List
+            </a>
+        </li>
+
     </ul>
 
 </li>

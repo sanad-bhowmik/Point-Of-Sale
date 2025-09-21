@@ -3,6 +3,7 @@
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\CostingController;
+use App\Http\Controllers\InputPermitController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
 use App\Http\Controllers\TransactionController;
@@ -100,4 +101,15 @@ Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => Con
     Route::delete('/delete/{id}', 'destroy')->name('delete');
     Route::put('/update/{id}', 'update')->name('update');
 });
+
+// Input Permit
+Route::group(['prefix' => 'input-permit', 'as' => 'input_permit.', 'controller' => InputPermitController::class], function () {
+    Route::get('/view', 'index')->name('view');
+    Route::get('/create', 'create')->name('create');
+    Route::post('/store', 'store')->name('store');
+    Route::delete('/destroy/{id}', 'destroy')->name('destroy');
+    Route::put('/update/{id}', 'update')->name('update');
+});
+
+
 // routes/web.php
