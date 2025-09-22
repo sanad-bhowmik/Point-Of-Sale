@@ -82,7 +82,10 @@
                                     <td>{{ $costing->supplier->supplier_name ?? '-' }}</td>
                                     <td>{{ $costing->product->product_name ?? '-' }}</td>
                                     <td>{{ $costing->box_type }}</td>
-                                    <td>{{ $costing->size }}</td>
+                                    @php
+                                    $sizeName = DB::table('sizes')->where('id', $costing->size)->value('size');
+                                    @endphp
+                                    <td>{{ $sizeName ?? '-' }}</td>
                                     <td>{{ $costing->currency }}</td>
                                     <td>{{ $costing->base_value }}</td>
                                     <td>{{ $costing->qty }}</td>

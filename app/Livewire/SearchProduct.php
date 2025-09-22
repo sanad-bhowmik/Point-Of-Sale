@@ -46,11 +46,23 @@ class SearchProduct extends Component
         $this->selected_container = $value;
     }
 
+    // private function updateContainers()
+    // {
+    //     if ($this->selected_lc) {
+    //         $this->containers = Container::where('lc_id', $this->selected_lc)
+    //             ->select('id', 'lc_id', 'name', 'number')
+    //             ->orderBy('name')
+    //             ->get();
+    //     } else {
+    //         $this->containers = collect([]);
+    //     }
+    // }
     private function updateContainers()
     {
         if ($this->selected_lc) {
             $this->containers = Container::where('lc_id', $this->selected_lc)
-                ->select('id', 'lc_id', 'name', 'number')
+                ->whereIn('status', [2, 3])
+                ->select('id', 'lc_id', 'name', 'number', 'status')
                 ->orderBy('name')
                 ->get();
         } else {
