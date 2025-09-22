@@ -75,9 +75,15 @@
         <!-- Left Panel: Status-wise Counts -->
         <div class="col-lg-6">
             <div class="card modern-card border-0 h-100">
-                <div class="card-header bg-transparent border-0 d-flex justify-content-between align-items-center pb-0">
-                    <h6 class="mb-0 fw-semibold text-dark">Container Status Overview</h6>
+                <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 d-flex align-items-center fw-bold">
+                        <i class="bi bi-box me-2 fs-5 mr-2"></i>
+                        Container Status Overview
 
+                    </h6>
+                     <a href="container/view" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-plus-circle me-1"></i> Add Container
+                    </a>
                 </div>
 
                 <div class="card-body">
@@ -266,76 +272,54 @@
         <!-- Right Panel: Bank-wise Balances -->
         <div class="col-lg-6">
             <div class="card border-0 shadow-sm h-100">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold" style="display: flex;">
-                        <div class="bank-icon me-2">
-                            <i class="bi bi-bank"></i>
-                        </div> <span class="mt-2 ml-2">Bank Balances</span>
+                <!-- Card Header -->
+                <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 d-flex align-items-center fw-bold">
+                        <i class="bi bi-box me-2 fs-5 mr-2"></i>
+                        Pending Containers
                     </h6>
-                    <a href="{{ route('bank.create') }}" class="btn btn-sm btn-outline-primary">
-                        <i class="bi bi-plus-circle"></i> Add Bank
+
+                    <a href="container/containerTbl" class="btn btn-outline-light btn-sm">
+                        <i class="bi bi-eye me-1"></i> View Container
                     </a>
                 </div>
 
-                <div class="card-body">
+                <!-- Card Body -->
+                <div class="card-body p-0">
                     @php
-                    $banks = DB::table('banks')
-                    ->select('id', 'bank_name', 'account_no', 'opening_balance')
+                    $containers = DB::table('container')
+                    ->select('id', 'name', 'number', 'shipping_date', 'status')
+                    ->where('status', 0)
+                    ->orderBy('created_at', 'desc')
+                    ->limit(5)
                     ->get();
-
-                    foreach ($banks as $bank) {
-                    $transactions = DB::table('transactions')
-                    ->where('bank_id', $bank->id)
-                    ->select(
-                    DB::raw('SUM(in_amount) as total_in'),
-                    DB::raw('SUM(out_amount) as total_out')
-                    )
-                    ->first();
-
-                    $bank->last_balance = $bank->opening_balance
-                    + ($transactions->total_in ?? 0)
-                    - ($transactions->total_out ?? 0);
-                    }
-
-                    $totalBalance = $banks->sum('last_balance');
                     @endphp
 
                     <div class="table-responsive">
-                        <table class="table align-middle table-hover">
-                            <thead class="table-light">
+                        <table class="table table-hover mb-0 align-middle">
+                            <thead class="table-light text-uppercase small">
                                 <tr>
-                                    <th>Bank</th>
-                                    <th>Account No.</th>
-                                    <th class="text-end">Opening Balance</th>
-                                    <th class="text-end">Last Balance</th>
+                                    <th>Name</th>
+                                    <th>Number</th>
+                                    <th>Shipping Date</th>
+                                    <th>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($banks as $bank)
-                                <tr style="font-weight: 500;font-family: auto;font-size: large;">
+                                @forelse ($containers as $container)
+                                <tr class="align-middle animate__animated animate__fadeInUp" style="transition: all 0.3s; cursor: pointer;">
+                                    <td class="fw-semibold">{{ $container->name }}</td>
+                                    <td>{{ $container->number }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($container->shipping_date)->format('d M Y') }}</td>
                                     <td>
-                                        <a href="https://wholesale.uzanvati.com/banks">
-                                            <div class="d-flex align-items-center">
-                                                <div>
-                                                    <span class="fw-semibold">{{ $bank->bank_name }}</span>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </td>
-                                    <td>
-                                        <span class="text-muted">{{ $bank->account_no }}</span>
-                                    </td>
-
-                                    <td class="text-end fw-bold {{ $bank->opening_balance < 0 ? 'text-danger' : 'text-success' }}">
-                                        {{ format_currency($bank->opening_balance) }}
-                                    </td>
-                                    <td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">
-                                        {{ format_currency($bank->last_balance) }}
+                                        <span class="badge rounded-pill bg-warning text-dark">Pending</span>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="4" class="text-center text-muted">No banks available</td>
+                                    <td colspan="4" class="text-center text-muted py-3">
+                                        No pending containers found.
+                                    </td>
                                 </tr>
                                 @endforelse
                             </tbody>
@@ -343,10 +327,102 @@
                     </div>
                 </div>
 
+                <!-- Card Footer -->
+                <div class="card-footer text-end bg-light border-top">
+                    <small class="text-muted">Showing latest 5 pending containers</small>
+                </div>
             </div>
         </div>
 
+        <!-- Animate.css CDN for animations -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+
+
     </div>
+    <div class="col-lg-12">
+        <div class="card border-0 shadow-sm h-50">
+            <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
+                   <h6 class="mb-0 fw-bold" style="display: flex;">
+                    <div class="bank-icon me-2">
+                        <i class="bi bi-bank"></i>
+                    </div> <span class="mt-2 ml-2">Bank Balances</span>
+                </h6>
+                    <a href="{{ route('bank.create') }}" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-plus-circle"></i> Add Bank
+                </a>
+            </div>
+
+
+            <div class="card-body">
+                @php
+                $banks = DB::table('banks')
+                ->select('id', 'bank_name', 'account_no', 'opening_balance')
+                ->get();
+
+                foreach ($banks as $bank) {
+                $transactions = DB::table('transactions')
+                ->where('bank_id', $bank->id)
+                ->select(
+                DB::raw('SUM(in_amount) as total_in'),
+                DB::raw('SUM(out_amount) as total_out')
+                )
+                ->first();
+
+                $bank->last_balance = $bank->opening_balance
+                + ($transactions->total_in ?? 0)
+                - ($transactions->total_out ?? 0);
+                }
+
+                $totalBalance = $banks->sum('last_balance');
+                @endphp
+
+                <div class="table-responsive">
+                    <table class="table align-middle table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Bank</th>
+                                <th>Account No.</th>
+                                <th class="text-end">Opening Balance</th>
+                                <th class="text-end">Last Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($banks as $bank)
+                            <tr style="font-weight: 500;font-family: auto;font-size: large;">
+                                <td>
+                                    <a href="https://wholesale.uzanvati.com/banks">
+                                        <div class="d-flex align-items-center">
+                                            <div>
+                                                <span class="fw-semibold">{{ $bank->bank_name }}</span>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </td>
+                                <td>
+                                    <span class="text-muted">{{ $bank->account_no }}</span>
+                                </td>
+
+                                <td class="text-end fw-bold {{ $bank->opening_balance < 0 ? 'text-danger' : 'text-success' }}">
+                                    {{ format_currency($bank->opening_balance) }}
+                                </td>
+                                <td class="text-end fw-bold {{ $bank->last_balance < 0 ? 'text-danger' : 'text-danger' }}">
+                                    {{ format_currency($bank->last_balance) }}
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="4" class="text-center text-muted">No banks available</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
     <!-- Live Charts Section -->
     <div class="row mb-4">
         <!-- Container Status Chart -->
@@ -476,51 +552,7 @@
         });
     </script>
 
-    @can('show_weekly_sales_purchases|show_month_overview')
-    <div class="row mb-4">
-        @can('show_weekly_sales_purchases')
-        <div class="col-lg-7">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header">
-                    Sales & Purchases of Last 7 Days
-                </div>
-                <div class="card-body">
-                    <canvas id="salesPurchasesChart"></canvas>
-                </div>
-            </div>
-        </div>
-        @endcan
-        @can('show_month_overview')
-        <div class="col-lg-5">
-            <div class="card border-0 shadow-sm h-100">
-                <div class="card-header">
-                    Overview of {{ now()->format('F, Y') }}
-                </div>
-                <div class="card-body d-flex justify-content-center">
-                    <div class="chart-container" style="position: relative; height:auto; width:280px">
-                        <canvas id="currentMonthChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @endcan
-    </div>
-    @endcan
 
-    @can('show_monthly_cashflow')
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header">
-                    Monthly Cash Flow (Payment Sent & Received)
-                </div>
-                <div class="card-body">
-                    <canvas id="paymentChart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endcan
 </div>
 @endsection
 
@@ -679,5 +711,8 @@
         border-radius: 6px;
         padding: 0.35em 0.65em;
         font-weight: 500;
+    }
+    .c-footer{
+        display: none !important;
     }
 </style>

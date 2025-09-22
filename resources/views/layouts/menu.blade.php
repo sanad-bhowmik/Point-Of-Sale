@@ -441,7 +441,6 @@
         </li>
         @endcan
 
->>>>>>> aaab78cf036ac672e9123990286cb92c22deac50
     </ul>
 </li>
 @endcan
