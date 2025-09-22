@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Container;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Modules\Expense\Entities\Expense;
@@ -17,33 +18,37 @@ use Modules\SalesReturn\Entities\SaleReturnPayment;
 class HomeController extends Controller
 {
 
-    public function index()
+public function index()
     {
         $sales = Sale::sum('total_amount');
         $sale_returns = SaleReturn::completed()->sum('total_amount');
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
         $product_costs = 0;
 
-        foreach (Sale::completed()->with('saleDetails')->get() as $sale) {
-            foreach ($sale->saleDetails as $saleDetail) {
-                if (!is_null($saleDetail->product)) {
-                    $product_costs += $saleDetail->product->product_cost * $saleDetail->quantity;
-                }
-            }
+        $containers = Container::all();
+        $container_cost = 0;
+
+        foreach ($containers as $container) {
+            $lc_cost = ($container->lc_value ?? 0) * ($container->lc_exchange_rate ?? 0) * ($container->qty ?? 1);
+            $tt_cost = ($container->tt_value ?? 0) * ($container->tt_exchange_rate ?? 0) * ($container->qty ?? 1);
+
+            $container_cost += $lc_cost + $tt_cost;
         }
 
+        $expenses = Expense::sum('amount');
+
+        $total_cost = $container_cost + $expenses;
+
         $revenue = ($sales - $sale_returns) / 100;
-        $profit = $revenue - $product_costs;
+        $profit = $sales - $total_cost;
 
         return view('home', [
             'revenue'          => $revenue,
             'sales'     => $sales,
             'purchase_returns' => $purchase_returns / 100,
-            'profit'           => $profit
+            'profit'           => $profit > 0 ? $profit : 0,
         ]);
     }
-
-
     public function currentMonthChart()
     {
         abort_if(!request()->ajax(), 404);
