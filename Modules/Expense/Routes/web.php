@@ -26,4 +26,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/finalReport', [ExpenseController::class, 'finalReport'])->name('expense.finalReport');
     Route::post('/finalReportFilter', [ExpenseController::class, 'finalReportFilter'])->name('expense.finalReportFilter');
 
+    Route::get('/expense-ledger', [ExpenseController::class, 'expenseLedger'])->name('expense.expenseLedger');
+
 });

@@ -160,8 +160,8 @@ class ExpenseController extends Controller
                 });
 
             $totalSale = SaleDetails::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->sum('sub_total');
+                ->where('container_id', $request->container_id)
+                ->sum('sub_total');
 
             return view('expense::expenses.finalReport', [
                 'find_container' => $container->load(['lc.costing.product', 'lc.costing.supplier']),
@@ -176,6 +176,51 @@ class ExpenseController extends Controller
             'lcs' => Lc::get(),
             'containers' => Container::whereIn('status', [1, 2])->get(),
             'find_container' => null,
+        ]);
+    }
+
+    public function expenseLedger(Request $request)
+    {
+        $query = Expense::with(['category', 'lc', 'container', 'expenseName']);
+
+        $fromDate = null;
+        $toDate   = null;
+
+        if ($request->date_range) {
+            $dates = explode(' - ', $request->date_range);
+
+            if (count($dates) === 2) {
+                $fromDate = $dates[0];
+                $toDate   = $dates[1];
+
+                $query->whereBetween('date', [$fromDate, $toDate]);
+            }
+        }
+
+        // if ($request->category_id) {
+        //     $query->where('category_id', $request->category_id);
+        // }
+
+        $expenses = $query->get();
+
+        // Opening balanc
+        $openingBalance = 0;
+        if ($fromDate) {
+            $openingBalance = Expense::where('date', '<', $fromDate)->sum('amount');
+        }
+
+        // Period total
+        $periodTotal = $expenses->sum('amount');
+
+        // Ledger balance (opening + period)
+        $ledgerTotal = $openingBalance + $periodTotal;
+
+        return view('expense::expenses.expense_ledger', [
+            'categories'     => ExpenseCategory::get(),
+            'expenses'       => $expenses,
+            'openingBalance' => $openingBalance,
+            'periodTotal'    => $periodTotal,
+            'ledgerTotal'    => $ledgerTotal,
         ]);
     }
 }

@@ -411,6 +411,12 @@
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Product Expenses
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
+                href="{{ route('expense.expenseLedger') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
+            </a>
+        </li>
 
         <!-- Office Expense Submenu -->
         @can('create_office_expense')
@@ -435,6 +441,7 @@
         </li>
         @endcan
 
+>>>>>>> aaab78cf036ac672e9123990286cb92c22deac50
     </ul>
 </li>
 @endcan
