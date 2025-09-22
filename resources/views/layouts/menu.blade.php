@@ -411,6 +411,12 @@
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Expenses
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
+                href="{{ route('expense.expenseLedger') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
+            </a>
+        </li>
     </ul>
 </li>
 @endcan
