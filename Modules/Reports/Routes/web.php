@@ -22,6 +22,10 @@ Route::group(['middleware' => 'auth'], function () {
         return response()->json($containers);
     });
 
+    //Stock Report
+    Route::get('/stock-report', 'ReportsController@stockReport')->name('stock-report.index');
+    Route::get('/stock-get-containers-by-lc/{lc_id}', 'ReportsController@getContainer')->name('stock-report.get-container');
+
     //Shipment Status Report
     Route::get('/shipment-status-report', 'ReportsController@shipmentStatus')
         ->name('shipment-status-report.index');
