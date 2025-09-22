@@ -357,7 +357,7 @@
             <div class="card-body">
                 @php
                 $banks = DB::table('banks')
-                ->select('id', 'bank_name', 'account_no', 'opening_balance')
+                ->select('id', 'bank_name', 'account_no', 'opening_balance','institution')
                 ->get();
 
                 foreach ($banks as $bank) {
@@ -381,6 +381,7 @@
                     <table class="table align-middle table-hover">
                         <thead class="table-light">
                             <tr>
+                                <th>Institution</th>
                                 <th>Bank</th>
                                 <th>Account No.</th>
                                 <th class="text-end">Opening Balance</th>
@@ -390,6 +391,9 @@
                         <tbody>
                             @forelse ($banks as $bank)
                             <tr style="font-weight: 500;font-family: auto;font-size: large;">
+                                <td>
+                                    <span class="text-muted">{{ $bank->institution }}</span>
+                                </td>
                                 <td>
                                     <a href="https://wholesale.uzanvati.com/banks">
                                         <div class="d-flex align-items-center">

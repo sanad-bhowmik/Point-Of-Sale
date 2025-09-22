@@ -56,7 +56,13 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                 <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="product_cost">Cost <span class="text-danger">*</span></label>
+                                        <input id="product_cost" type="text" class="form-control" name="product_cost" required value="{{ old('product_cost') }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label for="barcode_symbology">Barcode Symbology <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_barcode_symbology" id="barcode_symbology" required>
@@ -72,53 +78,24 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_cost">Cost <span class="text-danger">*</span></label>
-                                        <input id="product_cost" type="text" class="form-control" name="product_cost" required value="{{ old('product_cost') }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+
+                                <div class="col-md-6 d-none" >
                                     <div class="form-group">
                                         <label for="product_price">Price <span class="text-danger">*</span></label>
                                         <input id="product_price" type="text" class="form-control" name="product_price" required value="{{ old('product_price') }}">
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="form-row">
-                                <div class="col-md-6">
+                                <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="product_quantity" required value="{{ old('product_quantity') }}" min="1">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_stock_alert">Alert Quantity <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="product_stock_alert" required value="{{ old('product_stock_alert', 0) }}" min="0" max="100">
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="product_order_tax">Tax (%)</label>
-                                        <input type="number" class="form-control" name="product_order_tax" value="{{ old('product_order_tax') }}" min="1">
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label for="product_tax_type">Tax type</label>
-                                        <select class="form-control" name="product_tax_type" id="product_tax_type">
-                                            <option value="" selected >Select Tax Type</option>
-                                            <option value="1">Exclusive</option>
-                                            <option value="2">Inclusive</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
+
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="product_unit">Unit <i class="bi bi-question-circle-fill text-info" data-toggle="tooltip" data-placement="top" title="This short text will be placed after Product Quantity."></i> <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_unit" id="product_unit">
@@ -129,12 +106,35 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                     <label for="product_note">Note</label>
+                                         <textarea name="product_note" id="product_note" rows="4 " class="form-control"></textarea>
+                                    </div>
+                                </div>
                             </div>
 
-                            <div class="form-group">
-                                <label for="product_note">Note</label>
-                                <textarea name="product_note" id="product_note" rows="4 " class="form-control"></textarea>
+                            <div class="form-row d-none">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="product_order_tax">Tax (%)</label>
+                                        <input type="number" class="form-control" name="product_order_tax" value="{{ old('product_order_tax') }}" min="1">
+                                    </div>
+                                </div>
+                                <div class="col-md-4  d-none">
+                                    <div class="form-group">
+                                        <label for="product_tax_type">Tax type</label>
+                                        <select class="form-control" name="product_tax_type" id="product_tax_type">
+                                            <option value="" selected >Select Tax Type</option>
+                                            <option value="1">Exclusive</option>
+                                            <option value="2">Inclusive</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                             </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -218,7 +218,7 @@
     <script src="{{ asset('js/jquery-mask-money.js') }}"></script>
     <script>
         $(document).ready(function () {
-            
+
 
             $('#product-form').submit(function () {
                 var product_cost = $('#product_cost').maskMoney('unmasked')[0];

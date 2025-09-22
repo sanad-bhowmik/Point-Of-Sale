@@ -12433,6 +12433,7 @@ html:not([dir="rtl"]) .c-switch-label .c-switch-slider:after {
 }
 .table-responsive > .table-bordered {
     border: 0;
+    font-size: 13px;
 }
 .table-outline {
     border: 1px solid;
