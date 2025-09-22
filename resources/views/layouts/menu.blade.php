@@ -68,143 +68,143 @@
         {{-- @can('print_barcodes')
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('barcode.print') ? 'c-active' : '' }}"
-                href="{{ route('barcode.print') }}">
-                <i class="c-sidebar-nav-icon bi bi-printer" style="line-height: 1;"></i> Print Barcode
+        href="{{ route('barcode.print') }}">
+        <i class="c-sidebar-nav-icon bi bi-printer" style="line-height: 1;"></i> Print Barcode
+        </a>
+</li>
+@endcan --}}
+
+@can('create_sizes')
+<!-- Sizes Submenu -->
+<li
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('product.size.*') ? 'c-show' : '' }}">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Sizes
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.create') ? 'c-active' : '' }}"
+                href="{{ route('product.size.create') }}">
+                Create Sizes
             </a>
         </li>
-        @endcan --}}
-
-        @can('create_sizes')
-        <!-- Sizes Submenu -->
-        <li
-            class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('product.size.*') ? 'c-show' : '' }}">
-            <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-                <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Sizes
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.view') ? 'c-active' : '' }}"
+                href="{{ route('product.size.view') }}">
+                View Sizes
             </a>
-            <ul class="c-sidebar-nav-dropdown-items">
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.create') ? 'c-active' : '' }}"
-                        href="{{ route('product.size.create') }}">
-                       Create Sizes
-                    </a>
-                </li>
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('product.size.view') ? 'c-active' : '' }}"
-                        href="{{ route('product.size.view') }}">
-                        View Sizes
-                    </a>
-                </li>
-            </ul>
         </li>
-        @endcan
-
     </ul>
+</li>
+@endcan
+
+</ul>
 </li>
 @endcan
 
 
 {{-- @can('access_adjustments')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown d-none {{ request()->routeIs('adjustments.*') ? 'c-show' : '' }}">
-    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-clipboard-check" style="line-height: 1;"></i> Stock Adjustments
-    </a>
-    <ul class="c-sidebar-nav-dropdown-items">
-        @can('create_adjustments')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('adjustments.create') ? 'c-active' : '' }}"
-                href="{{ route('adjustments.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Adjustment
-            </a>
-        </li>
-        @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('adjustments.index') ? 'c-active' : '' }}"
-                href="{{ route('adjustments.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Adjustments
-            </a>
-        </li>
-    </ul>
+<a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+    <i class="c-sidebar-nav-icon bi bi-clipboard-check" style="line-height: 1;"></i> Stock Adjustments
+</a>
+<ul class="c-sidebar-nav-dropdown-items">
+    @can('create_adjustments')
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('adjustments.create') ? 'c-active' : '' }}"
+            href="{{ route('adjustments.create') }}">
+            <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Adjustment
+        </a>
+    </li>
+    @endcan
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('adjustments.index') ? 'c-active' : '' }}"
+            href="{{ route('adjustments.index') }}">
+            <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Adjustments
+        </a>
+    </li>
+</ul>
 </li>
 @endcan --}}
 
 {{-- @can('access_quotations')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown  d-none {{ request()->routeIs('quotations.*') ? 'c-show' : '' }}">
-    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-cart-check" style="line-height: 1;"></i> Quotations
-    </a>
-    <ul class="c-sidebar-nav-dropdown-items">
-        @can('create_adjustments')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('quotations.create') ? 'c-active' : '' }}"
-                href="{{ route('quotations.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Quotation
-            </a>
-        </li>
-        @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('quotations.index') ? 'c-active' : '' }}"
-                href="{{ route('quotations.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Quotations
-            </a>
-        </li>
-    </ul>
+<a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+    <i class="c-sidebar-nav-icon bi bi-cart-check" style="line-height: 1;"></i> Quotations
+</a>
+<ul class="c-sidebar-nav-dropdown-items">
+    @can('create_adjustments')
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('quotations.create') ? 'c-active' : '' }}"
+            href="{{ route('quotations.create') }}">
+            <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Quotation
+        </a>
+    </li>
+    @endcan
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('quotations.index') ? 'c-active' : '' }}"
+            href="{{ route('quotations.index') }}">
+            <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Quotations
+        </a>
+    </li>
+</ul>
 </li>
 @endcan --}}
 
 {{-- @can('access_purchases')
 <li
     class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('purchases.*') || request()->routeIs('purchase-payments*') ? 'c-show' : '' }}">
-    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-bag" style="line-height: 1;"></i> Purchases
-    </a>
-    @can('create_purchase')
-    <ul class="c-sidebar-nav-dropdown-items">
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('purchases.create') ? 'c-active' : '' }}"
-                href="{{ route('purchases.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Purchase
-            </a>
-        </li>
+<a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+    <i class="c-sidebar-nav-icon bi bi-bag" style="line-height: 1;"></i> Purchases
+</a>
+@can('create_purchase')
+<ul class="c-sidebar-nav-dropdown-items">
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('purchases.create') ? 'c-active' : '' }}"
+            href="{{ route('purchases.create') }}">
+            <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Purchase
+        </a>
+    </li>
     @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('purchases.index') ? 'c-active' : '' }}"
-                href="{{ route('purchases.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Purchases
-            </a>
-        </li>
-    </ul>
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('purchases.index') ? 'c-active' : '' }}"
+            href="{{ route('purchases.index') }}">
+            <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Purchases
+        </a>
+    </li>
+</ul>
 </li>
 @endcan --}}
 
 {{-- @can('access_purchase_returns')
 <li
     class="c-sidebar-nav-item c-sidebar-nav-dropdown  d-none {{ request()->routeIs('purchase-returns.*') || request()->routeIs('purchase-return-payments.*') ? 'c-show' : '' }}">
-    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-arrow-return-right" style="line-height: 1;"></i> Purchase Returns
-    </a>
-    <ul class="c-sidebar-nav-dropdown-items">
-        @can('create_purchase_returns')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('purchase-returns.create') ? 'c-active' : '' }}"
-                href="{{ route('purchase-returns.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Purchase Return
-            </a>
-        </li>
-        @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('purchase-returns.index') ? 'c-active' : '' }}"
-                href="{{ route('purchase-returns.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Purchase Returns
-            </a>
-        </li>
-    </ul>
+<a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+    <i class="c-sidebar-nav-icon bi bi-arrow-return-right" style="line-height: 1;"></i> Purchase Returns
+</a>
+<ul class="c-sidebar-nav-dropdown-items">
+    @can('create_purchase_returns')
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('purchase-returns.create') ? 'c-active' : '' }}"
+            href="{{ route('purchase-returns.create') }}">
+            <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Purchase Return
+        </a>
+    </li>
+    @endcan
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('purchase-returns.index') ? 'c-active' : '' }}"
+            href="{{ route('purchase-returns.index') }}">
+            <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Purchase Returns
+        </a>
+    </li>
+</ul>
 </li>
 @endcan --}}
 
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-costing.index') ? 'c-show' : '' }}">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> Costing
+        <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> LC Costing
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
         <li class="c-sidebar-nav-item">
@@ -334,17 +334,17 @@
         </li>
         {{-- <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.ledger') ? 'c-active' : '' }}"
-                href="{{ route('transaction.ledger') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
-            </a>
-        </li> --}}
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
-                href="{{ route('transaction.bank_report') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
-            </a>
-        </li>
-    </ul>
+        href="{{ route('transaction.ledger') }}">
+        <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
+        </a>
+</li> --}}
+<li class="c-sidebar-nav-item">
+    <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
+        href="{{ route('transaction.bank_report') }}">
+        <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
+    </a>
+</li>
+</ul>
 
 </li>
 @endcan
@@ -352,25 +352,25 @@
 {{-- @can('access_sale_returns')
 <li
     class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('sale-returns.*') || request()->routeIs('sale-return-payments.*') ? 'c-show' : '' }}">
-    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-arrow-return-left" style="line-height: 1;"></i> Sale Returns
-    </a>
-    @can('create_sale_returns')
-    <ul class="c-sidebar-nav-dropdown-items">
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('sale-returns.create') ? 'c-active' : '' }}"
-                href="{{ route('sale-returns.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Sale Return
-            </a>
-        </li>
-        @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('sale-returns.index') ? 'c-active' : '' }}"
-                href="{{ route('sale-returns.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Sale Returns
-            </a>
-        </li>
-    </ul>
+<a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+    <i class="c-sidebar-nav-icon bi bi-arrow-return-left" style="line-height: 1;"></i> Sale Returns
+</a>
+@can('create_sale_returns')
+<ul class="c-sidebar-nav-dropdown-items">
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('sale-returns.create') ? 'c-active' : '' }}"
+            href="{{ route('sale-returns.create') }}">
+            <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Sale Return
+        </a>
+    </li>
+    @endcan
+    <li class="c-sidebar-nav-item">
+        <a class="c-sidebar-nav-link {{ request()->routeIs('sale-returns.index') ? 'c-active' : '' }}"
+            href="{{ route('sale-returns.index') }}">
+            <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Sale Returns
+        </a>
+    </li>
+</ul>
 </li>
 @endcan --}}
 
@@ -393,7 +393,7 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
                 href="{{ route('expense-names.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Expense Names
+                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i>Product Expense Names
             </a>
         </li>
         @endcan
@@ -401,16 +401,40 @@
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"
                 href="{{ route('expenses.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i> Create Expense
+                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i>Product Create Expense
             </a>
         </li>
         @endcan
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.index') ? 'c-active' : '' }}"
                 href="{{ route('expenses.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> All Expenses
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Product Expenses
             </a>
         </li>
+
+        <!-- Office Expense Submenu -->
+        @can('create_office_expense')
+        <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('office_expense.*') ? 'c-show' : '' }}">
+            <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+                <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Office Expense
+            </a>
+            <ul class="c-sidebar-nav-dropdown-items">
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.create') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.create') }}">
+                        Create Office Expense
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.view') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.view') }}">
+                        View Office Expense
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endcan
+
     </ul>
 </li>
 @endcan
