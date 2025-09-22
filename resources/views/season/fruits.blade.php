@@ -23,7 +23,7 @@
                     </div>
 
                     <table class="table table-bordered table-hover">
-                        <thead>
+                        <thead >
                             <tr>
                                 <th>#</th>
                                 <th>Fruit Name</th>
@@ -43,9 +43,9 @@
                                 </td>
                                 <td>
                                     @if($fruit->img)
-                                    <img src="{{ asset($fruit->img) }}" alt="{{ $fruit->name }}" width="60" height="60" class="rounded">
+                                        <img src="{{ asset($fruit->img) }}" alt="{{ $fruit->name }}" width="60" height="60" class="rounded">
                                     @else
-                                    <span class="text-muted">No Image</span>
+                                        <span class="text-muted">No Image</span>
                                     @endif
                                 </td>
                                 <td>{{ $fruit->remarks ?? '-' }}</td>
@@ -87,17 +87,17 @@
     };
 
     @if(session('success'))
-    toastr.success("{{ session('success') }}");
+        toastr.success("{{ session('success') }}");
     @endif
 
     @if(session('error'))
-    toastr.error("{{ session('error') }}");
+        toastr.error("{{ session('error') }}");
     @endif
 
-    @if($errors - > any())
-    @foreach($errors - > all() as $error)
-    toastr.error("{{ $error }}");
-    @endforeach
+    @if($errors->any())
+        @foreach($errors->all() as $error)
+            toastr.error("{{ $error }}");
+        @endforeach
     @endif
 </script>
 @endsection
