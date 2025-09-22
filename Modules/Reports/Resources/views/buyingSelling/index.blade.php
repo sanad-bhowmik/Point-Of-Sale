@@ -106,9 +106,7 @@
                                             <td>{{ $container->number }}</td>
                                             <td>{{ $container?->lc?->costing?->product?->product_name }}</td>
                                             @php
-                                                $size = \App\Models\Size::find(
-                                                    $container?->lc?->costing?->size,
-                                                )->first();
+                                                $size = \App\Models\Size::where('id', $container?->lc?->costing?->size)->first();
                                             @endphp
                                             <td>{{ $size->size }}</td>
                                             <td>{{ $container?->lc?->costing?->supplier?->supplier_name }}</td>

@@ -35,13 +35,13 @@ class ReportsController extends Controller
                 ->sum('amount');
 
             $sales = SaleDetails::where('lc_id', $request->lc_id)
-                                ->where('container_id', $request->container_id)
-                                ->with('sale')
-                                ->get();
+                ->where('container_id', $request->container_id)
+                ->with('sale')
+                ->get();
 
             $totalSale = SaleDetails::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->sum('sub_total');
+                ->where('container_id', $request->container_id)
+                ->sum('sub_total');
 
             return view('reports::buyingSelling.index', [
                 'containerList' => $containerList,
@@ -50,7 +50,7 @@ class ReportsController extends Controller
                 'totalCostAmount' => $totalCostAmount,
                 'totalSale' => $totalSale,
                 'sales' => $sales,
-                'container' => $container?? null,
+                'container' => $container ?? null,
             ]);
         }
 
@@ -58,6 +58,32 @@ class ReportsController extends Controller
             'containerList' => $containerList,
             'lcList' => $lcList,
             'container' => $container,
+        ]);
+    }
+
+    public function getContainer(Request $request)
+    {
+        $containers = Container::where('lc_id', $request->lc_id)->where('status', 2)->get();
+        return response()->json($containers);
+    }
+
+    public function stockReport(Request $request)
+    {
+        $query = Container::with(['lc.costing.product.sizes', 'lc.costing.supplier', 'saleDetails'])
+            ->where('status', 2);
+
+        if (isset($request->container_id)) {
+            $containerList = $query->where('id', $request->container_id)->get();
+
+            return view('reports::stock-report.index', [
+                'containerList' => $containerList,
+            ]);
+        }
+
+        $containerList = $query->get();
+
+        return view('reports::stock-report.index', [
+            'containerList' => $containerList,
         ]);
     }
 
@@ -82,13 +108,13 @@ class ReportsController extends Controller
                 ->sum('amount');
 
             $sales = SaleDetails::where('lc_id', $request->lc_id)
-                                ->where('container_id', $request->container_id)
-                                ->with('sale')
-                                ->get();
+                ->where('container_id', $request->container_id)
+                ->with('sale')
+                ->get();
 
             $totalSale = SaleDetails::where('lc_id', $request->lc_id)
-                                    ->where('container_id', $request->container_id)
-                                    ->sum('sub_total');
+                ->where('container_id', $request->container_id)
+                ->sum('sub_total');
 
             return view('reports::shipmentStatus.index', [
                 'containerList' => $containerList,
@@ -97,7 +123,7 @@ class ReportsController extends Controller
                 'totalCostAmount' => $totalCostAmount,
                 'totalSale' => $totalSale,
                 'sales' => $sales,
-                'container' => $container?? null,
+                'container' => $container ?? null,
             ]);
         }
 
