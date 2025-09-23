@@ -19,7 +19,6 @@ use Modules\Sale\Http\Requests\UpdateSaleRequest;
 class SaleController extends Controller
 {
 
-
     public function index(SalesDataTable $dataTable)
     {
         abort_if(Gate::denies('access_sales'), 403);
@@ -105,7 +104,7 @@ class SaleController extends Controller
                         $container = Container::find($container_id);
                         if ($container) {
                             $containerQuantities[$container_id] = [
-                                'current_qty' => $container->qty,
+                                'current_qty' => $container->current_qty, // Changed from qty to current_qty
                                 'total_deduct' => 0
                             ];
                         }
@@ -131,7 +130,7 @@ class SaleController extends Controller
                     $new_qty = 0; // Prevent negative quantities
                 }
 
-                Container::where('id', $containerId)->update(['qty' => $new_qty]);
+                Container::where('id', $containerId)->update(['current_qty' => $new_qty]); // Changed from qty to current_qty
             }
 
             Cart::instance('sale')->destroy();
@@ -234,8 +233,8 @@ class SaleController extends Controller
             foreach ($containerQuantitiesToRestore as $containerId => $quantityToRestore) {
                 $container = Container::find($containerId);
                 if ($container) {
-                    $new_qty = $container->qty + $quantityToRestore;
-                    $container->update(['qty' => $new_qty]);
+                    $new_qty = $container->current_qty + $quantityToRestore; // Changed from qty to current_qty
+                    $container->update(['current_qty' => $new_qty]); // Changed from qty to current_qty
                 }
             }
 
@@ -299,11 +298,11 @@ class SaleController extends Controller
             foreach ($containerQuantitiesToDeduct as $containerId => $quantityToDeduct) {
                 $container = Container::find($containerId);
                 if ($container) {
-                    $new_qty = $container->qty - $quantityToDeduct;
+                    $new_qty = $container->current_qty - $quantityToDeduct; // Changed from qty to current_qty
                     if ($new_qty < 0) {
                         $new_qty = 0;
                     }
-                    $container->update(['qty' => $new_qty]);
+                    $container->update(['current_qty' => $new_qty]); // Changed from qty to current_qty
                 }
             }
 
@@ -344,8 +343,8 @@ class SaleController extends Controller
             foreach ($containerQuantitiesToRestore as $containerId => $quantityToRestore) {
                 $container = Container::find($containerId);
                 if ($container) {
-                    $new_qty = $container->qty + $quantityToRestore;
-                    $container->update(['qty' => $new_qty]);
+                    $new_qty = $container->current_qty + $quantityToRestore; // Changed from qty to current_qty
+                    $container->update(['current_qty' => $new_qty]); // Changed from qty to current_qty
                 }
             }
 

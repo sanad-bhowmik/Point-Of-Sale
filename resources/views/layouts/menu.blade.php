@@ -2,12 +2,10 @@
     <input type="text" id="sidebar-search" class="form-control" placeholder="Search menu...">
 </div>
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const searchInput = document.getElementById("sidebar-search");
-    const navItems = document.querySelectorAll(".c-sidebar-nav-item");
+    document.addEventListener("DOMContentLoaded", function() {
+        const searchInput = document.getElementById("sidebar-search");
+        const navItems = document.querySelectorAll(".c-sidebar-nav-item");
 
-    // Search functionality
-    if (searchInput) {
         searchInput.addEventListener("keyup", function() {
             let filter = searchInput.value.toLowerCase();
 
@@ -28,50 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 }
             });
         });
-    }
-
-    // Scroll to active menu on page load
-    function scrollToActiveMenu() {
-        // Find the active menu item
-        const activeMenuItem = document.querySelector('.c-sidebar-nav-item.c-active');
-
-        if (activeMenuItem) {
-            // Scroll the active menu item into view
-            activeMenuItem.scrollIntoView({
-                behavior: 'smooth',
-                block: 'center',
-                inline: 'nearest'
-            });
-
-            // Also ensure all parent dropdowns are expanded
-            let parentDropdown = activeMenuItem.closest('.c-sidebar-nav-dropdown');
-            while (parentDropdown) {
-                parentDropdown.classList.add('c-show');
-                parentDropdown = parentDropdown.parentElement.closest('.c-sidebar-nav-dropdown');
-            }
-        } else {
-            // If no active menu item, try to find active dropdown
-            const activeDropdown = document.querySelector('.c-sidebar-nav-dropdown.c-show');
-            if (activeDropdown) {
-                activeDropdown.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center',
-                    inline: 'nearest'
-                });
-            }
-        }
-    }
-
-    // Wait a bit for the page to fully load before scrolling
-    setTimeout(scrollToActiveMenu, 100);
-
-    // Alternative method: Scroll to active menu when DOM is fully ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', scrollToActiveMenu);
-    } else {
-        scrollToActiveMenu();
-    }
-});
+    });
 </script>
 
 <li class="c-sidebar-nav-item {{ request()->routeIs('home') ? 'c-active' : '' }}">
@@ -83,7 +38,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @can('access_products')
 
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('products.*') || request()->routeIs('product-categories.*') ? 'c-show' : '' }}" id="products">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-journal-bookmark" style="line-height: 1;"></i> Products
     </a>
@@ -122,7 +77,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @can('create_sizes')
 <!-- Sizes Submenu -->
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('product.size.*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('product.size.*') ? 'c-show' : '' }}" id="sizes">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Sizes
     </a>
@@ -247,7 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan --}}
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-costing.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-costing.index') ? 'c-show' : '' }}" id="costing">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-currency-exchange" style="line-height: 1;"></i> LC Costing
     </a>
@@ -269,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-container.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-container.index') ? 'c-show' : '' }}" id="container">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-calendar3-range" style="line-height: 1;"></i> Container
     </a>
@@ -292,7 +247,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 @can('access_sales')
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('sales.*') || request()->routeIs('sale-payments*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('sales.*') || request()->routeIs('sale-payments*') ? 'c-show' : '' }}" id="sales">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-receipt" style="line-height: 1;"></i> Sales
     </a>
@@ -316,7 +271,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*seasonalfruit.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*seasonalfruit.index') ? 'c-show' : '' }}" id="seasonal">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-basket3-fill" style="line-height: 1;"></i> Seasonal Fruit
     </a>
@@ -338,7 +293,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-bank.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-bank.index') ? 'c-show' : '' }}" id="banks">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-bank" style="line-height: 1;"></i> Banks
     </a>
@@ -360,7 +315,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}" id="transactions">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-wallet2" style="line-height: 1;"></i> Transactions
     </a>
@@ -421,7 +376,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 @can('access_expenses')
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('expenses.*') || request()->routeIs('expense-categories.*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('expenses.*') || request()->routeIs('expense-categories.*') ? 'c-show' : '' }}" id="expenses">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-wallet2" style="line-height: 1;"></i> Expenses
     </a>
@@ -492,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 @can('access_customers|access_suppliers')
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('customers.*') || request()->routeIs('suppliers.*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('customers.*') || request()->routeIs('suppliers.*') ? 'c-show' : '' }}" id="parties">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> Parties
     </a>
@@ -518,7 +473,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}" id="permit">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Import Permit
     </a>
@@ -542,7 +497,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_reports')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-report.index') ? 'c-show' : '' }}" id="reports">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-graph-up" style="line-height: 1;"></i> Reports
     </a>
@@ -582,7 +537,7 @@ document.addEventListener("DOMContentLoaded", function() {
 @endcan
 
 @can('access_user_management')
-<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') ? 'c-show' : '' }}">
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('roles*') ? 'c-show' : '' }}" id="management">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-people" style="line-height: 1;"></i> User Management
     </a>
@@ -611,7 +566,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 @can('access_currencies|access_settings')
 <li
-    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('currencies*') || request()->routeIs('units*') ? 'c-show' : '' }}">
+    class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('currencies*') || request()->routeIs('units*') ? 'c-show' : '' }}" id="settings">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-gear" style="line-height: 1;"></i> Settings
     </a>
@@ -647,3 +602,48 @@ document.addEventListener("DOMContentLoaded", function() {
     @endcan
 </li>
 @endcan
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const sidebar = document.querySelector(".c-sidebar-nav");
+        const dropdowns = document.querySelectorAll(".c-sidebar-nav-dropdown");
+        const activeLink = document.querySelector(".c-active");
+        localStorage.setItem("sidebarOpenDropdowns", JSON.stringify([]));
+        localStorage.setItem("sidebarScroll", 0);
+        const savedScroll = localStorage.getItem("sidebarScroll");
+        if (savedScroll && sidebar) {
+            sidebar.scrollTop = parseInt(savedScroll);
+        }
+
+        const openDropdowns = JSON.parse(localStorage.getItem("sidebarOpenDropdowns") || "[]");
+        dropdowns.forEach(dropdown => {
+            const id = dropdown.getAttribute("id");
+            if (id && openDropdowns.includes(id)) {
+                dropdown.classList.add("c-show");
+            }
+        });
+
+        if (!savedScroll && activeLink && sidebar) {
+            sidebar.scrollTop = activeLink.offsetTop - 50;
+        }
+
+        sidebar.addEventListener("scroll", function() {
+            localStorage.setItem("sidebarScroll", sidebar.scrollTop);
+        });
+
+        dropdowns.forEach(dropdown => {
+            const toggle = dropdown.querySelector(".c-sidebar-nav-dropdown-toggle");
+            if (toggle) {
+                toggle.addEventListener("click", function() {
+                    const openDropdowns = [];
+                    dropdowns.forEach(d => {
+                        if (d.classList.contains("c-show") && d.getAttribute("id")) {
+                            openDropdowns.push(d.getAttribute("id"));
+                        }
+                    });
+                    localStorage.setItem("sidebarOpenDropdowns", JSON.stringify(openDropdowns));
+                });
+            }
+        });
+    });
+</script>

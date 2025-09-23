@@ -27,12 +27,19 @@ class ContainerController extends Controller
             'tt_date' => 'nullable|date',
             'status' => 'nullable|numeric|in:0,1,2,3',
             'qty' => 'nullable|numeric',
+            'current_qty' => 'nullable|numeric',
         ]);
+
+        // If qty is set, also set current_qty
+        if (isset($validated['qty'])) {
+            $validated['current_qty'] = $validated['qty'];
+        }
 
         \App\Models\Container::create($validated);
 
         return redirect()->route('container.view')->with('success', 'Container added successfully!');
     }
+
 
     public function containerTbl()
     {

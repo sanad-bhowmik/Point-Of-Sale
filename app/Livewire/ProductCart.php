@@ -28,6 +28,7 @@ class ProductCart extends Component
     public $cart_sizes = [];
     public $cartInstance = 'sale';
     public $has_insufficient_stock = false;
+
     public function mount($cartInstance, $data = null)
     {
         $this->cart_instance = $cartInstance;
@@ -79,6 +80,7 @@ class ProductCart extends Component
             'has_insufficient_stock' => $this->has_insufficient_stock
         ]);
     }
+
     public function checkAllStockAvailability()
     {
         $this->has_insufficient_stock = false;
@@ -91,9 +93,9 @@ class ProductCart extends Component
 
             if ($container_id) {
                 $container = \App\Models\Container::find($container_id);
-                $container_quantity = $container ? $container->qty : 0;
+                $container_quantity = $container ? $container->current_qty : 0; // Changed from qty to current_qty
 
-                if ($container_quantity <= $requested_quantity) {
+                if ($container_quantity < $requested_quantity) {
                     $this->has_insufficient_stock = true;
 
                     // ✅ Use Livewire v3 dispatch
@@ -106,7 +108,6 @@ class ProductCart extends Component
             }
         }
     }
-
 
     public function updateSize($rowId)
     {
@@ -176,7 +177,7 @@ class ProductCart extends Component
         $container_quantity = 0;
         if ($container_id) {
             $container = \App\Models\Container::find($container_id);
-            $container_quantity = $container ? $container->qty : 0;
+            $container_quantity = $container ? $container->current_qty : 0; // Changed from qty to current_qty
         }
 
         // Add product to cart including LC and container IDs
@@ -206,6 +207,7 @@ class ProductCart extends Component
         $this->item_discount[$product['id']] = 0;
         $this->checkAllStockAvailability();
     }
+
     public function removeItem($row_id)
     {
         $cart_item = Cart::instance($this->cart_instance)->get($row_id);
@@ -242,7 +244,7 @@ class ProductCart extends Component
         $container_quantity = 0;
         if ($container_id) {
             $container = \App\Models\Container::find($container_id);
-            $container_quantity = $container ? $container->qty : 0;
+            $container_quantity = $container ? $container->current_qty : 0; // Changed from qty to current_qty
         }
 
         if ($this->cart_instance == 'sale' || $this->cart_instance == 'purchase_return') {

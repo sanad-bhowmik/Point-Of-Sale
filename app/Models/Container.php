@@ -26,6 +26,7 @@ class Container extends Model
         'tt_value',
         'tt_exchange_rate',
         'qty',
+        'current_qty',
         'lc_date',
         'tt_date',
     ];
