@@ -2,10 +2,12 @@
     <input type="text" id="sidebar-search" class="form-control" placeholder="Search menu...">
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const searchInput = document.getElementById("sidebar-search");
-        const navItems = document.querySelectorAll(".c-sidebar-nav-item");
+document.addEventListener("DOMContentLoaded", function() {
+    const searchInput = document.getElementById("sidebar-search");
+    const navItems = document.querySelectorAll(".c-sidebar-nav-item");
 
+    // Search functionality
+    if (searchInput) {
         searchInput.addEventListener("keyup", function() {
             let filter = searchInput.value.toLowerCase();
 
@@ -26,7 +28,50 @@
                 }
             });
         });
-    });
+    }
+
+    // Scroll to active menu on page load
+    function scrollToActiveMenu() {
+        // Find the active menu item
+        const activeMenuItem = document.querySelector('.c-sidebar-nav-item.c-active');
+
+        if (activeMenuItem) {
+            // Scroll the active menu item into view
+            activeMenuItem.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center',
+                inline: 'nearest'
+            });
+
+            // Also ensure all parent dropdowns are expanded
+            let parentDropdown = activeMenuItem.closest('.c-sidebar-nav-dropdown');
+            while (parentDropdown) {
+                parentDropdown.classList.add('c-show');
+                parentDropdown = parentDropdown.parentElement.closest('.c-sidebar-nav-dropdown');
+            }
+        } else {
+            // If no active menu item, try to find active dropdown
+            const activeDropdown = document.querySelector('.c-sidebar-nav-dropdown.c-show');
+            if (activeDropdown) {
+                activeDropdown.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center',
+                    inline: 'nearest'
+                });
+            }
+        }
+    }
+
+    // Wait a bit for the page to fully load before scrolling
+    setTimeout(scrollToActiveMenu, 100);
+
+    // Alternative method: Scroll to active menu when DOM is fully ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', scrollToActiveMenu);
+    } else {
+        scrollToActiveMenu();
+    }
+});
 </script>
 
 <li class="c-sidebar-nav-item {{ request()->routeIs('home') ? 'c-active' : '' }}">
