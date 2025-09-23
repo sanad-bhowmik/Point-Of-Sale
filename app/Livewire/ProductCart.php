@@ -27,7 +27,7 @@ class ProductCart extends Component
     private $product;
     public $cart_sizes = [];
     public $cartInstance = 'sale';
-
+    public $has_insufficient_stock = false;
     public function mount($cartInstance, $data = null)
     {
         $this->cart_instance = $cartInstance;
@@ -71,10 +71,42 @@ class ProductCart extends Component
     {
         $cart_items = Cart::instance($this->cart_instance)->content();
 
+        // Check stock status for all items
+        $this->checkAllStockAvailability();
+
         return view('livewire.product-cart', [
-            'cart_items' => $cart_items
+            'cart_items' => $cart_items,
+            'has_insufficient_stock' => $this->has_insufficient_stock
         ]);
     }
+    public function checkAllStockAvailability()
+    {
+        $this->has_insufficient_stock = false;
+        $cart_items = Cart::instance($this->cart_instance)->content();
+
+        foreach ($cart_items as $cart_item) {
+            $container_id = $cart_item->options->container_id ?? null;
+            $product_id = $cart_item->id;
+            $requested_quantity = $this->quantity[$product_id] ?? $cart_item->qty;
+
+            if ($container_id) {
+                $container = \App\Models\Container::find($container_id);
+                $container_quantity = $container ? $container->qty : 0;
+
+                if ($container_quantity <= $requested_quantity) {
+                    $this->has_insufficient_stock = true;
+
+                    // ✅ Use Livewire v3 dispatch
+                    $this->dispatch('consoleLog', [
+                        'message' => "Insufficient stock! Product ID: {$product_id}, Requested: {$requested_quantity}, Available: {$container_quantity}"
+                    ]);
+
+                    break;
+                }
+            }
+        }
+    }
+
 
     public function updateSize($rowId)
     {
@@ -120,62 +152,74 @@ class ProductCart extends Component
     }
 
     public function productSelected($payload)
-{
-    // Extract product, LC, and container from payload
-    $product = is_object($payload['product']) ? (array) $payload['product'] : $payload['product'];
-    $lc_id = $payload['lc_id'] ?? null;
-    $container_id = $payload['container_id'] ?? null;
+    {
+        // Extract product, LC, and container from payload
+        $product = is_object($payload['product']) ? (array) $payload['product'] : $payload['product'];
+        $lc_id = $payload['lc_id'] ?? null;
+        $container_id = $payload['container_id'] ?? null;
 
-    $cart = Cart::instance($this->cart_instance);
+        $cart = Cart::instance($this->cart_instance);
 
-    // Check if product already in cart
-    $exists = $cart->search(function ($cartItem, $rowId) use ($product) {
-        return $cartItem->id == $product['id'];
-    });
+        // Check if product already in cart
+        $exists = $cart->search(function ($cartItem, $rowId) use ($product) {
+            return $cartItem->id == $product['id'];
+        });
 
-    if ($exists->isNotEmpty()) {
-        session()->flash('message', 'Product exists in the cart!');
-        return;
+        if ($exists->isNotEmpty()) {
+            session()->flash('message', 'Product exists in the cart!');
+            return;
+        }
+
+        $this->product = $product;
+
+        // Get container quantity instead of product quantity
+        $container_quantity = 0;
+        if ($container_id) {
+            $container = \App\Models\Container::find($container_id);
+            $container_quantity = $container ? $container->qty : 0;
+        }
+
+        // Add product to cart including LC and container IDs
+        $cart->add([
+            'id'      => $product['id'],
+            'name'    => $product['product_name'],
+            'qty'     => 1,
+            'price'   => $this->calculate($product)['price'],
+            'weight'  => 1,
+            'options' => [
+                'product_discount'      => 0.00,
+                'product_discount_type' => 'fixed',
+                'sub_total'             => $this->calculate($product)['sub_total'],
+                'code'                  => $product['product_code'],
+                'stock'                 => $container_quantity, // Use container quantity instead of product quantity
+                'unit'                  => $product['product_unit'] ?? null,
+                'product_tax'           => $this->calculate($product)['product_tax'],
+                'unit_price'            => $this->calculate($product)['unit_price'],
+                'lc_id'                 => $lc_id,
+                'container_id'          => $container_id,
+            ]
+        ]);
+
+        $this->check_quantity[$product['id']] = $container_quantity; // Use container quantity for validation
+        $this->quantity[$product['id']] = 1;
+        $this->discount_type[$product['id']] = 'fixed';
+        $this->item_discount[$product['id']] = 0;
+        $this->checkAllStockAvailability();
     }
-
-    $this->product = $product;
-
-    // Get container quantity instead of product quantity
-    $container_quantity = 0;
-    if ($container_id) {
-        $container = \App\Models\Container::find($container_id);
-        $container_quantity = $container ? $container->qty : 0;
-    }
-
-    // Add product to cart including LC and container IDs
-    $cart->add([
-        'id'      => $product['id'],
-        'name'    => $product['product_name'],
-        'qty'     => 1,
-        'price'   => $this->calculate($product)['price'],
-        'weight'  => 1,
-        'options' => [
-            'product_discount'      => 0.00,
-            'product_discount_type' => 'fixed',
-            'sub_total'             => $this->calculate($product)['sub_total'],
-            'code'                  => $product['product_code'],
-            'stock'                 => $container_quantity, // Use container quantity instead of product quantity
-            'unit'                  => $product['product_unit'] ?? null,
-            'product_tax'           => $this->calculate($product)['product_tax'],
-            'unit_price'            => $this->calculate($product)['unit_price'],
-            'lc_id'                 => $lc_id,
-            'container_id'          => $container_id,
-        ]
-    ]);
-
-    $this->check_quantity[$product['id']] = $container_quantity; // Use container quantity for validation
-    $this->quantity[$product['id']] = 1;
-    $this->discount_type[$product['id']] = 'fixed';
-    $this->item_discount[$product['id']] = 0;
-}
     public function removeItem($row_id)
     {
+        $cart_item = Cart::instance($this->cart_instance)->get($row_id);
         Cart::instance($this->cart_instance)->remove($row_id);
+
+        // Remove from local arrays
+        if (isset($this->check_quantity[$cart_item->id])) {
+            unset($this->check_quantity[$cart_item->id]);
+        }
+        if (isset($this->quantity[$cart_item->id])) {
+            unset($this->quantity[$cart_item->id]);
+        }
+
+        $this->checkAllStockAvailability(); // Update the stock status after removal
     }
 
     public function updatedGlobalTax()
@@ -188,47 +232,49 @@ class ProductCart extends Component
         Cart::instance($this->cart_instance)->setGlobalDiscount((int)$this->global_discount);
     }
 
-   public function updateQuantity($row_id, $product_id)
-{
-    // Get the cart item to access container_id
-    $cart_item = Cart::instance($this->cart_instance)->get($row_id);
-    $container_id = $cart_item->options->container_id ?? null;
+    public function updateQuantity($row_id, $product_id)
+    {
+        // Get the cart item to access container_id
+        $cart_item = Cart::instance($this->cart_instance)->get($row_id);
+        $container_id = $cart_item->options->container_id ?? null;
 
-    // Get container quantity for validation
-    $container_quantity = 0;
-    if ($container_id) {
-        $container = \App\Models\Container::find($container_id);
-        $container_quantity = $container ? $container->qty : 0;
-    }
-
-    if ($this->cart_instance == 'sale' || $this->cart_instance == 'purchase_return') {
-        if ($container_quantity < $this->quantity[$product_id]) {
-            session()->flash('message', 'The requested quantity is not available in container stock.');
-            return;
+        // Get container quantity for validation
+        $container_quantity = 0;
+        if ($container_id) {
+            $container = \App\Models\Container::find($container_id);
+            $container_quantity = $container ? $container->qty : 0;
         }
+
+        if ($this->cart_instance == 'sale' || $this->cart_instance == 'purchase_return') {
+            if ($container_quantity < $this->quantity[$product_id]) {
+                session()->flash('message', 'The requested quantity is not available in container stock.');
+                $this->checkAllStockAvailability(); // Update the stock status
+                return;
+            }
+        }
+
+        Cart::instance($this->cart_instance)->update($row_id, $this->quantity[$product_id]);
+
+        // Update the stock value in cart options to reflect current container quantity
+        Cart::instance($this->cart_instance)->update($row_id, [
+            'options' => array_merge((array)$cart_item->options, [
+                'sub_total'             => $cart_item->price * $cart_item->qty,
+                'code'                  => $cart_item->options->code,
+                'stock'                 => $container_quantity,
+                'unit'                  => $cart_item->options->unit,
+                'product_tax'           => $cart_item->options->product_tax,
+                'unit_price'            => $cart_item->options->unit_price,
+                'product_discount'      => $cart_item->options->product_discount,
+                'product_discount_type' => $cart_item->options->product_discount_type,
+                'lc_id'                 => $cart_item->options->lc_id ?? null,
+                'container_id'          => $cart_item->options->container_id ?? null,
+            ])
+        ]);
+
+        $this->check_quantity[$product_id] = $container_quantity;
+        $this->checkAllStockAvailability(); // Update the stock status after quantity change
     }
 
-    Cart::instance($this->cart_instance)->update($row_id, $this->quantity[$product_id]);
-
-    // Update the stock value in cart options to reflect current container quantity
-    Cart::instance($this->cart_instance)->update($row_id, [
-        'options' => array_merge((array)$cart_item->options, [
-            'sub_total'             => $cart_item->price * $cart_item->qty,
-            'code'                  => $cart_item->options->code,
-            'stock'                 => $container_quantity, // Update with current container quantity
-            'unit'                  => $cart_item->options->unit,
-            'product_tax'           => $cart_item->options->product_tax,
-            'unit_price'            => $cart_item->options->unit_price,
-            'product_discount'      => $cart_item->options->product_discount,
-            'product_discount_type' => $cart_item->options->product_discount_type,
-            'lc_id'                 => $cart_item->options->lc_id ?? null,
-            'container_id'          => $cart_item->options->container_id ?? null,
-        ])
-    ]);
-
-    // Also update the check_quantity array with current container quantity
-    $this->check_quantity[$product_id] = $container_quantity;
-}
     public function updatedDiscountType($value, $name)
     {
         $this->item_discount[$name] = 0;
