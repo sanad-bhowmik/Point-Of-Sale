@@ -2,6 +2,7 @@
 
 namespace Modules\Sale\Http\Controllers;
 
+use App\Models\Container;
 use Modules\Sale\DataTables\SalesDataTable;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Routing\Controller;
@@ -17,6 +18,7 @@ use Modules\Sale\Http\Requests\UpdateSaleRequest;
 
 class SaleController extends Controller
 {
+
 
     public function index(SalesDataTable $dataTable)
     {
@@ -74,6 +76,10 @@ class SaleController extends Controller
                 'lc_id' => $lc_id,
                 'container_id' => $container_id,
             ]);
+
+            // Track container quantities to update
+            $containerQuantities = [];
+
             foreach (Cart::instance('sale')->content() as $cart_item) {
                 SaleDetails::create([
                     'sale_id' => $sale->id,
@@ -92,12 +98,40 @@ class SaleController extends Controller
                     'container_id' => $cart_item->options['container_id'] ?? null,
                 ]);
 
+                // Update container quantity based on the equation: stock - quantity = updated value
+                $container_id = $cart_item->options['container_id'] ?? null;
+                if ($container_id) {
+                    if (!isset($containerQuantities[$container_id])) {
+                        $container = Container::find($container_id);
+                        if ($container) {
+                            $containerQuantities[$container_id] = [
+                                'current_qty' => $container->qty,
+                                'total_deduct' => 0
+                            ];
+                        }
+                    }
+
+                    if (isset($containerQuantities[$container_id])) {
+                        $containerQuantities[$container_id]['total_deduct'] += $cart_item->qty;
+                    }
+                }
+
                 if ($request->status == 'Shipped' || $request->status == 'Completed') {
                     $product = Product::findOrFail($cart_item->id);
                     $product->update([
                         'product_quantity' => $product->product_quantity - $cart_item->qty
                     ]);
                 }
+            }
+
+            // Update container quantities in database
+            foreach ($containerQuantities as $containerId => $quantityData) {
+                $new_qty = $quantityData['current_qty'] - $quantityData['total_deduct'];
+                if ($new_qty < 0) {
+                    $new_qty = 0; // Prevent negative quantities
+                }
+
+                Container::where('id', $containerId)->update(['qty' => $new_qty]);
             }
 
             Cart::instance('sale')->destroy();
@@ -117,7 +151,6 @@ class SaleController extends Controller
 
         return redirect()->route('sales.index');
     }
-
 
     public function show(Sale $sale)
     {
@@ -153,14 +186,15 @@ class SaleController extends Controller
                     'code'        => $sale_detail->product_code,
                     'stock'       => Product::findOrFail($sale_detail->product_id)->product_quantity,
                     'product_tax' => $sale_detail->product_tax_amount,
-                    'unit_price'  => $sale_detail->unit_price
+                    'unit_price'  => $sale_detail->unit_price,
+                    'lc_id'       => $sale_detail->lc_id,
+                    'container_id' => $sale_detail->container_id,
                 ]
             ]);
         }
 
         return view('sale::edit', compact('sale'));
     }
-
 
     public function update(UpdateSaleRequest $request, Sale $sale)
     {
@@ -176,7 +210,17 @@ class SaleController extends Controller
                 $payment_status = 'Paid';
             }
 
+            // Restore container quantities before updating
+            $containerQuantitiesToRestore = [];
             foreach ($sale->saleDetails as $sale_detail) {
+                $container_id = $sale_detail->container_id;
+                if ($container_id) {
+                    if (!isset($containerQuantitiesToRestore[$container_id])) {
+                        $containerQuantitiesToRestore[$container_id] = 0;
+                    }
+                    $containerQuantitiesToRestore[$container_id] += $sale_detail->quantity;
+                }
+
                 if ($sale->status == 'Shipped' || $sale->status == 'Completed') {
                     $product = Product::findOrFail($sale_detail->product_id);
                     $product->update([
@@ -184,6 +228,15 @@ class SaleController extends Controller
                     ]);
                 }
                 $sale_detail->delete();
+            }
+
+            // Restore quantities to containers
+            foreach ($containerQuantitiesToRestore as $containerId => $quantityToRestore) {
+                $container = Container::find($containerId);
+                if ($container) {
+                    $new_qty = $container->qty + $quantityToRestore;
+                    $container->update(['qty' => $new_qty]);
+                }
             }
 
             $sale->update([
@@ -205,6 +258,9 @@ class SaleController extends Controller
                 'discount_amount' => Cart::instance('sale')->discount() * 100,
             ]);
 
+            // Track new container quantities to deduct
+            $containerQuantitiesToDeduct = [];
+
             foreach (Cart::instance('sale')->content() as $cart_item) {
                 SaleDetails::create([
                     'sale_id' => $sale->id,
@@ -218,13 +274,36 @@ class SaleController extends Controller
                     'product_discount_amount' => $cart_item->options->product_discount * 100,
                     'product_discount_type' => $cart_item->options->product_discount_type,
                     'product_tax_amount' => $cart_item->options->product_tax * 100,
+                    'lc_id' => $cart_item->options['lc_id'] ?? null,
+                    'container_id' => $cart_item->options['container_id'] ?? null,
                 ]);
+
+                // Track container quantities for deduction
+                $container_id = $cart_item->options['container_id'] ?? null;
+                if ($container_id) {
+                    if (!isset($containerQuantitiesToDeduct[$container_id])) {
+                        $containerQuantitiesToDeduct[$container_id] = 0;
+                    }
+                    $containerQuantitiesToDeduct[$container_id] += $cart_item->qty;
+                }
 
                 if ($request->status == 'Shipped' || $request->status == 'Completed') {
                     $product = Product::findOrFail($cart_item->id);
                     $product->update([
                         'product_quantity' => $product->product_quantity - $cart_item->qty
                     ]);
+                }
+            }
+
+            // Deduct quantities from containers
+            foreach ($containerQuantitiesToDeduct as $containerId => $quantityToDeduct) {
+                $container = Container::find($containerId);
+                if ($container) {
+                    $new_qty = $container->qty - $quantityToDeduct;
+                    if ($new_qty < 0) {
+                        $new_qty = 0;
+                    }
+                    $container->update(['qty' => $new_qty]);
                 }
             }
 
@@ -236,12 +315,42 @@ class SaleController extends Controller
         return redirect()->route('sales.index');
     }
 
-
     public function destroy(Sale $sale)
     {
         abort_if(Gate::denies('delete_sales'), 403);
 
-        $sale->delete();
+        DB::transaction(function () use ($sale) {
+            // Restore container quantities before deleting
+            $containerQuantitiesToRestore = [];
+            foreach ($sale->saleDetails as $sale_detail) {
+                $container_id = $sale_detail->container_id;
+                if ($container_id) {
+                    if (!isset($containerQuantitiesToRestore[$container_id])) {
+                        $containerQuantitiesToRestore[$container_id] = 0;
+                    }
+                    $containerQuantitiesToRestore[$container_id] += $sale_detail->quantity;
+                }
+
+                // Also restore product quantities if sale was shipped/completed
+                if ($sale->status == 'Shipped' || $sale->status == 'Completed') {
+                    $product = Product::findOrFail($sale_detail->product_id);
+                    $product->update([
+                        'product_quantity' => $product->product_quantity + $sale_detail->quantity
+                    ]);
+                }
+            }
+
+            // Restore quantities to containers
+            foreach ($containerQuantitiesToRestore as $containerId => $quantityToRestore) {
+                $container = Container::find($containerId);
+                if ($container) {
+                    $new_qty = $container->qty + $quantityToRestore;
+                    $container->update(['qty' => $new_qty]);
+                }
+            }
+
+            $sale->delete();
+        });
 
         toast('Sale Deleted!', 'warning');
 

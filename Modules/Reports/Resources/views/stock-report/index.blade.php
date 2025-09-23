@@ -35,7 +35,7 @@
                                 <label for="">Select Container</label>
                                 <select class="form-control" id="containerSelect" name="container_id">
                                     <option value="">-- Select Container --</option>
-                                    @foreach ($containerList as $list_container)
+                                    @foreach ($containers as $list_container)
                                         <option value="{{ $list_container->id }}"
                                             {{ request('container_id') == $list_container->id ? 'selected' : '' }}>
                                             {{ $list_container->name }} ({{ $list_container->number }})

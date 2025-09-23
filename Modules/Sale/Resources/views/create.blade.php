@@ -62,17 +62,17 @@
                             <livewire:product-cart :cartInstance="'sale'"/>
 
                             <div class="form-row">
-                                <div class="col-lg-4">
+                                <div class="col-lg-4 d-none">
                                     <div class="form-group">
                                         <label for="status">Status <span class="text-danger">*</span></label>
                                         <select class="form-control" name="status" id="status" required>
-                                            <option value="Pending">Pending</option>
+                                            <option value="Pending" selected>Pending</option>
                                             <option value="Shipped">Shipped</option>
                                             <option value="Completed">Completed</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="from-group">
                                         <div class="form-group">
                                             <label for="payment_method">Payment Method <span class="text-danger">*</span></label>
@@ -86,7 +86,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-lg-4">
+                                <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="paid_amount">Amount Received <span class="text-danger">*</span></label>
                                         <div class="input-group">

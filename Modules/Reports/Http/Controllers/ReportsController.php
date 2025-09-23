@@ -71,12 +71,15 @@ class ReportsController extends Controller
     {
         $query = Container::with(['lc.costing.product.sizes', 'lc.costing.supplier', 'saleDetails'])
             ->where('status', 2);
+        $containers = Container::with(['lc.costing.product.sizes', 'lc.costing.supplier', 'saleDetails'])
+            ->where('status', 2)->get();
 
         if (isset($request->container_id)) {
             $containerList = $query->where('id', $request->container_id)->get();
 
             return view('reports::stock-report.index', [
                 'containerList' => $containerList,
+                'containers' => $containers,
             ]);
         }
 
@@ -84,6 +87,7 @@ class ReportsController extends Controller
 
         return view('reports::stock-report.index', [
             'containerList' => $containerList,
+            'containers' => $containers,
         ]);
     }
 
