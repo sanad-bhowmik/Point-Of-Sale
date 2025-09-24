@@ -12430,10 +12430,11 @@ html:not([dir="rtl"]) .c-switch-label .c-switch-slider:after {
     width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+     font-size: 11px;
 }
 .table-responsive > .table-bordered {
     border: 0;
-    font-size: 13px;
+    font-size: 11px;
 }
 .table-outline {
     border: 1px solid;
