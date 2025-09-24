@@ -39,4 +39,7 @@
     .select2-container--default .select2-selection--single .select2-selection__arrow b {
         margin-top: 2px;
     }
+    td, th, p, h3,h4,h5,button,a,label,input,textarea{
+        font-size: 12px !important;
+    }
 </style>

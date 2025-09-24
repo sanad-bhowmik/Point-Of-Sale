@@ -15,7 +15,7 @@
             <div class="col-md-12">
                 <div class="card shadow-sm rounded-3">
                     <div class="card-body">
-                        <h5 class="mb-3 border-bottom pb-2">Bank Report</h5>
+                        {{-- <h5 class="mb-3 border-bottom pb-2">Bank Report</h5> --}}
 
                         <div class="row">
                             <div class="col-md-9">

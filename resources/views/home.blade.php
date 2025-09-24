@@ -719,4 +719,14 @@
     .c-footer{
         display: none !important;
     }
+
+    th,td{
+        font-size: 12px !important;
+        padding: 6px !important;
+        font-weight: 400;
+    }
+
+    .card-header {
+        padding: 6px !important;
+    }
 </style>
