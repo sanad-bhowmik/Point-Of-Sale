@@ -15,9 +15,9 @@
             <div class="col-md-12">
                 {{-- Filter Section --}}
                 <div class="card shadow-sm mb-4">
-                    <div class="card-header" style="background-color: #e3ff4a">
+                    {{-- <div class="card-header" style="background-color: #e3ff4a">
                         <h5 class="mb-0">Filter Final Report</h5>
-                    </div>
+                    </div> --}}
                     <div class="card-body">
                         <form action="{{ route('expense.finalReportFilter') }}" method="post" class="row g-3">
                             @csrf
@@ -91,7 +91,7 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="text-center mb-4">Price of {{ $find_container?->lc?->costing?->product?->product_name }}</h4>
+                                    <h4 class="text-center mb-4" style="font-size: 16px;">Price of {{ $find_container?->lc?->costing?->product?->product_name }}</h4>
 
                                     <div class="table-responsive">
                                         <table class="table table-bordered table-striped">
@@ -355,14 +355,31 @@
 
     <style>
         td {
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 12px;
+            font-weight: 400;
+            padding: 6px !important;
+        }
+
+        th {
+            font-size: 12px !important;
+            padding: 6px !important;
         }
 
         .td-font {
-            font-size: 18px;
-            font-weight: 600;
-            padding: 4px !important;
+            font-size: 12px;
+            font-weight: 400;
+            padding: 6px !important;
+        }
+        .card-body{
+            padding: 8px;
+        }
+
+        .card-header{
+            padding: 6px !important;
+        }
+        .card-header h4{
+            font-size: 14px !important;
+            margin: 0px !important;
         }
     </style>
 @endpush

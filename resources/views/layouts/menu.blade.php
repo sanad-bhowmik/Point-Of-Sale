@@ -1,6 +1,20 @@
 <div class="p-2">
     <input type="text" id="sidebar-search" class="form-control" placeholder="Search menu...">
 </div>
+
+<style>
+    .c-sidebar-nav-link{
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+    }
+    .c-sidebar{
+        width: 200px !important;
+    }
+    .c-wrapper{
+        margin-left: 200px !important;
+    }
+</style>
+
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         const searchInput = document.getElementById("sidebar-search");
