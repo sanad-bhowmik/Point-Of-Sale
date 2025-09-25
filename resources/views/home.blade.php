@@ -341,17 +341,17 @@
     <div class="col-lg-12">
         @if (isset($containers))
                 <div class="card border-0 shadow-sm">
-                    <div class="card-body position-relative">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h6 class="mb-0 fw-bold" style="display: flex;">
+                            <div class="bank-icon me-2">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div> <span class="mt-2 ml-2">Details of cash flow</span>
+                        </h6>
+                    </div>
+                    <div class="card-body position-relative p-0">
                         <div class="table-responsive">
                             <table id="cashflow-table" class="table table-bordered table-striped">
-                                <thead class="bg-success text-white">
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th colspan="2" style="font-size: 20px;">Details of cash flow</th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
+                                <thead>
                                     <tr>
                                         <th>SL</th>
                                         <th>Container Name</th>
