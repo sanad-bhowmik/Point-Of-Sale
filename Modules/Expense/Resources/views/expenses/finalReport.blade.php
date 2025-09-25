@@ -110,8 +110,8 @@
                                                     <tr>
                                                         <td>{{ $find_container?->lc?->costing?->product?->product_name ? 'Price of ' . $find_container?->lc?->costing?->product?->product_name . ' (LC)' : 'N/A' }}
                                                         </td>
-                                                        <td>{{ $find_container?->lc_value }}</td>
                                                         <td>{{ $find_container?->lc_exchange_rate }}</td>
+                                                        <td>{{ $find_container?->lc_value }}</td>
                                                         <td>{{ number_format($find_container?->lc_value * $find_container?->lc_exchange_rate, 2) }}</td>
                                                         <td>{{ $find_container->qty }}</td>
                                                         <td>{{ number_format(($find_container?->lc_value * $find_container?->lc_exchange_rate) * $find_container->qty, 2) }}</td>
@@ -126,8 +126,8 @@
                                                     <tr>
                                                         <td>{{ $find_container?->lc?->costing?->product?->product_name ? 'Price of ' . $find_container?->lc?->costing?->product?->product_name . ' (TT)' : 'N/A' }}
                                                         </td>
-                                                        <td>{{ $find_container->tt_value }}</td>
                                                         <td>{{ $find_container->tt_exchange_rate }}</td>
+                                                        <td>{{ $find_container->tt_value }}</td>
                                                         <td>{{ number_format($find_container->tt_value * $find_container->tt_exchange_rate, 4) }}
                                                         </td>
                                                         <td>{{ $find_container->qty }}</td>
@@ -330,8 +330,13 @@
                                                 <td>Profit Margin</td>
                                                 <td>
                                                     @if ($totalSale > 0 && $valueAfterCosts)
-                                                        {{ number_format((($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2) }}
-                                                        %
+                                                        @if ($totalSale - $valueAfterCosts < 0)
+                                                            {{ number_format((($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2) }}
+                                                            %
+                                                        @else
+                                                            {{ number_format((($totalSale - $valueAfterCosts) / $totalSale) * 100, 2) }}
+                                                            %
+                                                        @endif
                                                     @else
                                                         0 %
                                                     @endif
