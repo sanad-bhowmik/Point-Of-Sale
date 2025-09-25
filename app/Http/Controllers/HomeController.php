@@ -25,7 +25,7 @@ public function index()
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
         $product_costs = 0;
 
-        $containers = Container::all();
+        $containers = Container::with(['lc.costing.supplier'])->get();
         $container_cost = 0;
 
         foreach ($containers as $container) {
@@ -45,6 +45,7 @@ public function index()
         return view('home', [
             'revenue'          => $revenue,
             'sales'     => $sales,
+            'containers'     => $containers,
             'purchase_returns' => $purchase_returns / 100,
             'profit'           => $profit > 0 ? $profit : 0,
         ]);

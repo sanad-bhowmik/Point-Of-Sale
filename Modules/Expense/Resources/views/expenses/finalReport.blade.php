@@ -330,8 +330,13 @@
                                                 <td>Profit Margin</td>
                                                 <td>
                                                     @if ($totalSale > 0 && $valueAfterCosts)
-                                                        {{ number_format((($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2) }}
-                                                        %
+                                                        @if ($totalSale - $valueAfterCosts < 0)
+                                                            {{ number_format((($totalSale - $valueAfterCosts) / $valueAfterCosts) * 100, 2) }}
+                                                            %
+                                                        @else
+                                                            {{ number_format((($totalSale - $valueAfterCosts) / $totalSale) * 100, 2) }}
+                                                            %
+                                                        @endif
                                                     @else
                                                         0 %
                                                     @endif
