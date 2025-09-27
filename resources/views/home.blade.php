@@ -336,10 +336,104 @@
 
         <!-- Animate.css CDN for animations -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
-
-
-
     </div>
+
+    <div class="col-lg-12">
+        @if (isset($containers))
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-gradient-info text-white">
+                        <h6 class="mb-0 fw-bold" style="display: flex;">
+                            <div class="bank-icon me-2">
+                                <i class="bi bi-currency-dollar"></i>
+                            </div> <span class="mt-2 ml-2">Details of cash flow</span>
+                        </h6>
+                    </div>
+                    <div class="card-body position-relative p-0">
+                        <div class="table-responsive">
+                            <table id="cashflow-table" class="table table-bordered table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>SL</th>
+                                        <th>Container Name</th>
+                                        <th>Profit</th>
+                                        <th>Loss</th>
+                                        <th>Profit/Loss</th>
+                                        <th>Supplier</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @php
+                                        $totalProfit = 0;
+                                        $totalLoss = 0;
+                                        $pro_loss = $totalProfit - $totalLoss;
+                                    @endphp
+
+                                    @forelse ($containers as $index => $container)
+                                        <tr>
+                                            <td>{{ $index + 1 }}</td>
+                                            <td>{{ $container->name ?? '-' }}</td>
+                                            @php
+                                                $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id',$container->lc_id,)->where('container_id', $container->id)->sum('amount');
+
+                                                $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
+
+                                                $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+
+                                                $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
+                                                        ->where('container_id', $container->id)
+                                                        ->sum('sub_total');
+
+                                                $totalCost = $lcCost + $ttCost + $totalCostAmount;
+
+                                                $profit_loss = $totalSale - $totalCost;
+
+                                                if ($profit_loss > 0) {
+                                                    $totalProfit += $profit_loss;
+                                                } elseif ($profit_loss < 0) {
+                                                    $totalLoss += abs($profit_loss);
+                                                }
+                                            @endphp
+                                            <td>{{ $profit_loss > 0 ? round($profit_loss) : '-' }}</td>
+                                            <td>{{ $profit_loss < 0 ? abs(round($profit_loss)) : '-' }}</td>
+                                            @if ($profit_loss > 0)
+                                                <td style="background-color: #9eff86;">Profit</td>
+                                            @else
+                                                <td style="background-color: #ff8e7a;">Loss</td>
+                                            @endif
+                                            <td>
+                                                {{ $container?->lc?->costing?->supplier?->supplier_name ?? '-' }}
+                                                -
+                                                {{ $container?->lc?->costing?->product?->sizes->pluck('size')->implode('/') ?? '-' }}
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6">No data available.</td>
+                                        </tr>
+                                    @endforelse
+
+                                    @if (count($containers) > 0)
+                                        <tr style="background: #f1f1f1;">
+                                            <td colspan="2">Total</td>
+                                            <td>{{ round($totalProfit) }}</td>
+                                            <td>{{ round($totalLoss) }}</td>
+                                            <td>{{ round($totalProfit - $totalLoss) }}</td>
+                                            @if ($pro_loss > 0)
+                                                <td>Till now profit</td>
+                                            @else
+                                                <td>Till now loss</td>
+                                            @endif
+                                        </tr>
+                                    @endif
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            @endif
+    </div>
+
+
     <div class="col-lg-12">
         <div class="card border-0 shadow-sm h-50">
             <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
@@ -728,5 +822,12 @@
 
     .card-header {
         padding: 6px !important;
+    }
+    #cashflow-table th,
+    #cashflow-table td {
+        width: 200px;
+        white-space: nowrap;
+        text-align: center;
+        vertical-align: middle;
     }
 </style>
