@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -136,7 +137,7 @@
             border-radius: 10px;
             font-weight: 600;
             font-size: 16px;
-            background: linear-gradient(135deg, #0d6efd, #6610f2);
+            background: linear-gradient(135deg, #ff4b21, #ae000e);
             color: #fff;
             transition: all 0.3s ease;
             position: relative;
@@ -219,8 +220,15 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes ripple {
@@ -228,6 +236,7 @@
                 transform: scale(0, 0);
                 opacity: 0.5;
             }
+
             100% {
                 transform: scale(30, 30);
                 opacity: 0;
@@ -252,97 +261,97 @@
 </head>
 
 <body>
-<div class="login-container">
-    <div class="login-box">
-        <div class="login-header">
-            <img src="{{ asset('images/logo.png') }}" alt="Sales Admin Logo">
-            <h2>Welcome to Admin Login</h2>
-            <p>Secure access to your sales dashboard</p>
-        </div>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="{{ asset('images/logo.png') }}" alt="Sales Admin Logo">
+                <h2>Welcome to Admin Login</h2>
+                <p>Secure access to your sales dashboard</p>
+            </div>
 
-        @if(Session::has('account_deactivated'))
+            @if(Session::has('account_deactivated'))
             <div class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-circle-fill me-2"></i> {{ Session::get('account_deactivated') }}
             </div>
-        @endif
+            @endif
 
-        <form id="login" method="post" action="{{ url('/login') }}">
-            @csrf
-            <div class="form-group">
-                <i class="bi bi-envelope input-icon"></i>
-                <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
-                       name="email" value="{{ old('email') }}" placeholder="Email Address" autocomplete="email" autofocus>
-                @error('email')
-                <div class="invalid-feedback d-block text-danger mt-2">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <div class="form-group">
-                <i class="bi bi-lock input-icon"></i>
-                <input id="password" type="password"
-                       class="form-control @error('password') is-invalid @enderror"
-                       placeholder="Password" name="password" autocomplete="current-password">
-                <button type="button" class="password-toggle" id="passwordToggle">
-                    <i class="bi bi-eye"></i>
-                </button>
-                @error('password')
-                <div class="invalid-feedback d-block text-danger mt-2">{{ $message }}</div>
-                @enderror
-            </div>
-
-            <button id="submit" class="btn btn-login d-flex justify-content-center align-items-center" type="submit">
-                <span id="button-text">Sign In</span>
-                <div id="spinner" class="spinner-border text-light ms-2" role="status" style="display: none;">
-                    <span class="visually-hidden"></span>
+            <form id="login" method="post" action="{{ url('/login') }}">
+                @csrf
+                <div class="form-group">
+                    <i class="bi bi-envelope input-icon" style="color: black;"></i>
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror"
+                        name="email" value="{{ old('email') }}" placeholder="Email Address" autocomplete="email" autofocus>
+                    @error('email')
+                    <div class="invalid-feedback d-block text-danger mt-2">{{ $message }}</div>
+                    @enderror
                 </div>
-            </button>
 
-            <a class="forgot-link" href="{{ route('password.request') }}">Forgot password?</a>
-        </form>
+                <div class="form-group">
+                    <i class="bi bi-lock input-icon" style="color: black;"></i>
+                    <input id="password" type="password"
+                        class="form-control @error('password') is-invalid @enderror"
+                        placeholder="Password" name="password" autocomplete="current-password">
+                    <button type="button" class="password-toggle" id="passwordToggle" style="border-left: 1px solid darkslategray;">
+                        <i class="bi bi-eye" style="color: black;"></i>
+                    </button>
+                    @error('password')
+                    <div class="invalid-feedback d-block text-danger mt-2">{{ $message }}</div>
+                    @enderror
+                </div>
 
-        <div class="developer-credit">
-            Developed by <a href="https://playon24.com.bd" target="_blank">PlayOn 24</a>
+                <button id="submit" class="btn btn-login d-flex justify-content-center align-items-center" type="submit">
+                    <span id="button-text">Sign In</span>
+                    <div id="spinner" class="spinner-border text-light ms-2" role="status" style="display: none;">
+                        <span class="visually-hidden"></span>
+                    </div>
+                </button>
+
+            </form>
+
+            <div class="developer-credit">
+                Developed by <a href="https://playon24.com.bd" target="_blank" style="color: #0D50A1;">PlayOn<span style="color: orangered;">24</span></a>
+            </div>
         </div>
     </div>
-</div>
 
-<script src="{{ mix('js/app.js') }}" defer></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        let login = document.getElementById('login');
-        let submit = document.getElementById('submit');
-        let email = document.getElementById('email');
-        let password = document.getElementById('password');
-        let spinner = document.getElementById('spinner');
-        let buttonText = document.getElementById('button-text');
-        let passwordToggle = document.getElementById('passwordToggle');
+    <script src="{{ mix('js/app.js') }}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let login = document.getElementById('login');
+            let submit = document.getElementById('submit');
+            let email = document.getElementById('email');
+            let password = document.getElementById('password');
+            let spinner = document.getElementById('spinner');
+            let buttonText = document.getElementById('button-text');
+            let passwordToggle = document.getElementById('passwordToggle');
 
-        // Password toggle functionality
-        passwordToggle.addEventListener('click', function() {
-            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-            password.setAttribute('type', type);
-            this.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+            // Password toggle functionality
+            passwordToggle.addEventListener('click', function() {
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                this.innerHTML = type === 'password' ? '<i class="bi bi-eye"style="color: black;"></i>' : '<i class="bi bi-eye-slash"style="color: black;"></i>';
+            });
+
+            // Form submission handler
+            login.addEventListener('submit', function(e) {
+                submit.disabled = true;
+                email.readOnly = true;
+                password.readOnly = true;
+
+                spinner.style.display = 'inline-block';
+                buttonText.textContent = 'Signing In';
+
+                // Auto reset after 5 seconds in case of error
+                setTimeout(() => {
+                    submit.disabled = false;
+                    email.readOnly = false;
+                    password.readOnly = false;
+                    buttonText.textContent = 'Sign In';
+                    spinner.style.display = 'none';
+                }, 5000);
+            });
         });
-
-        // Form submission handler
-        login.addEventListener('submit', function(e) {
-            submit.disabled = true;
-            email.readOnly = true;
-            password.readOnly = true;
-
-            spinner.style.display = 'inline-block';
-            buttonText.textContent = 'Signing In';
-
-            // Auto reset after 5 seconds in case of error
-            setTimeout(() => {
-                submit.disabled = false;
-                email.readOnly = false;
-                password.readOnly = false;
-                buttonText.textContent = 'Sign In';
-                spinner.style.display = 'none';
-            }, 5000);
-        });
-    });
-</script>
+    </script>
 </body>
+
 </html>

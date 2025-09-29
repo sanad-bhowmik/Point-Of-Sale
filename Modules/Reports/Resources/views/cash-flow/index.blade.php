@@ -106,6 +106,11 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <!-- Pagination -->
+                        {{-- <div class="mt-3">
+                {{ $shipmentStatus->links() }}
+            </div> --}}
                     </div>
                 </div>
             @endif
