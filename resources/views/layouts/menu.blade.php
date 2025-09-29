@@ -452,6 +452,12 @@
                     </a>
                 </li>
                 <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.history') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.history') }}">
+                        Cash In History
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.view') ? 'c-active' : '' }}"
                         href="{{ route('office_expense.view') }}">
                         View Office Expense

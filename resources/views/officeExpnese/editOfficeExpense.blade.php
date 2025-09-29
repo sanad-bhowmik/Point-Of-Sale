@@ -5,7 +5,7 @@
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('office_expense.view') }}">Office Expenses</a></li>
+        <li class="breadcrumb-item"><a href="{{ request()->get('page') === 'cashInHistory' ? route('office_expense.history') : route('office_expense.view') }}">{{ request()->get('page') === 'cashInHistory' ? 'Cash In History' : 'Office Expenses' }}</a></li>
         <li class="breadcrumb-item active">Edit</li>
     </ol>
 @endsection
@@ -20,7 +20,7 @@
                     @include('utils.alerts')
                     <div class="form-group mb-3">
                         <button type="submit" class="btn btn-primary">
-                            Update Office Expense <i class="bi bi-check"></i>
+                            {{ request()->get('page') === 'cashInHistory' ? 'Update Cash In' : 'Update Office Expense' }} <i class="bi bi-check"></i>
                         </button>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                                     </div>
                                 </div>
 
-                                <!-- Employee Name -->
+                                @if (request()->get('page') !== 'cashInHistory')
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="employee_name">Employee Name</label>
@@ -61,9 +61,11 @@
                                                placeholder="Enter Employee Name">
                                     </div>
                                 </div>
+                                @endif
 
-                                <!-- Status -->
-                                <div class="col-lg-4">
+                                <input type="text" name="status" value="{{ request()->get('page') === 'cashInHistory' ? 'in' : 'out' }}" hidden>
+                                {{-- status --}}
+                                {{-- <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="status">Status <span class="text-danger">*</span></label>
                                         <select name="status" id="status" class="form-control" required>
@@ -71,9 +73,10 @@
                                             <option value="out" {{ $expense->status == 'out' ? 'selected' : '' }}>Out Amount</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
 
-                                <!-- Quantity -->
+                                @if (request()->get('page') !== 'cashInHistory')
+                                    <!-- Quantity -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="quantity">Quantity</label>
@@ -82,6 +85,7 @@
                                                value="{{ old('quantity', $expense->quantity) }}">
                                     </div>
                                 </div>
+                                @endif
 
                                 <!-- Amount -->
                                 <div class="col-lg-4">

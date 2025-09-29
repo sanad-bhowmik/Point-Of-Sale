@@ -12,14 +12,16 @@ class OfficeExpenseController extends Controller
     {
         $query = OfficeExpense::with('category');
 
-        // Status filter
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        $expenses = $query->orderBy('date', 'desc')->paginate(10);
+        $expenses = $query->where('status', 'out')->orderBy('date', 'desc')->get();
 
         return view('officeExpnese.viewOfficeExpense', compact('expenses'));
+    }
+
+    public function history(Request $request)
+    {
+        $expenses = OfficeExpense::with('category')->where('status', 'in')->orderBy('date', 'desc')->get();
+
+        return view('officeExpnese.cashInHistory', compact('expenses'));
     }
 
     /**
@@ -67,6 +69,10 @@ class OfficeExpenseController extends Controller
             'note'                       => $validated['note'] ?? null,
         ]);
 
+        if ($validated['status'] === 'in') {
+            return redirect()->route('office_expense.history')
+                ->with('success', 'Cash In added successfully!');
+        }
 
         return redirect()->route('office_expense.view')
             ->with('success', 'Office Expense added successfully!');
@@ -111,6 +117,11 @@ class OfficeExpenseController extends Controller
             }
 
             $expense->update($validated);
+
+            if ($validated['status'] === 'in') {
+                return redirect()->route('office_expense.history')
+                    ->with('success', 'Cash In updated successfully!');
+            }
 
             return redirect()->route('office_expense.view')
                 ->with('success', 'Office Expense updated successfully!');

@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Office Expenses')
+@section('title', 'Cash In History')
 
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item active">Office Expenses</li>
+        <li class="breadcrumb-item active">Cash In History</li>
     </ol>
 @endsection
 
@@ -16,11 +16,11 @@
                 <div class="card shadow-sm">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Office Expense List</h5>
+                            <h5 class="mb-0">Cash In History</h5>
                             <div>
                                 <button id="downloadExcelRaw" class="btn btn-success btn-sm me-2">Download Excel</button>
-                                <a href="{{ route('office_expense.create') }}" class="btn btn-primary btn-sm">
-                                    + Add Expense
+                                <a href="{{ route('office_expense.create', ['page' => 'cashInHistory']) }}" class="btn btn-primary btn-sm">
+                                    + Add Cash
                                 </a>
                             </div>
                         </div>
@@ -31,9 +31,7 @@
                                     <th>#</th>
                                     <th>Date</th>
                                     <th>Expense Category</th>
-                                    <th>Employee Name</th>
                                     <th>Amount</th>
-                                    <th>Quantity</th>
                                     <th>Status</th>
                                     <th>Note</th>
                                     <th>Actions</th>
@@ -45,23 +43,15 @@
                                         <td>{{ $index + 1 }}</td>
                                         <td>{{ Carbon\Carbon::parse($expense->date)->format('d-m-Y') }}</td>
                                         <td>{{ $expense->category->category_name ?? 'N/A' }}</td>
-                                        <td>{{ $expense->employee_name ?? 'N/A' }}</td>
                                         <td>{{ number_format($expense->amount, 2) }}</td>
-                                        <td>{{ number_format($expense->quantity, 2) }}</td>
-                                        <td>
-                                            @if ($expense->status === 'in')
-                                                <span class="badge bg-success px-3 py-2 text-white">In</span>
-                                            @else
-                                                <span class="badge bg-danger px-3 py-2 text-white">Out</span>
-                                            @endif
-                                        </td>
+                                        <td><span class="badge bg-success px-3 py-2 text-white">In</span></td>
                                         <td>{{ $expense->note ?? 'N/A' }}</td>
                                         <td>
-                                            <a href="{{ route('office_expense.edit', $expense->id) }}"
+                                            <a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}"
                                                 class="btn btn-sm btn-warning">
                                                 Edit
                                             </a>
-                                            <form action="{{ route('office_expense.destroy', $expense->id) }}"
+                                            {{-- <form action="{{ route('office_expense.destroy', $expense->id) }}"
                                                 method="POST" class="d-inline"
                                                 onsubmit="return confirm('Are you sure you want to delete this expense?');">
                                                 @csrf
@@ -69,7 +59,7 @@
                                                 <button type="submit" class="btn btn-sm btn-danger">
                                                     Delete
                                                 </button>
-                                            </form>
+                                            </form> --}}
                                         </td>
                                     </tr>
                                 @empty

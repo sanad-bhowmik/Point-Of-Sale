@@ -5,7 +5,9 @@
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item"><a href="{{ route('office_expense.view') }}">Office Expenses</a></li>
+        <li class="breadcrumb-item"><a
+                href="{{ request()->get('page') === 'cashInHistory' ? route('office_expense.history') : route('office_expense.view') }}">{{ request()->get('page') === 'cashInHistory' ? 'Cash In History' : 'Office Expenses' }}</a>
+        </li>
         <li class="breadcrumb-item active">Add</li>
     </ol>
 @endsection
@@ -18,7 +20,8 @@
                 <div class="col-lg-12">
                     @include('utils.alerts')
                     <div class="form-group mb-3">
-                        <button type="submit" class="btn btn-primary">Create Office Expense <i
+                        <button type="submit" class="btn btn-primary">
+                            {{ request()->get('page') === 'cashInHistory' ? 'Create Cash In' : 'Create Office Expense' }} <i
                                 class="bi bi-check"></i></button>
                     </div>
                 </div>
@@ -46,17 +49,20 @@
                                     </div>
                                 </div>
 
-                                <!-- Employee Name -->
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label for="employee_name">Employee Name</label>
-                                        <input type="text" name="employee_name" id="employee_name" class="form-control"
-                                            placeholder="Enter Employee Name">
+                                @if (request()->get('page') !== 'cashInHistory')
+                                    <!-- Employee Name -->
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="employee_name">Employee Name</label>
+                                            <input type="text" name="employee_name" id="employee_name"
+                                                class="form-control" placeholder="Enter Employee Name">
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
 
+                                <input type="text" name="status" value="{{ request()->get('page') === 'cashInHistory' ? 'in' : 'out' }}" hidden>
                                 {{-- status --}}
-                                <div class="col-lg-4">
+                                {{-- <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="status">Status <span class="text-danger">*</span></label>
                                         <select name="status" id="status" class="form-control" required>
@@ -64,22 +70,24 @@
                                             <option value="out">Out Amount</option>
                                         </select>
                                     </div>
-                                </div>
+                                </div> --}}
 
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label for="quantity">Quantity</label>
-                                        <input type="text" id="quantity" name="quantity" class="form-control"
-                                            value="">
+                                @if (request()->get('page') !== 'cashInHistory')
+                                    <!-- Quantity -->
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="quantity">Quantity</label>
+                                            <input type="text" id="quantity" name="quantity" class="form-control"
+                                                value="">
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
 
                                 <!-- Amount -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="amount">Amount <span class="text-danger">*</span></label>
-                                        <input type="text" id="amount" name="amount"
-                                            class="form-control" required>
+                                        <input type="text" id="amount" name="amount" class="form-control" required>
                                     </div>
                                 </div>
 
