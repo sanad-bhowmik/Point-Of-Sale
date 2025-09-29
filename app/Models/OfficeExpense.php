@@ -20,10 +20,12 @@ class OfficeExpense extends Model
 
     // Fillable fields for mass assignment
     protected $fillable = [
-        'expense_category',
+        'expense_category_id',
         'employee_name',
         'amount',
         'date',
+        'status',
+        'quantity',
         'note',
     ];
 }

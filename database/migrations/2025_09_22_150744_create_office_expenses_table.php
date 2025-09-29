@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('office_expenses', function (Blueprint $table) {
             $table->id();
-            $table->string('expense_category');
-            $table->string('employee_name');
+            $table->foreignId('expense_category_id')->constrained()->onDelete('cascade');
+            $table->string('employee_name')->nullable();
             $table->decimal('amount', 15, 2)->default(0);
             $table->date('date');
+            $table->enum('status', ['in', 'out'])->default('out');
+            $table->double('quantity', 15, 2)->default(1);
             $table->text('note')->nullable();
             $table->timestamps();
         });

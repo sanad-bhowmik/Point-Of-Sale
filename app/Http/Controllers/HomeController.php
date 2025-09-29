@@ -25,7 +25,7 @@ public function index()
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
         $product_costs = 0;
 
-        $containers = Container::with(['lc.costing.supplier'])->get();
+        $containers = Container::with(['lc.costing.supplier', 'lc.costing.product.sizes'])->get();
         $container_cost = 0;
 
         foreach ($containers as $container) {
@@ -43,11 +43,11 @@ public function index()
         $profit = $sales - $total_cost;
 
         return view('home', [
-            'revenue'          => $revenue,
+            'revenue'          => $total_cost,
             'sales'     => $sales,
-            'containers'     => $containers,
+            'find_containers'     => $containers,
             'purchase_returns' => $purchase_returns / 100,
-            'profit'           => $profit > 0 ? $profit : 0,
+            'profit'           => $profit,
         ]);
     }
     public function currentMonthChart()
