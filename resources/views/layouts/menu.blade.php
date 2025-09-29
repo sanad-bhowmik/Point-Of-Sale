@@ -392,7 +392,7 @@
 <li
     class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('expenses.*') || request()->routeIs('expense-categories.*') ? 'c-show' : '' }}" id="expenses">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-wallet2" style="line-height: 1;"></i> Expenses
+        <i class="c-sidebar-nav-icon bi bi-arrow-repeat" style="line-height: 1;"></i> Expenses
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
         @can('access_expense_categories')
@@ -439,6 +439,12 @@
                 <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Office Expense
             </a>
             <ul class="c-sidebar-nav-dropdown-items">
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.name') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.name') }}">
+                        Office Expense Name
+                    </a>
+                </li>
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.create') ? 'c-active' : '' }}"
                         href="{{ route('office_expense.create') }}">

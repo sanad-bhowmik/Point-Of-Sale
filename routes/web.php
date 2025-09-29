@@ -122,6 +122,9 @@ Route::group(['prefix' => 'office-expense', 'as' => 'office_expense.', 'controll
     Route::get('/edit/{id}', 'edit')->name('edit');
     Route::put('/update/{id}', 'update')->name('update');
     Route::delete('/destroy/{id}', 'destroy')->name('destroy');
+    Route::get('/name', 'officeExpenseName')->name('name');
+    Route::post('/store-office-expense-category', 'storeOfficeExpenseCategory')->name('store_office_expense_category');
+    Route::get('/view-names', 'viewOfficeExpenseName')->name('view_names');
 });
 
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\OfficeExpense;
+use App\Models\OfficeExpenseCategory;
 
 class OfficeExpenseController extends Controller
 {
@@ -43,24 +44,27 @@ class OfficeExpenseController extends Controller
      */
     public function store(Request $request)
     {
-        $request->merge(['expense_category' => 'Office']); // fixed category
-
         $validated = $request->validate([
-            'expense_category' => 'required|string|max:255',
-            'employee_name'    => 'required|string|max:255',
-            'amount'           => 'required|numeric',
-            'date'             => 'required|date',
-            'note'             => 'nullable|string',
+            'category_id'    => 'required|exists:office_expense_categories,id',
+            'employee_name'  => 'required|string|max:255',
+            'amount'         => 'required|numeric',
+            'date'           => 'required|date',
+            'note'           => 'nullable|string',
         ]);
 
-        try {
-            OfficeExpense::create($validated);
+        // Insert into DB
+        $expense = OfficeExpense::create([
+            'office_expense_category_id' => $validated['category_id'],
+            'employee_name'              => $validated['employee_name'],
+            'amount'                     => $validated['amount'],
+            'date'                       => $validated['date'],
+            'note'                       => $validated['note'] ?? null,
+        ]);
 
-            return redirect()->route('office_expense.view')
-                ->with('success', 'Office Expense added successfully!');
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Failed to add Office Expense: ' . $e->getMessage());
-        }
+        // dd($expense); // Check if record is inserted
+
+        return redirect()->route('office_expense.view')
+            ->with('success', 'Office Expense added successfully!');
     }
 
     /**
@@ -109,5 +113,30 @@ class OfficeExpenseController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Failed to delete Office Expense: ' . $e->getMessage());
         }
+    }
+
+    public function officeExpenseName()
+    {
+        return view('officeExpnese.officeExpenseName');
+    }
+    public function storeOfficeExpenseCategory(Request $request)
+    {
+        $request->validate([
+            'category_name' => 'required|string|max:255',
+            'category_description' => 'nullable|string|max:255',
+        ]);
+
+        OfficeExpenseCategory::create([
+            'category_name' => $request->category_name,
+            'category_description' => $request->category_description,
+        ]);
+
+        return redirect()->route('office_expense.view_names')
+            ->with('success', 'Office Expense Category created successfully.');
+    }
+    public function viewOfficeExpenseName()
+    {
+        $categories = OfficeExpenseCategory::all(); // Fetch all categories
+        return view('officeExpnese.viewOfficeExpenseName', compact('categories'));
     }
 }

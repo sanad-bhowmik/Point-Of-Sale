@@ -166,7 +166,7 @@ public function index()
         $dates = collect();
         foreach (range(-6, 0) as $i) {
             $date = Carbon::now()->addDays($i)->format('d-m-y');
-            $dates->put($date, 0);
+            $dates->put($date, value: 0);
         }
 
         $date_range = Carbon::today()->subDays(6);
