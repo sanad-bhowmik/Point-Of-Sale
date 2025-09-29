@@ -12,14 +12,32 @@ class OfficeExpenseController extends Controller
     {
         $query = OfficeExpense::with('category');
 
+        // Category filter
+        if ($request->filled('category_id')) {
+            $query->where('expense_category_id', $request->category_id);
+        }
+
+        // Date range filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('date', [$request->from_date, $request->to_date]);
+        }
+
         $expenses = $query->where('status', 'out')->orderBy('date', 'desc')->get();
 
-        return view('officeExpnese.viewOfficeExpense', compact('expenses'));
+        $categories = OfficeExpenseCategory::where('category_name', '!=', 'Funds')->get();
+
+        return view('officeExpnese.viewOfficeExpense', compact('expenses', 'categories'));
     }
 
     public function history(Request $request)
     {
-        $expenses = OfficeExpense::with('category')->where('status', 'in')->orderBy('date', 'desc')->get();
+        $expenses = OfficeExpense::with('category')->where('status', 'in');
+
+        // Date range filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $expenses->whereBetween('date', [$request->from_date, $request->to_date]);
+        }
+        $expenses = $expenses->orderBy('date', 'desc')->get();
 
         return view('officeExpnese.cashInHistory', compact('expenses'));
     }
@@ -132,14 +150,21 @@ class OfficeExpenseController extends Controller
 
     public function ledger(Request $request)
     {
+        $categories = OfficeExpenseCategory::where('category_name', '!=', 'Funds')->get();
         $query = OfficeExpense::with('category')->orderBy('date', 'asc');
+        $inQuery = OfficeExpense::with('category')->where('status', 'in');
+
+        // Category filter
+        if ($request->filled('category_id')) {
+            $query->where('expense_category_id', $request->category_id);
+        }
 
         // Date range filter
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $query->whereBetween('date', [$request->from_date, $request->to_date]);
         }
 
-        $expenses = $query->get();
+        $expenses = $inQuery->get()->merge($query->get())->sortBy('date')->values();
 
         // Running balance calculation
         $balance = 0;
@@ -157,7 +182,7 @@ class OfficeExpenseController extends Controller
         $totalOut = OfficeExpense::where('status', 'out')->sum('amount');
         $cashInHand = $totalIn - $totalOut;
 
-        return view('officeExpnese.officeExpenseLedger', compact('expenses', 'cashInHand', 'totalIn', 'totalOut'));
+        return view('officeExpnese.officeExpenseLedger', compact('expenses', 'cashInHand', 'totalIn', 'totalOut', 'categories'));
     }
 
 
