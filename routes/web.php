@@ -117,14 +117,18 @@ Route::group(['prefix' => 'input-permit', 'as' => 'input_permit.', 'controller' 
 // Office Expense
 Route::group(['prefix' => 'office-expense', 'as' => 'office_expense.', 'controller' => OfficeExpenseController::class], function () {
     Route::get('/view', 'index')->name('view');
+    Route::get('/cash-in-history', 'history')->name('history');
     Route::get('/create', 'create')->name('create');
     Route::post('/store', 'store')->name('store');
-    Route::get('/edit/{id}', 'edit')->name('edit');
-    Route::put('/update/{id}', 'update')->name('update');
+    Route::get('/{id}/edit', 'edit')->name('edit');
+    Route::put('/{id}/update', 'update')->name('update');
     Route::delete('/destroy/{id}', 'destroy')->name('destroy');
     Route::get('/name', 'officeExpenseName')->name('name');
     Route::post('/store-office-expense-category', 'storeOfficeExpenseCategory')->name('store_office_expense_category');
     Route::get('/view-names', 'viewOfficeExpenseName')->name('view_names');
+
+    Route::get('/ledger', 'ledger')->name('ledger');
+
 });
 
 

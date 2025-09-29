@@ -3,14 +3,16 @@
 </div>
 
 <style>
-    .c-sidebar-nav-link{
+    .c-sidebar-nav-link {
         padding: 8px 12px !important;
         font-size: 12px !important;
     }
-    .c-sidebar{
+
+    .c-sidebar {
         width: 200px !important;
     }
-    .c-wrapper{
+
+    .c-wrapper {
         margin-left: 200px !important;
     }
 </style>
@@ -395,43 +397,54 @@
         <i class="c-sidebar-nav-icon bi bi-arrow-repeat" style="line-height: 1;"></i> Expenses
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
-        @can('access_expense_categories')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
-                href="{{ route('expense-categories.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Categories
-            </a>
-        </li>
-        @endcan
-        @can('access_expense_categories')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
-                href="{{ route('expense-names.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i>Product Expense Names
-            </a>
-        </li>
-        @endcan
-        @can('create_expenses')
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"
-                href="{{ route('expenses.create') }}">
-                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i>Product Create Expense
-            </a>
-        </li>
-        @endcan
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.index') ? 'c-active' : '' }}"
-                href="{{ route('expenses.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Product Expenses
-            </a>
-        </li>
-        <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
-                href="{{ route('expense.expenseLedger') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
-            </a>
-        </li>
 
+
+        <!-- Product Expense Submenu -->
+        @can('create_office_expense')
+        <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('office_expense.*') ? 'c-show' : '' }}">
+            <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+                <i class="c-sidebar-nav-icon bi bi-box" style="line-height: 1;"></i> Product Expense
+            </a>
+            <ul class="c-sidebar-nav-dropdown-items">
+                @can('access_expense_categories')
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
+                        href="{{ route('expense-categories.index') }}">
+                        <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Categories
+                    </a>
+                </li>
+                @endcan
+                @can('access_expense_categories')
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
+                        href="{{ route('expense-names.index') }}">
+                        <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i>Sub Categories
+                    </a>
+                </li>
+                @endcan
+                @can('create_expenses')
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"
+                        href="{{ route('expenses.create') }}">
+                        <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i>Expense Posting
+                    </a>
+                </li>
+                @endcan
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.index') ? 'c-active' : '' }}"
+                        href="{{ route('expenses.index') }}">
+                        <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Expenses History
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
+                        href="{{ route('expense.expenseLedger') }}">
+                        <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
+                    </a>
+                </li>
+            </ul>
+        </li>
+        @endcan
         <!-- Office Expense Submenu -->
         @can('create_office_expense')
         <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('office_expense.*') ? 'c-show' : '' }}">
@@ -442,19 +455,31 @@
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.name') ? 'c-active' : '' }}"
                         href="{{ route('office_expense.name') }}">
-                        Office Expense Name
+                        Categories
                     </a>
                 </li>
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.create') ? 'c-active' : '' }}"
                         href="{{ route('office_expense.create') }}">
-                        Create Office Expense
+                        Expense Posting
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.history') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.history') }}">
+                        Cash In History
                     </a>
                 </li>
                 <li class="c-sidebar-nav-item">
                     <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.view') ? 'c-active' : '' }}"
                         href="{{ route('office_expense.view') }}">
-                        View Office Expense
+                       Expense History
+                    </a>
+                </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.ledger') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.ledger') }}">
+                      Expense Ledger
                     </a>
                 </li>
             </ul>
