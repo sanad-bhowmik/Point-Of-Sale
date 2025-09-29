@@ -10,20 +10,11 @@ class OfficeExpenseController extends Controller
 {
     public function index(Request $request)
     {
-        $query = OfficeExpense::query();
+        $query = OfficeExpense::with('category');
 
-        // ✅ Employee filter
-        if ($request->filled('employee_name')) {
-            $query->where('employee_name', 'like', '%' . $request->employee_name . '%');
-        }
-
-        // ✅ Date range filter
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('date', [$request->from_date, $request->to_date]);
-        } elseif ($request->filled('from_date')) {
-            $query->whereDate('date', '>=', $request->from_date);
-        } elseif ($request->filled('to_date')) {
-            $query->whereDate('date', '<=', $request->to_date);
+        // Status filter
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
         }
 
         $expenses = $query->orderBy('date', 'desc')->paginate(10);
@@ -46,22 +37,36 @@ class OfficeExpenseController extends Controller
     {
         $validated = $request->validate([
             'category_id'    => 'required|exists:office_expense_categories,id',
-            'employee_name'  => 'required|string|max:255',
-            'amount'         => 'required|numeric',
+            'employee_name'  => 'nullable|string|max:255',
+            'quantity'       => 'nullable|string',
+            'status'         => 'required|string',
+            'amount'         => 'required|string',
             'date'           => 'required|date',
             'note'           => 'nullable|string',
         ]);
 
+        $totalIn  = OfficeExpense::where('status', 'in')->sum('amount');
+        $totalOut = OfficeExpense::where('status', 'out')->sum('amount');
+        $currentBalance = $totalIn - $totalOut;
+
+        // If Out → Check balance
+        if ($validated['status'] === 'out' && $validated['amount'] > $currentBalance) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Insufficient balance! You only have ' . $currentBalance . ' available.');
+        }
+
         // Insert into DB
         $expense = OfficeExpense::create([
-            'office_expense_category_id' => $validated['category_id'],
-            'employee_name'              => $validated['employee_name'],
+            'expense_category_id'       => $validated['category_id'],
+            'employee_name'              => $validated['employee_name'] ?? null,
+            'quantity'                   => $validated['quantity'] ?? 0,
+            'status'                     => $validated['status'],
             'amount'                     => $validated['amount'],
             'date'                       => $validated['date'],
             'note'                       => $validated['note'] ?? null,
         ]);
 
-        // dd($expense); // Check if record is inserted
 
         return redirect()->route('office_expense.view')
             ->with('success', 'Office Expense added successfully!');
@@ -82,14 +87,29 @@ class OfficeExpenseController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'employee_name'    => 'required|string|max:255',
-            'amount'           => 'required|numeric',
-            'date'             => 'required|date',
-            'note'             => 'nullable|string',
+            'category_id'    => 'required|exists:office_expense_categories,id',
+            'employee_name'  => 'nullable|string|max:255',
+            'quantity'       => 'nullable|string',
+            'status'         => 'required|string',
+            'amount'         => 'required|string',
+            'date'           => 'required|date',
+            'note'           => 'nullable|string',
         ]);
 
         try {
             $expense = OfficeExpense::findOrFail($id);
+
+            // Calculate balance excluding current record
+            $totalIn  = OfficeExpense::where('status', 'in')->where('id', '!=', $expense->id)->sum('amount');
+            $totalOut = OfficeExpense::where('status', 'out')->where('id', '!=', $expense->id)->sum('amount');
+            $currentBalance = $totalIn - $totalOut;
+
+            if ($validated['status'] === 'out') {
+                if ($validated['amount'] > $currentBalance) {
+                    return redirect()->back()->with('error', 'Insufficient balance! You only have ' . $currentBalance . ' available.');
+                }
+            }
+
             $expense->update($validated);
 
             return redirect()->route('office_expense.view')
@@ -98,6 +118,37 @@ class OfficeExpenseController extends Controller
             return redirect()->back()->with('error', 'Failed to update Office Expense: ' . $e->getMessage());
         }
     }
+
+    public function ledger(Request $request)
+    {
+        $query = OfficeExpense::with('category')->orderBy('date', 'asc');
+
+        // Date range filter
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereBetween('date', [$request->from_date, $request->to_date]);
+        }
+
+        $expenses = $query->get();
+
+        // Running balance calculation
+        $balance = 0;
+        foreach ($expenses as $expense) {
+            if ($expense->status === 'in') {
+                $balance += $expense->amount;
+                $expense->cash_in_hand_line = $balance;
+            } else {
+                $balance -= $expense->amount;
+                $expense->cash_in_hand_line = $balance;
+            }
+        }
+
+        $totalIn  = OfficeExpense::where('status', 'in')->sum('amount');
+        $totalOut = OfficeExpense::where('status', 'out')->sum('amount');
+        $cashInHand = $totalIn - $totalOut;
+
+        return view('officeExpnese.officeExpenseLedger', compact('expenses', 'cashInHand', 'totalIn', 'totalOut'));
+    }
+
 
     /**
      * Remove the specified resource from storage.

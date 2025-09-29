@@ -457,6 +457,12 @@
                         View Office Expense
                     </a>
                 </li>
+                <li class="c-sidebar-nav-item">
+                    <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.ledger') ? 'c-active' : '' }}"
+                        href="{{ route('office_expense.ledger') }}">
+                        Office Expense Ledger
+                    </a>
+                </li>
             </ul>
         </li>
         @endcan

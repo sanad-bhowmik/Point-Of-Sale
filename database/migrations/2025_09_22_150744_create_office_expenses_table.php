@@ -13,14 +13,16 @@ return new class extends Migration
     {
         Schema::create('office_expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('expense_category_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('expense_category_id');
             $table->string('employee_name')->nullable();
             $table->decimal('amount', 15, 2)->default(0);
             $table->date('date');
             $table->enum('status', ['in', 'out'])->default('out');
-            $table->double('quantity', 15, 2)->default(1);
+            $table->double('quantity', 15, 2)->default(0);
             $table->text('note')->nullable();
             $table->timestamps();
+
+            $table->foreign('expense_category_id')->references('id')->on('office_expense_categories')->onDelete('cascade');
         });
     }
 
