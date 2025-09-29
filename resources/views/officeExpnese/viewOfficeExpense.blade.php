@@ -25,6 +25,44 @@
                             </div>
                         </div>
 
+                        <form method="GET" action="{{ route('office_expense.view') }}" class="mb-4">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group mb-0">
+                                        <label for="category_id">Category</label>
+                                        <select name="category_id" class="form-control">
+                                            <option value="">All Categories</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}"
+                                                    {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->category_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-0">
+                                        <label for="from_date">From Date</label>
+                                        <input type="date" name="from_date" value="{{ request('from_date') }}"
+                                            class="form-control">
+
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-0">
+                                        <label for="to_date">To Date</label>
+                                        <input type="date" name="to_date" value="{{ request('to_date') }}"
+                                            class="form-control">
+                                    </div>
+                                </div>
+                                <div class="col-md-3 mt-4">
+                                    <button type="submit" class="btn btn-primary">Filter</button>
+                                    <a href="{{ route('office_expense.view') }}" class="btn btn-secondary">Reset</a>
+                                </div>
+                            </div>
+                        </form>
+
                         <table id="officeExpenseTable" class="table table-bordered table-hover">
                             <thead>
                                 <tr>

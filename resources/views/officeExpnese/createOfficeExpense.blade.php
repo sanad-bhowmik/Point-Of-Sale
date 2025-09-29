@@ -37,17 +37,24 @@
 
                             <div class="form-row">
                                 <!-- Expense Category Dropdown -->
-                                <div class="col-lg-4">
-                                    <div class="form-group">
-                                        <label for="category_id">Expense Category<span class="text-danger">*</span></label>
-                                        <select name="category_id" id="category_id" class="form-control" required>
-                                            <option value="" disabled selected>Select</option>
-                                            @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->category_name }}</option>
-                                            @endforeach
-                                        </select>
+                                @if (request()->get('page') !== 'cashInHistory')
+                                    <div class="col-lg-4">
+                                        <div class="form-group">
+                                            <label for="category_id">Expense Category<span
+                                                    class="text-danger">*</span></label>
+                                            <select name="category_id" id="category_id" class="form-control" required>
+                                                <option value="" disabled selected>Select</option>
+                                                @foreach ($categories as $category)
+                                                    <option value="{{ $category->id }}">{{ $category->category_name }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                @else
+                                    <input type="text" name="category_id"
+                                        value="{{ $categories->where('category_name', 'Funds')->first()?->id }}" hidden>
+                                @endif
 
                                 @if (request()->get('page') !== 'cashInHistory')
                                     <!-- Employee Name -->
@@ -60,7 +67,8 @@
                                     </div>
                                 @endif
 
-                                <input type="text" name="status" value="{{ request()->get('page') === 'cashInHistory' ? 'in' : 'out' }}" hidden>
+                                <input type="text" name="status"
+                                    value="{{ request()->get('page') === 'cashInHistory' ? 'in' : 'out' }}" hidden>
                                 {{-- status --}}
                                 {{-- <div class="col-lg-4">
                                     <div class="form-group">

@@ -36,6 +36,7 @@
 
                             <div class="form-row">
                                 <!-- Expense Category Dropdown -->
+                                @if (request()->get('page') !== 'cashInHistory')
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="category_id">Expense Category <span class="text-danger">*</span></label>
@@ -50,6 +51,7 @@
                                         </select>
                                     </div>
                                 </div>
+                                @endif
 
                                 @if (request()->get('page') !== 'cashInHistory')
                                 <div class="col-lg-4">
