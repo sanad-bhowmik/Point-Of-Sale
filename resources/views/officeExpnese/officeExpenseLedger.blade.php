@@ -14,6 +14,20 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <div class="form-group mb-0">
+                                        <label for="category_id">Category</label>
+                                        <select name="category_id" class="form-control">
+                                            <option value="">All Categories</option>
+                                            @foreach ($categories as $category)
+                                                <option value="{{ $category->id }}"
+                                                    {{ request('category_id') == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->category_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group mb-0">
                                         <label for="from_date">From Date</label>
                                         <input type="date" name="from_date" value="{{ request('from_date') }}"
                                             class="form-control">
@@ -56,15 +70,18 @@
                             <tbody>
                                 @forelse($expenses as $expense)
                                     <tr>
-                                        <td>{{ $expense->status === 'in' ? Carbon\Carbon::parse($expense->date)->format('d-m-Y') : '' }}</td>
+                                        <td>{{ $expense->status === 'in' ? Carbon\Carbon::parse($expense->date)->format('d-m-Y') : '' }}
+                                        </td>
                                         <td>{{ $expense->status === 'in' ? $expense->note : '' }}</td>
                                         <td>{{ $expense->status === 'in' ? number_format($expense->amount, 2) : '' }}</td>
-                                        <td>{{ $expense->status === 'out' ? Carbon\Carbon::parse($expense->date)->format('d-m-Y') : '' }}</td>
+                                        <td>{{ $expense->status === 'out' ? Carbon\Carbon::parse($expense->date)->format('d-m-Y') : '' }}
+                                        </td>
                                         <td>{{ $expense->category->category_name }}
                                         </td>
                                         <td>{{ $expense->status === 'out' ? $expense->note : '' }}</td>
                                         <td>{{ $expense->status === 'out' ? number_format($expense->amount, 2) : '' }}</td>
-                                        <td>{{ $expense->status === 'out' ? '-'. number_format($expense->amount, 2) : number_format($expense->amount, 2) }}</td>
+                                        <td>{{ $expense->status === 'out' ? '-' . number_format($expense->amount, 2) : number_format($expense->amount, 2) }}
+                                        </td>
                                         <td>{{ number_format($expense->cash_in_hand_line, 2) }}</td>
                                     </tr>
                                 @empty
