@@ -52,11 +52,11 @@
                                         <label for="amount">Amount <span class="text-danger">*</span></label>
                                         <div class="input-group">
                                             <input id="amount" type="text" class="form-control" name="amount" required value="{{ old('amount') }}">
-                                            <div class="input-group-append">
+                                            <!-- <div class="input-group-append">
                                                 <button id="getTotalAmount" class="btn btn-primary" type="button">
                                                     <i class="bi bi-check-square"></i>
                                                 </button>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                 </div>
@@ -89,26 +89,18 @@
         </form>
     </div>
 @endsection
-
 @push('page_scripts')
-    <script src="{{ asset('js/jquery-mask-money.js') }}"></script>
-    <script>
-        $(document).ready(function () {
-            $('#amount').maskMoney({
-                prefix:'{{ settings()->currency->symbol }}',
-                thousands:'{{ settings()->currency->thousand_separator }}',
-                decimal:'{{ settings()->currency->decimal_separator }}',
-            });
-
-            $('#getTotalAmount').click(function () {
-                $('#amount').maskMoney('mask', {{ $sale->due_amount }});
-            });
-
-            $('#payment-form').submit(function () {
-                var amount = $('#amount').maskMoney('unmasked')[0];
-                $('#amount').val(amount);
-            });
+<script>
+    $(document).ready(function () {
+        // Optional: If you still want a "Get Total Amount" button
+        $('#getTotalAmount').click(function () {
+            $('#amount').val('{{ $sale->due_amount }}');
         });
-    </script>
-@endpush
 
+        // No need for maskMoney or unmasking anymore
+        $('#payment-form').submit(function () {
+            // Amount is already plain text, no formatting required
+        });
+    });
+</script>
+@endpush

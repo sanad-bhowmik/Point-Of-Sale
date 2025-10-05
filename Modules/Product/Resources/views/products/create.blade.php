@@ -82,13 +82,13 @@
                                 <div class="col-md-6 d-none" >
                                     <div class="form-group">
                                         <label for="product_price">Price <span class="text-danger">*</span></label>
-                                        <input id="product_price" type="text" class="form-control" name="product_price" required value="{{ old('product_price') }}">
+                                        <input id="product_price" type="text" class="form-control" name="product_price" required value="1">
                                     </div>
                                 </div>
                                 <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
-                                        <input type="number" class="form-control" name="product_quantity" required value="{{ old('product_quantity') }}" min="1">
+                                        <input type="number" class="form-control" name="product_quantity" required value="1" min="1">
                                     </div>
                                 </div>
                             </div>

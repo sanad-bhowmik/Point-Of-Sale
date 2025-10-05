@@ -26,13 +26,13 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="form-row">
-                                <div class="col-md-7">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="product_name">Product Name <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="product_name" required value="{{ $product->product_name }}">
                                     </div>
                                 </div>
-                                <div class="col-md-5">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="product_code">Code <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" name="product_code" required value="{{ $product->product_code }}">
@@ -53,6 +53,12 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
+                                        <label for="product_cost">Cost <span class="text-danger">*</span></label>
+                                        <input id="product_cost" type="text" class="form-control" min="0" name="product_cost" required value="{{ $product->product_cost }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group d-none">
                                         <label for="barcode_symbology">Barcode Symbology <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_barcode_symbology" id="barcode_symbology" required>
                                             <option {{ $product->product_barcode_symbology == 'C128' ? 'selected' : '' }} value="C128">Code 128</option>
@@ -67,13 +73,8 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="product_cost">Cost <span class="text-danger">*</span></label>
-                                        <input id="product_cost" type="text" class="form-control" min="0" name="product_cost" required value="{{ $product->product_cost }}">
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
+
+                                <div class="col-md-6  d-none">
                                     <div class="form-group">
                                         <label for="product_price">Price <span class="text-danger">*</span></label>
                                         <input id="product_price" type="text" class="form-control" min="0" name="product_price" required value="{{ $product->product_price }}">
@@ -81,14 +82,14 @@
                                 </div>
                             </div>
 
-                            <div class="form-row">
+                            <div class="form-row  d-none">
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="product_quantity">Quantity <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="product_quantity" required value="{{ $product->product_quantity }}" min="1">
                                     </div>
                                 </div>
-                                <div class="col-md-6">
+                                <div class="col-md-6 d-none">
                                     <div class="form-group">
                                         <label for="product_stock_alert">Alert Quantity <span class="text-danger">*</span></label>
                                         <input type="number" class="form-control" name="product_stock_alert" required value="{{ $product->product_stock_alert }}" min="0">
@@ -97,13 +98,13 @@
                             </div>
 
                             <div class="form-row">
-                                <div class="col-md-4">
+                                <div class="col-md-4  d-none">
                                     <div class="form-group">
                                         <label for="product_order_tax">Tax (%)</label>
                                         <input type="number" class="form-control" name="product_order_tax" value="{{ $product->product_order_tax }}" min="0" max="100">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 d-none">
                                     <div class="form-group">
                                         <label for="product_tax_type">Tax type</label>
                                         <select class="form-control" name="product_tax_type" id="product_tax_type">
@@ -113,7 +114,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="product_unit">Unit <i class="bi bi-question-circle-fill text-info" data-toggle="tooltip" data-placement="top" title="This short text will be placed after Product Quantity."></i> <span class="text-danger">*</span></label>
                                         <select class="form-control" name="product_unit" id="product_unit" required>
@@ -124,11 +125,14 @@
                                         </select>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="form-group">
+                                <div class="col-md-6">
+                                     <div class="form-group">
                                 <label for="product_note">Note</label>
                                 <textarea name="product_note" id="product_note" rows="4 " class="form-control">{{ $product->product_note }}</textarea>
                             </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>

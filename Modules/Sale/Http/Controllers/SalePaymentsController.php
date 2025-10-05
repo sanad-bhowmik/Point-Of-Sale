@@ -14,7 +14,8 @@ use Modules\Sale\Entities\SalePayment;
 class SalePaymentsController extends Controller
 {
 
-    public function index($sale_id, SalePaymentsDataTable $dataTable) {
+    public function index($sale_id, SalePaymentsDataTable $dataTable)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $sale = Sale::findOrFail($sale_id);
@@ -23,7 +24,8 @@ class SalePaymentsController extends Controller
     }
 
 
-    public function create($sale_id) {
+    public function create($sale_id)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $sale = Sale::findOrFail($sale_id);
@@ -32,7 +34,8 @@ class SalePaymentsController extends Controller
     }
 
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $request->validate([
@@ -67,8 +70,8 @@ class SalePaymentsController extends Controller
             }
 
             $sale->update([
-                'paid_amount' => ($sale->paid_amount + $request->amount) * 100,
-                'due_amount' => $due_amount * 100,
+                'paid_amount' => $sale->paid_amount + $request->amount,
+                'due_amount' => $due_amount,
                 'payment_status' => $payment_status
             ]);
         });
@@ -79,7 +82,8 @@ class SalePaymentsController extends Controller
     }
 
 
-    public function edit($sale_id, SalePayment $salePayment) {
+    public function edit($sale_id, SalePayment $salePayment)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $sale = Sale::findOrFail($sale_id);
@@ -88,7 +92,8 @@ class SalePaymentsController extends Controller
     }
 
 
-    public function update(Request $request, SalePayment $salePayment) {
+    public function update(Request $request, SalePayment $salePayment)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $request->validate([
@@ -114,8 +119,8 @@ class SalePaymentsController extends Controller
             }
 
             $sale->update([
-                'paid_amount' => (($sale->paid_amount - $salePayment->amount) + $request->amount) * 100,
-                'due_amount' => $due_amount * 100,
+                'paid_amount' => ($sale->paid_amount - $salePayment->amount) + $request->amount,
+                'due_amount' => $due_amount,
                 'payment_status' => $payment_status
             ]);
 
@@ -135,7 +140,8 @@ class SalePaymentsController extends Controller
     }
 
 
-    public function destroy(SalePayment $salePayment) {
+    public function destroy(SalePayment $salePayment)
+    {
         abort_if(Gate::denies('access_sale_payments'), 403);
 
         $salePayment->delete();

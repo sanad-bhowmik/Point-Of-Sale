@@ -32,8 +32,12 @@
                                 <div class="form-group">
                                     <label>Season (From – To) <span class="text-danger">*</span></label>
                                     <div class="d-flex gap-2">
-                                        <input type="month" class="form-control" name="season_from" required>
-                                        <input type="month" class="form-control" name="season_to" required>
+                                        <div class="position-relative flex-fill">
+                                            <input type="month" class="form-control month-input-hide-year" name="season_from" required>
+                                        </div>
+                                        <div class="position-relative flex-fill">
+                                            <input type="month" class="form-control month-input-hide-year" name="season_to" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -73,6 +77,69 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+<style>
+/* Hide year in month inputs */
+.month-input-hide-year {
+    position: relative;
+}
+
+.month-input-hide-year::-webkit-datetime-edit-year-field {
+    display: none !important;
+}
+
+.month-input-hide-year::-webkit-datetime-edit-text {
+    display: none;
+}
+
+.month-input-hide-year::-webkit-datetime-edit-month-field {
+    color: #495057;
+    padding: 0;
+}
+
+/* For Firefox */
+.month-input-hide-year {
+    color: transparent;
+    position: relative;
+}
+
+.month-input-hide-year:focus {
+    color: transparent;
+}
+
+.month-input-hide-year::before {
+    content: attr(placeholder);
+    color: #495057;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+
+.month-input-hide-year:focus::before {
+    display: none;
+}
+
+.month-input-hide-year:not(:placeholder-shown)::before {
+    display: none;
+}
+
+/* Show only month when not focused */
+.month-input-hide-year:not(:focus) {
+    color: transparent;
+}
+
+.month-input-hide-year:not(:focus)::after {
+    content: attr(data-month-display);
+    color: #495057;
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+}
+</style>
+
 <script>
     // Toastr options
     toastr.options = {
@@ -98,6 +165,32 @@
             toastr.error("{{ $error }}");
         @endforeach
     @endif
+
+    // Update month display values
+    document.addEventListener('DOMContentLoaded', function() {
+        const monthInputs = document.querySelectorAll('.month-input-hide-year');
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+                           "July", "August", "September", "October", "November", "December"];
+
+        monthInputs.forEach(input => {
+            // Set placeholder
+            input.setAttribute('placeholder', 'Select month');
+
+            // Update display when value changes
+            input.addEventListener('change', function() {
+                if (this.value) {
+                    const monthIndex = parseInt(this.value.split('-')[1]) - 1;
+                    this.setAttribute('data-month-display', monthNames[monthIndex]);
+                }
+            });
+
+            // Initialize display if there's a value
+            if (input.value) {
+                const monthIndex = parseInt(input.value.split('-')[1]) - 1;
+                input.setAttribute('data-month-display', monthNames[monthIndex]);
+            }
+        });
+    });
 </script>
 
 @endsection

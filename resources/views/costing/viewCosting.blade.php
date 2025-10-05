@@ -66,7 +66,7 @@
                                     <th>Tariff per Kg (LC)</th>
                                     <th>Actual Cost per Kg</th>
                                     <th>Total Cost per Kg</th>
-                                    <th>Total Cost per Box (20 KG)</th>
+                                    <th>Total Cost per Box</th>
 
                                     <!--   New Status Column -->
                                     <th>Status</th>

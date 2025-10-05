@@ -90,7 +90,7 @@ class BankController extends Controller
             'branch_name'   => 'required|string|max:255',
             'owner'         => 'required|string|max:255',
             'date'          => 'required|date',
-            'last_balance'  => 'required|numeric',
+            'last_balance'  => 'nullable|numeric',
             'disclaimer'    => 'nullable|string|max:255',
         ]);
 

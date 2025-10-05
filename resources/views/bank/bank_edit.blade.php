@@ -68,6 +68,11 @@
                                     <input type="text" name="disclaimer" id="disclaimer" class="form-control"
                                         value="{{ old('disclaimer', $bank->disclaimer) }}">
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="opening_balance" class="form-label">Opening Balance</label>
+                                    <input type="text" name="opening_balance" id="opening_balance" class="form-control"
+                                        value="{{ old('opening_balance', $bank->opening_balance) }}" readonly>
+                                </div>
                             </div>
 
                             <!-- SAVE BUTTON -->

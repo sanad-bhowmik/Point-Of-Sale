@@ -12,19 +12,21 @@ use Modules\Product\DataTables\ProductCategoriesDataTable;
 class CategoriesController extends Controller
 {
 
-    public function index(ProductCategoriesDataTable $dataTable) {
+    public function index(ProductCategoriesDataTable $dataTable)
+    {
         abort_if(Gate::denies('access_product_categories'), 403);
 
         return $dataTable->render('product::categories.index');
     }
 
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $request->validate([
             'category_code' => 'required|unique:categories,category_code',
-            'category_name' => 'required'
+            'category_name' => 'required|unique:categories,category_name',
         ]);
 
         Category::create([
@@ -38,7 +40,8 @@ class CategoriesController extends Controller
     }
 
 
-    public function edit($id) {
+    public function edit($id)
+    {
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $category = Category::findOrFail($id);
@@ -47,7 +50,8 @@ class CategoriesController extends Controller
     }
 
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $request->validate([
@@ -66,7 +70,8 @@ class CategoriesController extends Controller
     }
 
 
-    public function destroy($id) {
+    public function destroy($id)
+    {
         abort_if(Gate::denies('access_product_categories'), 403);
 
         $category = Category::findOrFail($id);
