@@ -1,28 +1,27 @@
 @extends('layouts.app')
 
-@section('title', 'Create Office Expense')
+@section('title', 'Edit Office Expense')
 
 @section('breadcrumb')
     <ol class="breadcrumb border-0 m-0">
         <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
-        <li class="breadcrumb-item"><a
-                href="{{ request()->get('page') === 'cashInHistory' ? route('office_expense.history') : route('office_expense.view') }}">{{ request()->get('page') === 'cashInHistory' ? 'Cash In History' : 'Office Expenses' }}</a>
-        </li>
-        <li class="breadcrumb-item active">Add</li>
+        <li class="breadcrumb-item"><a href="{{ request()->get('page') === 'cashInHistory' ? route('office_expense.history') : route('office_expense.view') }}">{{ request()->get('page') === 'cashInHistory' ? 'Cash In History' : 'Office Expenses' }}</a></li>
+        <li class="breadcrumb-item active">Edit</li>
     </ol>
 @endsection
 
 @section('content')
     <div class="container-fluid">
-        <form id="expense-form" action="{{ route('office_expense.store') }}" method="POST">
+        <form id="expense-form" action="{{ route('office_expense.update', $expense->id) }}" method="POST">
             @csrf
+            @method('PUT')
             <div class="row">
                 <div class="col-lg-12">
                     @include('utils.alerts')
                     <div class="form-group mb-3">
                         <button type="submit" class="btn btn-primary">
-                            {{ request()->get('page') === 'cashInHistory' ? 'Create Cash In' : 'Create Office Expense' }} <i
-                                class="bi bi-check"></i></button>
+                            {{ request()->get('page') === 'cashInHistory' ? 'Update Cash In' : 'Update Office Expense' }} <i class="bi bi-check"></i>
+                        </button>
                     </div>
                 </div>
 
@@ -39,25 +38,29 @@
                                 <!-- Expense Category Dropdown -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
-                                        <label for="category_id">Expense Category<span class="text-danger">*</span></label>
+                                        <label for="category_id">Expense Category <span class="text-danger">*</span></label>
                                         <select name="category_id" id="category_id" class="form-control" required>
-                                            <option value="" disabled selected>Select</option>
+                                            <option value="" disabled>Select</option>
                                             @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->category_name }}</option>
+                                                <option value="{{ $category->id }}" 
+                                                    {{ $expense->category_id == $category->id ? 'selected' : '' }}>
+                                                    {{ $category->category_name }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
 
                                 @if (request()->get('page') !== 'cashInHistory')
-                                    <!-- Employee Name -->
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="employee_name">Employee Name</label>
-                                            <input type="text" name="employee_name" id="employee_name"
-                                                class="form-control" placeholder="Enter Employee Name">
-                                        </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="employee_name">Employee Name</label>
+                                        <input type="text" name="employee_name" id="employee_name" 
+                                               class="form-control"
+                                               value="{{ old('employee_name', $expense->employee_name) }}"
+                                               placeholder="Enter Employee Name">
                                     </div>
+                                </div>
                                 @endif
 
                                 <input type="text" name="status" value="{{ request()->get('page') === 'cashInHistory' ? 'in' : 'out' }}" hidden>
@@ -66,43 +69,49 @@
                                     <div class="form-group">
                                         <label for="status">Status <span class="text-danger">*</span></label>
                                         <select name="status" id="status" class="form-control" required>
-                                            <option value="in">In Amount</option>
-                                            <option value="out">Out Amount</option>
+                                            <option value="in" {{ $expense->status == 'in' ? 'selected' : '' }}>In Amount</option>
+                                            <option value="out" {{ $expense->status == 'out' ? 'selected' : '' }}>Out Amount</option>
                                         </select>
                                     </div>
                                 </div> --}}
 
                                 @if (request()->get('page') !== 'cashInHistory')
                                     <!-- Quantity -->
-                                    <div class="col-lg-4">
-                                        <div class="form-group">
-                                            <label for="quantity">Quantity</label>
-                                            <input type="text" id="quantity" name="quantity" class="form-control"
-                                                value="">
-                                        </div>
+                                <div class="col-lg-4">
+                                    <div class="form-group">
+                                        <label for="quantity">Quantity</label>
+                                        <input type="text" id="quantity" name="quantity" 
+                                               class="form-control"
+                                               value="{{ old('quantity', $expense->quantity) }}">
                                     </div>
+                                </div>
                                 @endif
 
                                 <!-- Amount -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="amount">Amount <span class="text-danger">*</span></label>
-                                        <input type="text" id="amount" name="amount" class="form-control" required>
+                                        <input type="text" id="amount" name="amount" 
+                                               class="form-control"
+                                               value="{{ old('amount', $expense->amount) }}" required>
                                     </div>
                                 </div>
 
+                                <!-- Date -->
                                 <div class="col-lg-4">
                                     <div class="form-group">
                                         <label for="date">Date <span class="text-danger">*</span></label>
                                         <input type="date" class="form-control" name="date"
-                                            value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
+                                               value="{{ old('date', \Carbon\Carbon::parse($expense->date)->format('Y-m-d')) }}"
+                                               required>
                                     </div>
                                 </div>
 
+                                <!-- Note -->
                                 <div class="col-lg-12">
                                     <div class="form-group">
                                         <label for="note">Note (Optional)</label>
-                                        <textarea name="note" id="note" class="form-control" rows="12"></textarea>
+                                        <textarea name="note" id="note" class="form-control" rows="12">{{ old('note', $expense->note) }}</textarea>
                                     </div>
                                 </div>
                             </div>

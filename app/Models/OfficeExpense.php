@@ -21,10 +21,18 @@ class OfficeExpense extends Model
     // Fillable fields for mass assignment
     protected $fillable = [
         // 'expense_category',
-        'office_expense_category_id',
+        'expense_category_id',
         'employee_name',
         'amount',
         'date',
+        'status',
+        'quantity',
         'note',
     ];
+
+    // Relationships
+    public function category()
+    {
+        return $this->belongsTo(OfficeExpenseCategory::class, 'expense_category_id');
+    }
 }
