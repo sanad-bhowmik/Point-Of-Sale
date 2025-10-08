@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BankController;
+use App\Http\Controllers\CateringController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\CostingController;
 use App\Http\Controllers\InputPermitController;
@@ -129,6 +130,15 @@ Route::group(['prefix' => 'office-expense', 'as' => 'office_expense.', 'controll
 
     Route::get('/ledger', 'ledger')->name('ledger');
 
+});
+
+Route::group(['prefix' => 'catering', 'as' => 'catering.', 'controller' => CateringController::class], function () {
+    Route::get('/index', 'index')->name('index');
+    Route::get('/create', 'create')->name('create');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/{lunch}/edit', 'edit')->name('edit');
+    Route::post('/{lunch}/update', 'update')->name('update');
+    Route::delete('/{lunch}/delete', 'destroy')->name('delete');
 });
 
 
