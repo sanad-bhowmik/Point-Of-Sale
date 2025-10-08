@@ -56,7 +56,6 @@
                                     <th>Date</th>
                                     <th>Expense Category</th>
                                     <th>Amount</th>
-                                    <th>Status</th>
                                     <th>Note</th>
                                     <th>Actions</th>
                                 </tr>
@@ -68,7 +67,6 @@
                                         <td>{{ Carbon\Carbon::parse($expense->date)->format('d-m-Y') }}</td>
                                         <td>{{ $expense->category->category_name ?? 'N/A' }}</td>
                                         <td>{{ number_format($expense->amount, 2) }}</td>
-                                        <td><span class="badge bg-success px-3 py-2 text-white">In</span></td>
                                         <td>{{ $expense->note ?? 'N/A' }}</td>
                                         <td>
                                             <a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}"

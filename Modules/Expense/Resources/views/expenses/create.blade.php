@@ -57,7 +57,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="lc_id">LC Number <span class="text-danger">*</span></label>
-                                        <select name="lc_id" id="lc_id" class="form-control select2" required>
+                                        <select name="lc_id" id="lcSelect" class="form-control select2" required>
                                             <option value="">Select LC</option>
                                             @foreach ($lcs as $lc)
                                                 <option value="{{ $lc->id }}">
@@ -71,7 +71,7 @@
                                 <div class="col-lg-6">
                                     <div class="form-group">
                                         <label for="container_id">Container Name <span class="text-danger">*</span></label>
-                                        <select name="container_id" id="container_id" class="form-control select2" required>
+                                        <select name="container_id" id="containerSelect" class="form-control select2" required>
                                             <option value="">Select Container</option>
                                             @foreach ($containers as $container)
                                                 <option value="{{ $container->id }}">{{ $container->name }}</option>
@@ -147,6 +147,25 @@
                     });
                 } else {
                     $('#expense_name_id').html('<option value="">Select Expense Name</option>');
+                }
+            });
+
+            $('#lcSelect').on('change', function() {
+                var lcId = $(this).val();
+                var $containerSelect = $('#containerSelect');
+                $containerSelect.html('<option value="">Loading...</option>');
+                if (lcId) {
+                    $.get('/get-containers-by-lc/' + lcId, function(data) {
+                        var options = '<option value="">-- Select Container --</option>';
+                        data.forEach(function(container) {
+                            options +=
+                                `<option value="${container.id}">${container.name} (${container.number})</option>`;
+                        });
+                        $containerSelect.html(options).trigger('change');
+                    });
+                } else {
+                    $containerSelect.html('<option value="">-- Select Container --</option>').trigger(
+                        'change');
                 }
             });
 
