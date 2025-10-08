@@ -88,6 +88,72 @@ class ContainerController extends Controller
         // Fetch all suppliers for the dropdown
         $suppliers = \App\Models\Supplier::orderBy('supplier_name')->get();
 
-        return view('container.supplierTtLc', compact('containers', 'suppliers', 'supplierId'));
+        // Fetch all banks for the payment modals
+        $banks = \App\Models\Bank::orderBy('bank_name')->get();
+
+        return view('container.supplierTtLc', compact('containers', 'suppliers', 'supplierId', 'banks'));
+    }
+    public function ttPayment(Request $request)
+    {
+        $request->validate([
+            'container_id' => 'required|exists:container,id',
+            'amount'       => 'required|numeric|min:0',
+            'bank_id'      => 'required|exists:banks,id',
+            'date'         => 'required|date',
+        ]);
+
+        $container = \App\Models\Container::findOrFail($request->container_id);
+
+        // Update the TT paid amount
+        $container->tt_paid_amount += $request->amount;
+        $container->save();
+
+        // Create transaction record
+        \App\Models\Transaction::create([
+            'bank_id'    => $request->bank_id,
+            'out_amount' => $request->amount,
+            'in_amount'  => 0,
+            'purpose'    => 'TT Payment',
+            'status'     => 'approved',
+            'date'       => $request->date,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'TT payment updated successfully',
+            'tt_paid_amount' => $container->tt_paid_amount,
+        ]);
+    }
+
+    public function lcPayment(Request $request)
+    {
+        $request->validate([
+            'container_id' => 'required|exists:container,id',
+            'amount'       => 'required|numeric|min:0',
+            'bank_id'      => 'required|exists:banks,id',
+            'date'         => 'required|date',
+        ]);
+
+        $container = \App\Models\Container::findOrFail($request->container_id);
+
+        // Update the LC paid amount
+        $container->lc_paid_amount += $request->amount;
+        $container->save();
+
+        // Create transaction record
+        \App\Models\Transaction::create([
+            'bank_id'    => $request->bank_id,
+            'out_amount' => $request->amount,
+            'in_amount'  => 0,
+            'purpose'    => 'LC Payment',
+            'status'     => 'approved',
+            'date'       => $request->date,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'LC payment updated successfully',
+            'lc_paid_amount' => $container->lc_paid_amount,
+        ]);
     }
 }

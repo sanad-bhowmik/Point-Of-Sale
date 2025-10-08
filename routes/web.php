@@ -104,6 +104,9 @@ Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => Con
     Route::delete('/delete/{id}', 'destroy')->name('delete');
     Route::put('/update/{id}', 'update')->name('update');
     Route::get('/supplierTtLc', 'supplierTtLc')->name('supplierTtLc');
+    Route::post('/ttPayment', 'ttPayment')->name('ttPayment');
+    Route::post('/lcPayment', 'lcPayment')->name('lcPayment');
+
 });
 
 // Input Permit
@@ -130,7 +133,6 @@ Route::group(['prefix' => 'office-expense', 'as' => 'office_expense.', 'controll
     Route::get('/view-names', 'viewOfficeExpenseName')->name('view_names');
 
     Route::get('/ledger', 'ledger')->name('ledger');
-
 });
 
 Route::group(['prefix' => 'catering', 'as' => 'catering.', 'controller' => CateringController::class], function () {

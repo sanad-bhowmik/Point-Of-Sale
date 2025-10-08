@@ -29,6 +29,8 @@ class Container extends Model
         'current_qty',
         'lc_date',
         'tt_date',
+        'lc_paid_amount',
+        'tt_paid_amount',
     ];
 
     public function lc()
