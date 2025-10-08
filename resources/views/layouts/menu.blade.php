@@ -264,6 +264,7 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Costing List
             </a>
         </li>
+
     </ul>
 </li>
 @endcan
@@ -286,6 +287,7 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Container List
             </a>
         </li>
+
     </ul>
 </li>
 @endcan
@@ -296,43 +298,43 @@
         <i class="c-sidebar-nav-icon bi bi bi-arrow-down-up" style="line-height: 1;"></i> Container expenses
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
-                @can('access_expense_categories')
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
-                        href="{{ route('expense-categories.index') }}">
-                        <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Categories
-                    </a>
-                </li>
-                @endcan
-                @can('access_expense_categories')
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
-                        href="{{ route('expense-names.index') }}">
-                        <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i>Sub Categories
-                    </a>
-                </li>
-                @endcan
-                @can('create_expenses')
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"
-                        href="{{ route('expenses.create') }}">
-                        <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i>Expense Posting
-                    </a>
-                </li>
-                @endcan
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.index') ? 'c-active' : '' }}"
-                        href="{{ route('expenses.index') }}">
-                        <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Expenses History
-                    </a>
-                </li>
-                <li class="c-sidebar-nav-item">
-                    <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
-                        href="{{ route('expense.expenseLedger') }}">
-                        <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
-                    </a>
-                </li>
-            </ul>
+        @can('access_expense_categories')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-categories.*') ? 'c-active' : '' }}"
+                href="{{ route('expense-categories.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i> Categories
+            </a>
+        </li>
+        @endcan
+        @can('access_expense_categories')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense-names.*') ? 'c-active' : '' }}"
+                href="{{ route('expense-names.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-collection" style="line-height: 1;"></i>Sub Categories
+            </a>
+        </li>
+        @endcan
+        @can('create_expenses')
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.create') ? 'c-active' : '' }}"
+                href="{{ route('expenses.create') }}">
+                <i class="c-sidebar-nav-icon bi bi-journal-plus" style="line-height: 1;"></i>Expense Posting
+            </a>
+        </li>
+        @endcan
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expenses.index') ? 'c-active' : '' }}"
+                href="{{ route('expenses.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i>Expenses History
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('expense.expenseLedger') ? 'c-active' : '' }}"
+                href="{{ route('expense.expenseLedger') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Expenses Ledger
+            </a>
+        </li>
+    </ul>
 </li>
 @endcan
 
@@ -401,6 +403,7 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Bank List
             </a>
         </li>
+
     </ul>
 </li>
 @endcan
@@ -423,19 +426,20 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Transaction List
             </a>
         </li>
-        {{-- <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.ledger') ? 'c-active' : '' }}"
-        href="{{ route('transaction.ledger') }}">
-        <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
-        </a>
-</li> --}}
-<li class="c-sidebar-nav-item">
-    <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
-        href="{{ route('transaction.bank_report') }}">
-        <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
-    </a>
-</li>
-</ul>
+
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('transaction.bank_report') ? 'c-active' : '' }}"
+                href="{{ route('transaction.bank_report') }}">
+                <i class="c-sidebar-nav-icon bi bi-journal-text" style="line-height: 1;"></i> Bank Ledger
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('container.supplierTtLc') ? 'c-active' : '' }}"
+                href="{{ route('container.supplierTtLc') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Supplier Payment
+            </a>
+        </li>
+    </ul>
 
 </li>
 @endcan
@@ -478,31 +482,31 @@
         @can('create_office_expense')
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.name') ? 'c-active' : '' }}"
-               href="{{ route('office_expense.name') }}">
+                href="{{ route('office_expense.name') }}">
                 Categories
             </a>
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.create') ? 'c-active' : '' }}"
-               href="{{ route('office_expense.create') }}">
+                href="{{ route('office_expense.create') }}">
                 Expense Posting
             </a>
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.history') ? 'c-active' : '' }}"
-               href="{{ route('office_expense.history') }}">
+                href="{{ route('office_expense.history') }}">
                 Cash In History
             </a>
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.view') ? 'c-active' : '' }}"
-               href="{{ route('office_expense.view') }}">
+                href="{{ route('office_expense.view') }}">
                 Expense History
             </a>
         </li>
         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('office_expense.ledger') ? 'c-active' : '' }}"
-               href="{{ route('office_expense.ledger') }}">
+                href="{{ route('office_expense.ledger') }}">
                 Expense Ledger
             </a>
         </li>

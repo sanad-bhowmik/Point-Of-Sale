@@ -71,4 +71,23 @@ class ContainerController extends Controller
 
         return redirect()->back()->with('success', 'Container updated successfully!');
     }
+    public function supplierTtLc(Request $request)
+    {
+        $supplierId = $request->supplier_id;
+
+        $query = \App\Models\Container::with(['lc.costing.supplier', 'lc.costing.product.sizes']);
+
+        if ($supplierId) {
+            $query->whereHas('lc.costing.supplier', function ($q) use ($supplierId) {
+                $q->where('id', $supplierId);
+            });
+        }
+
+        $containers = $query->get();
+
+        // Fetch all suppliers for the dropdown
+        $suppliers = \App\Models\Supplier::orderBy('supplier_name')->get();
+
+        return view('container.supplierTtLc', compact('containers', 'suppliers', 'supplierId'));
+    }
 }

@@ -17,9 +17,15 @@
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <h5 class="mb-0">Container List</h5>
-                        <a href="{{ route('container.view') }}" class="btn btn-primary btn-sm">
+                        <div>
+                            <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
+                                <i class="bi bi-file-earmark-excel-fill"></i> Excel
+                            </button>
+                            <a href="{{ route('container.view') }}" class="btn btn-primary btn-sm">
                             + Add Container
                         </a>
+                        </div>
+
                     </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
@@ -27,15 +33,17 @@
                                 <tr>
                                     <th>#</th>
                                     <th>LC Name</th>
+                                    <th>LC Number</th>
+                                    <th>Container Name</th>
+                                    <th>Container Number</th>
+                                    <th>Container Quantity</th>
                                     <th>LC Value</th>
                                     <th>LC Exchange Rate</th>
                                     <th>LC Amount</th>
                                     <th>TT Value</th>
                                     <th>TT Exchange Rate</th>
                                     <th>TT Amount</th>
-                                    <th>Container Name</th>
-                                    <th>Container Number</th>
-                                    <th>Quantity</th>
+
                                     <th>LC Total Amount ৳</th>
                                     <th>TT Total Amount ৳</th>
                                     <th>Grand Total ৳</th>
@@ -50,6 +58,10 @@
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $container->lc->lc_name ?? '-' }}</td>
+                                    <td>{{ $container->lc->lc_number ?? '-' }}</td>
+                                     <td>{{ $container->name }}</td>
+                                    <td>{{ $container->number }}</td>
+                                    <td>{{ $container->qty ?? '-' }}</td>
                                     <td>{{ $container->lc_value ?? '-' }}</td>
                                     <td>{{ $container->lc_exchange_rate ?? '-' }}</td>
                                     <td>
@@ -64,9 +76,7 @@
                ? number_format($container->tt_value * $container->tt_exchange_rate, 2)
                : '-' }}
                                     </td>
-                                    <td>{{ $container->name }}</td>
-                                    <td>{{ $container->number }}</td>
-                                    <td>{{ $container->qty ?? '-' }}</td>
+
 
                                     {{-- LC Total Amount --}}
                                     <td>
@@ -203,6 +213,47 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
+function downloadTableAsExcel() {
+        let table = document.querySelector("table");
+        let rows = table.querySelectorAll("tr");
+
+        let excelContent = "<table border='1' style='border-collapse:collapse;'>";
+
+        let totalCols = rows[0].querySelectorAll("th, td").length - 2;
+        excelContent += `<tr>
+                        <th colspan="${totalCols}" rowspan="3"
+                            style="text-align:center; vertical-align:middle; font-size:28px; font-weight:bold; padding:15px;">
+                           Container
+                        </th>
+                     </tr>`;
+        excelContent += `<tr></tr><tr></tr>`;
+
+        rows.forEach((row, rowIndex) => {
+            let cells = row.querySelectorAll("th, td");
+            excelContent += "<tr>";
+
+            cells.forEach((cell, colIndex) => {
+                if (colIndex >= cells.length - 1) return;
+                let tag = (rowIndex === 0) ? "th" : "td";
+                excelContent += `<${tag} style="padding:5px;">${cell.innerText.trim()}</${tag}>`;
+            });
+
+            excelContent += "</tr>";
+        });
+
+        excelContent += "</table>";
+
+        let today = new Date();
+        let day = String(today.getDate()).padStart(2, '0');
+        let month = String(today.getMonth() + 1).padStart(2, '0');
+        let year = today.getFullYear();
+        let filename = `Container_${day}_${month}_${year}_.xls`;
+
+        let downloadLink = document.createElement("a");
+        downloadLink.href = 'data:application/vnd.ms-excel,' + encodeURIComponent(excelContent);
+        downloadLink.download = filename;
+        downloadLink.click();
+    }
     toastr.options = {
         "closeButton": true,
         "progressBar": true,

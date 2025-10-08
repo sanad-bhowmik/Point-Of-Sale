@@ -32,6 +32,8 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
+                                    <th>LC Name</th>
+                                    <th>LC Number</th>
                                     <th>Supplier</th>
                                     <th>Product</th>
                                     <th>Box Type</th>
@@ -79,10 +81,15 @@
                                 @forelse($costings as $index => $costing)
                                 <tr>
                                     <td>{{ $index + 1 }}</td>
+                                      @php
+                                       $lc = DB::table('lc')->where('id', $costing->lc_id)->first();
+                                     @endphp
+                                     <td>{{ $lc->lc_name ?? '-' }}</td>
+                                     <td>{{ $lc->lc_number ?? '-' }}</td>
                                     <td>{{ $costing->supplier->supplier_name ?? '-' }}</td>
                                     <td>{{ $costing->product->product_name ?? '-' }}</td>
                                     <td>{{ $costing->box_type }}</td>
-                                    @php
+                                     @php
                                     $sizeName = DB::table('sizes')->where('id', $costing->size)->value('size');
                                     @endphp
                                     <td>{{ $sizeName ?? '-' }}</td>
@@ -128,7 +135,7 @@
 
                                     <!--  Actions -->
                                     <td>
-                                        <button class="edit-btn btn btn-warning" data-id="{{ $costing->id }}" data-base_value="{{ $costing->base_value }}" data-qty="{{ $costing->qty }}" data-exchange_rate="{{ $costing->exchange_rate }}" data-transport="{{ $costing->transport }}" data-arrot="{{ $costing->arrot }}" data-cns_charge="{{ $costing->cns_charge }}" data-actual_cost_per_kg="{{ $costing->actual_cost_per_kg }}">Edit</button>
+                                        <!--<button class="edit-btn btn btn-warning" data-id="{{ $costing->id }}" data-base_value="{{ $costing->base_value }}" data-qty="{{ $costing->qty }}" data-exchange_rate="{{ $costing->exchange_rate }}" data-transport="{{ $costing->transport }}" data-arrot="{{ $costing->arrot }}" data-cns_charge="{{ $costing->cns_charge }}" data-actual_cost_per_kg="{{ $costing->actual_cost_per_kg }}">Edit</button>-->
 
                                         <form action="{{ route('costing.destroy', $costing->id) }}" method="POST" style="display:inline-block;">
                                             @csrf
@@ -329,7 +336,6 @@
             fetch(`/costing/${costingId}/lc`)
                 .then(res => res.json())
                 .then(data => {
-                    console.log("Previous LC Data:", data); // 🔹 log in console
                     if (data.success && data.lc) {
                         document.querySelector("input[name='lc_name']").value = data.lc.lc_name ?? "";
                         document.querySelector("input[name='lc_number']").value = data.lc.lc_number ?? "";

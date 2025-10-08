@@ -103,6 +103,7 @@ Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => Con
     Route::get('/containerTbl', 'containerTbl')->name('containerTbl');
     Route::delete('/delete/{id}', 'destroy')->name('delete');
     Route::put('/update/{id}', 'update')->name('update');
+    Route::get('/supplierTtLc', 'supplierTtLc')->name('supplierTtLc');
 });
 
 // Input Permit
