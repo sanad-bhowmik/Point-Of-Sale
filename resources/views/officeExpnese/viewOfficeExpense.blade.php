@@ -68,12 +68,12 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Date</th>
-                                    <th>Expense Category</th>
+                                    <th>Category</th>
                                     <th>Employee Name</th>
-                                    <th>Amount</th>
-                                    <th>Quantity</th>
-                                    <th>Status</th>
                                     <th>Note</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>Amount</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
@@ -84,16 +84,14 @@
                                         <td>{{ Carbon\Carbon::parse($expense->date)->format('d-m-Y') }}</td>
                                         <td>{{ $expense->category->category_name ?? 'N/A' }}</td>
                                         <td>{{ $expense->employee_name ?? 'N/A' }}</td>
-                                        <td>{{ number_format($expense->amount, 2) }}</td>
-                                        <td>{{ number_format($expense->quantity, 2) }}</td>
+                                        <td>{{ $expense->note ?? 'N/A' }}</td>
+                                        <td>{{ $expense->quantity > 0 ? $expense->quantity : 0 }}</td>
                                         <td>
-                                            @if ($expense->status === 'in')
-                                                <span class="badge bg-success px-3 py-2 text-white">In</span>
-                                            @else
-                                                <span class="badge bg-danger px-3 py-2 text-white">Out</span>
+                                            @if ($expense->quantity > 0)
+                                                {{ number_format($expense->amount / $expense->quantity, 2) }} 
                                             @endif
                                         </td>
-                                        <td>{{ $expense->note ?? 'N/A' }}</td>
+                                        <td>{{ number_format($expense->amount, 2) }}</td>
                                         <td>
                                             <a href="{{ route('office_expense.edit', $expense->id) }}"
                                                 class="btn btn-sm btn-warning">
@@ -162,6 +160,7 @@
 
 @push('page_scripts')
     <script>
+        // ...existing code...
         document.getElementById("downloadExcelRaw").addEventListener("click", function() {
             let table = document.getElementById("officeExpenseTable");
             if (!table) {
@@ -182,29 +181,38 @@
                 }
             }
 
+            // Add heading row
+            let heading = `<tr>
+        <th colspan="${clone.tHead.rows[0].cells.length}" style="font-size:22px;text-align:center;padding:15px;">
+            Office Expense List
+        </th>
+    </tr>`;
+
             // Excel styling
             let style = `
-        <style>
-            * {
-                font-family: Roboto, Arial, sans-serif;
-            }
-            table, th, td {
-                border: 1px solid #000;
-                border-collapse: collapse;
-                text-align: center;
-            }
-            th, td {
-                padding: 10px;
-                height: 35px; /* row height */
-                vertical-align: middle;
-            }
-            th {
-                font-weight: bold;
-            }
-        </style>
+    <style>
+        * {
+            font-family: Roboto, Arial, sans-serif;
+        }
+        table, th, td {
+            border: 1px solid #000;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, td {
+            padding: 10px;
+            height: 35px; /* row height */
+            vertical-align: middle;
+        }
+        th {
+            font-weight: bold;
+        }
+    </style>
     `;
 
-            let tableHTML = style + table.outerHTML;
+            // Insert heading before thead
+            let tableHTML = style +
+                `<table>${heading}${clone.tHead.outerHTML}${clone.tBodies[0].outerHTML}</table>`;
 
             let blob = new Blob(
                 ['\ufeff' + tableHTML], {
@@ -221,5 +229,6 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         });
+        // ...existing code...
     </script>
 @endpush
