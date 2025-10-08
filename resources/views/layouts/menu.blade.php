@@ -512,6 +512,30 @@
 @endcan
 
 @can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-catering.index') ? 'c-show' : '' }}" id="permit">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Catering
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('catering.create') ? 'c-active' : '' }}"
+                href="{{ route('catering.create') }}">
+                <i class="c-sidebar-nav-icon bi bi-arrows-fullscreen" style="line-height: 1;"></i> Add Lunch
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('catering.index') ? 'c-active' : '' }}"
+                href="{{ route('catering.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Lunch List
+            </a>
+        </li>
+
+    </ul>
+
+</li>
+@endcan
+
+@can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}" id="permit">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Import Permit
