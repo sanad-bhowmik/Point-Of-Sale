@@ -82,7 +82,7 @@
                                 <div class="col-md-6 d-none" >
                                     <div class="form-group">
                                         <label for="product_price">Price <span class="text-danger">*</span></label>
-                                        <input id="product_price" type="text" class="form-control" name="product_price" required value="1">
+                                        <input id="product_price" type="text" class="form-control" name="product_price" required value="100000">
                                     </div>
                                 </div>
                                 <div class="col-md-6 d-none">
