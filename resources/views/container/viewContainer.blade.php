@@ -123,11 +123,11 @@
                                         </button>
 
                                         <!-- Delete Form -->
-                                        <form action="{{ route('container.delete', $container->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this container?');">
+                                        <!-- <form action="{{ route('container.delete', $container->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this container?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                        </form>
+                                        </form> -->
                                     </td>
                                 </tr>
 

@@ -22,7 +22,7 @@
                             <div class="row">
                                 <!-- Bank Select -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="bank_id" class="form-label">Bank</label>
+                                    <label for="bank_id" class="form-label">Bank <span class="text-danger">*</span></label>
                                     <select name="bank_id" id="bank_id" class="form-control" required>
                                         <option value="">Select Bank</option>
                                         @foreach ($banks as $bank)
@@ -36,7 +36,7 @@
 
                                 <!-- Transaction Type -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="transaction_type" class="form-label">Transaction Type</label>
+                                    <label for="transaction_type" class="form-label">Transaction Type <span class="text-danger">*</span></label>
                                     <select id="transaction_type" class="form-control" required>
                                         <option value="">Select Type</option>
                                         <option value="in" {{ $transaction->in_amount > 0 ? 'selected' : '' }}>In Amount
@@ -49,7 +49,7 @@
                                 <!-- In Amount -->
                                 <div class="col-md-6 mb-3" id="in_amount_div"
                                     style="{{ $transaction->in_amount > 0 ? '' : 'display:none;' }}">
-                                    <label for="in_amount" class="form-label">In Amount</label>
+                                    <label for="in_amount" class="form-label">In Amount <span class="text-danger">*</span></label>
                                     <input type="number" name="in_amount" id="in_amount" class="form-control"
                                         step="0.01" value="{{ $transaction->in_amount ?? 0 }}">
                                 </div>
@@ -57,7 +57,7 @@
                                 <!-- Out Amount -->
                                 <div class="col-md-6 mb-3" id="out_amount_div"
                                     style="{{ $transaction->out_amount > 0 ? '' : 'display:none;' }}">
-                                    <label for="out_amount" class="form-label">Out Amount</label>
+                                    <label for="out_amount" class="form-label">Out Amount <span class="text-danger">*</span></label>
                                     <input type="number" name="out_amount" id="out_amount" class="form-control"
                                         step="0.01" value="{{ $transaction->out_amount ?? 0 }}">
                                 </div>
@@ -70,7 +70,7 @@
 
                                 <!-- Date -->
                                 <div class="col-md-6 mb-3">
-                                    <label for="date" class="form-label">Posting Date</label>
+                                    <label for="date" class="form-label">Posting Date <span class="text-danger">*</span></label>
                                     <input type="date" name="date" id="date" class="form-control"
                                         value="{{ \Carbon\Carbon::parse($transaction->date)->format('Y-m-d') }}" required>
 

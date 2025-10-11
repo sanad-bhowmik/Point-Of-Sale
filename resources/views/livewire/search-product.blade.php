@@ -17,7 +17,7 @@
                                     <i class="bi bi-bank text-primary"></i>
                                 </div>
                             </div>
-                            <select wire:model.live="selected_lc" class="form-control">
+                            <select wire:model.live="selected_lc" class="form-control" required>
                                 <option value="">-- Select LC --</option>
                                 @foreach($lcs as $lc)
                                     <option value="{{ $lc->id }}">
@@ -36,7 +36,7 @@
                                     <i class="bi bi-box text-primary"></i>
                                 </div>
                             </div>
-                            <select wire:model="selected_container" class="form-control">
+                            <select wire:model="selected_container" class="form-control" required>
                                 <option value="">-- Select Container --</option>
                                 @foreach($containers as $container)
                                     <option value="{{ $container->id }}">

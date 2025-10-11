@@ -204,28 +204,23 @@
 
     <script src="{{ asset('js/jquery-mask-money.js') }}"></script>
     <script>
-        $(document).ready(function () {
-            $('#product_cost').maskMoney({
-                prefix:'{{ settings()->currency->symbol }}',
-                thousands:'{{ settings()->currency->thousand_separator }}',
-                decimal:'{{ settings()->currency->decimal_separator }}',
-            });
-            $('#product_price').maskMoney({
-                prefix:'{{ settings()->currency->symbol }}',
-                thousands:'{{ settings()->currency->thousand_separator }}',
-                decimal:'{{ settings()->currency->decimal_separator }}',
-            });
-
-            $('#product_cost').maskMoney('mask');
-            $('#product_price').maskMoney('mask');
-
-            $('#product-form').submit(function () {
-                var product_cost = $('#product_cost').maskMoney('unmasked')[0];
-                var product_price = $('#product_price').maskMoney('unmasked')[0];
-                $('#product_cost').val(product_cost);
-                $('#product_price').val(product_price);
-            });
+    $(document).ready(function () {
+        // Prevent negative values in Cost field
+        $('#product_cost').on('input', function () {
+            let value = $(this).val();
+            if (value < 0) {
+                $(this).val(0);
+            }
         });
-    </script>
+
+        // Prevent digits in Product Name field
+        $('input[name="product_name"]').on('input', function () {
+            let value = $(this).val();
+            // Remove any numbers
+            $(this).val(value.replace(/[0-9]/g, ''));
+        });
+    });
+</script>
+
 @endpush
 

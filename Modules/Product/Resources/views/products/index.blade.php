@@ -29,7 +29,7 @@
 
                         <!-- Right: DataTable Buttons -->
                         <div>
-                            <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
+                            <button class="btn btn-success buttons-excel" onclick="downloadTableAsExcel()">
                                 <i class="bi bi-file-earmark-excel-fill"></i> Excel
                             </button>
                         </div>
