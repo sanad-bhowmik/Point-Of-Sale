@@ -10,54 +10,74 @@
 @endsection
 
 @section('content')
-<div class="container-fluid mt-4">
+<div class="container-fluid mt-5">
     <div class="card shadow-lg border-0">
-        <div class="card-header bg-danger text-white text-center">
-            <h3 class="mb-0 fw-bold">TAIFA TRADERSE</h3>
+        <div class="card-header bg-gradient-danger text-white text-center py-4" style="background: linear-gradient(90deg, #c31432, #240b36);">
+            <h2 class="fw-bold mb-0 text-uppercase letter-spacing-1">TAIFA TRADERSE</h2>
+            <p class="mb-0 small">Comprehensive Investment Report</p>
         </div>
-        <div class="card-body">
-            <table class="table table-bordered text-center align-middle">
-                <tbody>
+
+        <div class="card-body bg-light">
+            <table class="table table-hover table-bordered align-middle text-center shadow-sm bg-white rounded">
+                <thead class="table-dark">
                     <tr>
-                        <th>TOTAL STORAGER</th>
+                        <th>Category</th>
+                        <th>Amount (৳)</th>
+                    </tr>
+                </thead>
+                <tbody class="fw-semibold">
+                    <tr>
+                        <td class="text-start">TOTAL STORAGER</td>
                         <td>{{ number_format($totalStorager, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>MUSTAQ MAMA</th>
-                        <td>9,014,491.00</td>
+                        <td class="text-start">MUSTAQ MAMA</td>
+                        <td>{{ number_format(9014491.00, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>UPCOMMING</th>
-                        <td>{{$calculateUpcoming}}</td>
+                        <td class="text-start">UPCOMING</td>
+                        <td>{{ number_format($calculateUpcoming, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>TOTAL MARKET DUE</th>
-                        <td>{{ $totalDueAmount }}</td>
+                        <td class="text-start">TOTAL MARKET DUE</td>
+                        <td>{{ number_format($totalDueAmount, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>TOTAL LOSS</th>
-                        <td>{{$totalLose}}</td>
+                        <td class="text-start">TOTAL LOSS</td>
+                        <td>{{ number_format($totalLose, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>BANK AMMOUNT</th>
-                        <td>2,563,269.20</td>
+                        <td class="text-start">BANK AMOUNT</td>
+                        <td>{{ number_format(2563269.20, 2) }}</td>
                     </tr>
                     <tr>
-                        <th>PAYMENT GET</th>
-                        <td>2,120,569.20</td>
+                        <td class="text-start">PAYMENT GET</td>
+                        <td>{{ number_format(2120569.20, 2) }}</td>
                     </tr>
-                    <tr>
-                        <th>TOTAL PROFIT</th>
-                        <td>{{ $totalProfit }}</td>
+                    <tr class="table-success">
+                        <td class="text-start">TOTAL PROFIT</td>
+                        <td>{{ number_format($totalProfit, 2) }}</td>
                     </tr>
                 </tbody>
             </table>
 
-            <div class="bg-danger text-white text-center p-3 mt-4 rounded">
-                <h5 class="fw-bold mb-2">STORAGE + MUSTAQ MAMA + UPCOMMING + DUE + LOSS + BANK - PROFIT</h5>
-                <h2 class="fw-bold mb-0">78,640,463.89</h2>
-            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .letter-spacing-1 {
+        letter-spacing: 1px;
+    }
+
+    .table th,
+    .table td {
+        vertical-align: middle !important;
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+        transition: 0.3s ease-in-out;
+    }
+</style>
 @endsection
