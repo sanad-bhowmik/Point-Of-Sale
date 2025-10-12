@@ -599,6 +599,12 @@
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Final Report
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('investment-report.index') ? 'c-active' : '' }}"
+                href="{{ route('investment-report.index') }}">
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Investment
+            </a>
+        </li>
     </ul>
 </li>
 @endcan

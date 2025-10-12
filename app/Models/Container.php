@@ -42,4 +42,8 @@ class Container extends Model
     {
         return $this->hasMany(SaleDetails::class);
     }
+    public function expenses()
+    {
+        return $this->hasMany(\Modules\Expense\Entities\Expense::class, 'container_id', 'id');
+    }
 }

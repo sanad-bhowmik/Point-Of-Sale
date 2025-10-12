@@ -142,7 +142,7 @@
                                             <option value="0">Pending</option>
                                             <option value="1">Shipped</option>
                                             <option value="2">Arrived</option>
-                                            <option value="3">Custom Done</option>
+                                            <option value="3">Upcoming</option>
                                         </select>
                                     </div>
                                 </div>

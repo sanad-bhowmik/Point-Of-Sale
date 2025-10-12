@@ -108,14 +108,29 @@
 
                                     <td>{{ $container->shipping_date ?? '-' }}</td>
                                     <td>{{ $container->arriving_date ?? '-' }}</td>
-                                    <td>
-                                        @switch($container->status)
-                                        @case(0) Pending @break
-                                        @case(1) Shipped @break
-                                        @case(2) Arrived @break
-                                        @default -
-                                        @endswitch
-                                    </td>
+                                 <td>
+    @switch($container->status)
+        @case(0)
+            <span class="badge bg-warning text-light">Pending</span>
+            @break
+
+        @case(1)
+            <span class="badge bg-primary  text-light">Shipped</span>
+            @break
+
+        @case(2)
+            <span class="badge bg-success  text-light">Arrived</span>
+            @break
+
+        @case(3)
+            <span class="badge bg-info  text-light">Upcoming</span>
+            @break
+
+        @default
+            <span class="badge bg-secondary">-</span>
+    @endswitch
+</td>
+
                                     <td>
                                         <!-- Edit Button triggers modal -->
                                         <button type="button" class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#editContainerModal{{ $container->id }}">
@@ -123,11 +138,11 @@
                                         </button>
 
                                         <!-- Delete Form -->
-                                        <!-- <form action="{{ route('container.delete', $container->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this container?');">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                                        </form> -->
+                                        <!--<form action="{{ route('container.delete', $container->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this container?');">-->
+                                        <!--    @csrf-->
+                                        <!--    @method('DELETE')-->
+                                        <!--    <button type="submit" class="btn btn-sm btn-danger">Delete</button>-->
+                                        <!--</form>-->
                                     </td>
                                 </tr>
 
@@ -176,7 +191,7 @@
                                                                 <option value="0" {{ $container->status == 0 ? 'selected' : '' }}>Pending</option>
                                                                 <option value="1" {{ $container->status == 1 ? 'selected' : '' }}>Shipped</option>
                                                                 <option value="2" {{ $container->status == 2 ? 'selected' : '' }}>Arrived</option>
-                                                                <option value="3" {{ $container->status == 3 ? 'selected' : '' }}>Custom Done</option>
+                                                                <option value="3" {{ $container->status == 3 ? 'selected' : '' }}>Upcoming</option>
                                                             </select>
                                                         </div>
                                                     </div>

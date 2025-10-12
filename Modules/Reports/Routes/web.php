@@ -17,7 +17,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Buying Selling Report
     Route::get('/buying-selling-report', 'ReportsController@buyingSelling')
         ->name('buying-selling-report.index');
-    Route::get('/get-containers-by-lc/{lc_id}', function($lc_id) {
+    Route::get('/get-containers-by-lc/{lc_id}', function ($lc_id) {
         $containers = Container::where('lc_id', $lc_id)->get();
         return response()->json($containers);
     });
@@ -33,7 +33,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Cash Flow Report
     Route::get('/cash-flow-report', 'ReportsController@cashFlow')
         ->name('cash-flow-report.index');
-        
+
     //Profit Loss Report
     Route::get('/profit-loss-report', 'ReportsController@profitLossReport')
         ->name('profit-loss-report.index');
@@ -52,4 +52,8 @@ Route::group(['middleware' => 'auth'], function () {
     //Purchases Return Report
     Route::get('/purchases-return-report', 'ReportsController@purchasesReturnReport')
         ->name('purchases-return-report.index');
+
+    // Investment Report
+    Route::get('/investment-report', 'ReportsController@investmentReport')
+        ->name('investment-report.index');
 });

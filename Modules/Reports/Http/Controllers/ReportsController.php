@@ -189,4 +189,49 @@ class ReportsController extends Controller
 
         return view('reports::purchases-return.index');
     }
+
+    public function investmentReport()
+    {
+        abort_if(Gate::denies('access_reports'), 403);
+
+        // ✅ Call the function here
+        $totalStorager = $this->calculateStorageCosts();
+        dd($totalStorager);
+        return view('reports::investment.index', [
+            'totalStorager' => $totalStorager,
+        ]);
+    }
+
+    // ✅ Define the function below
+    private function calculateStorageCosts()
+    {
+        $containers = Container::where('status', '!=', 3)->get();
+
+        $result = 0;
+
+        foreach ($containers as $container) {
+            // Step 2: Calculate total LC amount, total TT amount, and total expense cost
+            $totalLcAmount = $container->lc_value *  $container->lc_exchange_rate * $container->qty;
+            $totalTtAmount = $container->tt_value * $container->tt_exchange_rate * $container->qty;
+
+            $totalExpenseCost = $container->load("expenses")->expenses->sum('amount');  // Sum of all related expenses
+
+            // Step 3: Calculate total sales for the container
+            $totalSales = $container->load("saleDetails")->saleDetails->sum('sub_total'); // Sum of all related sale details
+
+            // Step 4: Calculate total cost
+            $totalCost = $totalLcAmount + $totalTtAmount + $totalExpenseCost;
+            $storageCost =0;
+
+            // Step 5: If total cost is greater than total sales, calculate storage cost
+            if ($totalCost > $totalSales) {
+                $storageCost = $totalCost - $totalSales;
+            }
+
+            // Add to result array
+            $result += $storageCost;
+        }
+
+        return $result;
+    }
 }
