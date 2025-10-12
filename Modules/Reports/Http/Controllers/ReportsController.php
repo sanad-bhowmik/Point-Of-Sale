@@ -196,16 +196,114 @@ class ReportsController extends Controller
 
         // ✅ Call the function here
         $totalStorager = $this->calculateStorageCosts();
-        dd($totalStorager);
+        $totalLose = $this->totolLose();
+        $totalProfit = $this->totalProfit();
+        $totalDueAmount = $this->totalDueAmount();
+        $calculateUpcoming = $this->calculateUpcoming();
+        // dd($calculateUpcoming);
         return view('reports::investment.index', [
             'totalStorager' => $totalStorager,
+            'totalLose' => $totalLose,
+            'totalProfit' => $totalProfit,
+            'totalDueAmount' => $totalDueAmount,
+            'calculateUpcoming' => $calculateUpcoming,
         ]);
+    }
+    private function totalProfit()
+    {
+        $containers = Container::where('status', '!=', 3)->where("current_qty", "=", 0)->get();
+        $totalLose = 0;
+
+        foreach ($containers as $key => $container) {
+            # code...
+
+            $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id', $container->lc_id,)->where('container_id', $container->id)->sum('amount');
+
+            $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
+
+            $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+
+            $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
+                ->where('container_id', $container->id)
+                ->sum('sub_total');
+
+            $totalCost = $lcCost + $ttCost + $totalCostAmount;
+
+            $profit_loss = $totalSale - $totalCost;
+
+            if ($profit_loss > 0) {
+                $totalLose += $profit_loss;
+            } elseif ($profit_loss < 0) {
+                $totalLose += 0;
+            }
+        }
+        return $totalLose;
+    }
+    private function totolLose()
+    {
+        $containers = Container::where('status', '!=', 3)->where("current_qty", "=", 0)->get();
+        $totalLose = 0;
+
+        foreach ($containers as $key => $container) {
+            # code...
+
+            $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id', $container->lc_id,)->where('container_id', $container->id)->sum('amount');
+
+            $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
+
+            $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
+
+            $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
+                ->where('container_id', $container->id)
+                ->sum('sub_total');
+
+            $totalCost = $lcCost + $ttCost + $totalCostAmount;
+
+            $profit_loss = $totalSale - $totalCost;
+
+            if ($profit_loss > 0) {
+                $totalLose += 0;
+            } elseif ($profit_loss < 0) {
+                $totalLose += abs($profit_loss);
+            }
+        }
+        return $totalLose;
     }
 
     // ✅ Define the function below
+    private function calculateUpcoming()
+    {
+          $containers = Container::where('status', 3)->get();
+        $result = 0;
+
+        foreach ($containers as $container) {
+            // Step 2: Calculate total LC amount, total TT amount, and total expense cost
+            $totalLcAmount = $container->lc_value *  $container->lc_exchange_rate * $container->qty;
+            $totalTtAmount = $container->tt_value * $container->tt_exchange_rate * $container->qty;
+
+            $totalExpenseCost = $container->load("expenses")->expenses->sum('amount');  // Sum of all related expenses
+
+            // Step 3: Calculate total sales for the container
+            $totalSales = $container->load("saleDetails")->saleDetails->sum('sub_total'); // Sum of all related sale details
+
+            // Step 4: Calculate total cost
+            $totalCost = $totalLcAmount + $totalTtAmount + $totalExpenseCost;
+            $storageCost = 0;
+
+            // Step 5: If total cost is greater than total sales, calculate storage cost
+            if ($totalCost > $totalSales) {
+                $storageCost = $totalCost - $totalSales;
+            }
+
+            // Add to result array
+            $result += $storageCost;
+        }
+
+        return $result;
+    }
     private function calculateStorageCosts()
     {
-        $containers = Container::where('status', '!=', 3)->get();
+        $containers = Container::where('status', '!=', 3)->where("current_qty", ">", 0)->get();
 
         $result = 0;
 
@@ -221,7 +319,7 @@ class ReportsController extends Controller
 
             // Step 4: Calculate total cost
             $totalCost = $totalLcAmount + $totalTtAmount + $totalExpenseCost;
-            $storageCost =0;
+            $storageCost = 0;
 
             // Step 5: If total cost is greater than total sales, calculate storage cost
             if ($totalCost > $totalSales) {
@@ -233,5 +331,12 @@ class ReportsController extends Controller
         }
 
         return $result;
+    }
+    private function totalDueAmount()
+    {
+        // Sum the due_amount column from the sales table
+        $totalDue = \Modules\Sale\Entities\Sale::sum('due_amount');
+
+        return $totalDue;
     }
 }

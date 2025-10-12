@@ -28,15 +28,15 @@
                     </tr>
                     <tr>
                         <th>UPCOMMING</th>
-                        <td>21,979,969.53</td>
+                        <td>{{$calculateUpcoming}}</td>
                     </tr>
                     <tr>
                         <th>TOTAL MARKET DUE</th>
-                        <td>157,100.00</td>
+                        <td>{{ $totalDueAmount }}</td>
                     </tr>
                     <tr>
                         <th>TOTAL LOSS</th>
-                        <td>13,101,152.49</td>
+                        <td>{{$totalLose}}</td>
                     </tr>
                     <tr>
                         <th>BANK AMMOUNT</th>
@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <th>TOTAL PROFIT</th>
-                        <td>1,810,649.01</td>
+                        <td>{{ $totalProfit }}</td>
                     </tr>
                 </tbody>
             </table>
