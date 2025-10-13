@@ -541,6 +541,30 @@
 
 
 @can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-partiesPayment.index') ? 'c-show' : '' }}" id="permit">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi bi-credit-card-2-back" style="line-height: 1;"></i> Payment Get / Return
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('partiesPayment.index') ? 'c-active' : '' }}"
+                href="{{ route('partiesPayment.index') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Payment
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('partiesPayment.show') ? 'c-active' : '' }}"
+                href="{{ route('partiesPayment.show') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Payment List
+            </a>
+        </li>
+
+
+    </ul>
+</li>
+@endcan
+
+@can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-investment.index') ? 'c-show' : '' }}" id="permit">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi  bi-piggy-bank" style="line-height: 1;"></i> Investment

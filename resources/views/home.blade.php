@@ -109,6 +109,7 @@
     </div>
     @endcan
 
+
     <!-- New Section: Bank Balance and Status Counts -->
     <div class="row mb-4">
         <!-- Left Panel: Status-wise Counts -->

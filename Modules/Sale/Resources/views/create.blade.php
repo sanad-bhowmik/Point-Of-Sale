@@ -87,7 +87,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-6 d-none">
                                 <div class="form-group">
                                     <label for="paid_amount">Amount Received <span class="text-danger">*</span></label>
                                     <div class="input-group">
@@ -100,9 +100,15 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <div class="form-group">
+                                     <label for="note">Note (If Needed)</label>
+                            <textarea name="note" id="note" rows="5" class="form-control"></textarea>
+                                </div>
+                            </div>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group d-none">
                             <label for="note">Note (If Needed)</label>
                             <textarea name="note" id="note" rows="5" class="form-control"></textarea>
                         </div>

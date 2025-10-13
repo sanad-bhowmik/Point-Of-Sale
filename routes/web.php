@@ -7,6 +7,7 @@ use App\Http\Controllers\CostingController;
 use App\Http\Controllers\InputPermitController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\OfficeExpenseController;
+use App\Http\Controllers\PartiesPaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
 use App\Http\Controllers\TransactionController;
@@ -153,5 +154,16 @@ Route::group(['prefix' => 'investment', 'as' => 'investment.', 'controller' => I
     Route::get('/{id}/edit', 'edit')->name('edit');        // Show edit form
     Route::put('/{id}/update', 'update')->name('update'); // Update investment
     Route::delete('/{id}/delete', 'destroy')->name('delete'); // Delete investment
+});
+
+// partiesPayment
+Route::group(['prefix' => 'parties-payment', 'as' => 'partiesPayment.', 'controller' => PartiesPaymentController::class], function () {
+    Route::get('/index', 'index')->name('index');           // Show all payments
+    Route::get('/show', 'show')->name('show');           // Show all payments
+    Route::get('/create', 'create')->name('create');        // Show create form
+    Route::post('/store', 'store')->name('store');          // Store new payment
+    Route::get('/{id}/edit', 'edit')->name('edit');         // Show edit form
+    Route::put('/{id}/update', 'update')->name('update');   // Update payment
+    Route::delete('/{id}/delete', 'destroy')->name('delete'); // Delete payment
 });
 // routes/web.php

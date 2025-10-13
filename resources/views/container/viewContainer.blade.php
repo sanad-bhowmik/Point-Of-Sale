@@ -15,18 +15,35 @@
         <div class="col-md-12">
             <div class="card shadow-sm">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h5 class="mb-0">Container List</h5>
-                        <div>
+                        <div class="d-flex align-items-center gap-2 flex-wrap" style="gap:10px;">
+                            <a href="{{ route('container.view') }}" class="btn btn-primary btn-sm">
+                                + Add Container
+                            </a>
                             <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
                                 <i class="bi bi-file-earmark-excel-fill"></i> Excel
                             </button>
-                            <a href="{{ route('container.view') }}" class="btn btn-primary btn-sm">
-                            + Add Container
-                        </a>
-                        </div>
 
+                            <!-- 🔍 Global Search Input -->
+                            <div class="d-flex align-items-center position-relative" style="width: 230px;">
+                                <input
+                                    type="text"
+                                    id="globalSearch"
+                                    class="form-control"
+                                    placeholder="Search in table..."
+                                    style="padding-right: 30px;">
+                                <span
+                                    id="clearSearch"
+                                    class="text-muted"
+                                    style="position: absolute;right: 10px;cursor: pointer;display: none;font-size: 18px;line-height: 1; "
+                                    title="Clear">
+                                    &times;
+                                </span>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover">
                             <thead>
@@ -59,7 +76,7 @@
                                     <td>{{ $index + 1 }}</td>
                                     <td>{{ $container->lc->lc_name ?? '-' }}</td>
                                     <td>{{ $container->lc->lc_number ?? '-' }}</td>
-                                     <td>{{ $container->name }}</td>
+                                    <td>{{ $container->name }}</td>
                                     <td>{{ $container->number }}</td>
                                     <td>{{ $container->qty ?? '-' }}</td>
                                     <td>{{ $container->lc_value ?? '-' }}</td>
@@ -108,28 +125,28 @@
 
                                     <td>{{ $container->shipping_date ?? '-' }}</td>
                                     <td>{{ $container->arriving_date ?? '-' }}</td>
-                                 <td>
-    @switch($container->status)
-        @case(0)
-            <span class="badge bg-warning text-light">Pending</span>
-            @break
+                                    <td>
+                                        @switch($container->status)
+                                        @case(0)
+                                        <span class="badge bg-warning text-light">Pending</span>
+                                        @break
 
-        @case(1)
-            <span class="badge bg-primary  text-light">Shipped</span>
-            @break
+                                        @case(1)
+                                        <span class="badge bg-primary  text-light">Shipped</span>
+                                        @break
 
-        @case(2)
-            <span class="badge bg-success  text-light">Arrived</span>
-            @break
+                                        @case(2)
+                                        <span class="badge bg-success  text-light">Arrived</span>
+                                        @break
 
-        @case(3)
-            <span class="badge bg-info  text-light">Upcoming</span>
-            @break
+                                        @case(3)
+                                        <span class="badge bg-info  text-light">Upcoming</span>
+                                        @break
 
-        @default
-            <span class="badge bg-secondary">-</span>
-    @endswitch
-</td>
+                                        @default
+                                        <span class="badge bg-secondary">-</span>
+                                        @endswitch
+                                    </td>
 
                                     <td>
                                         <!-- Edit Button triggers modal -->
@@ -228,7 +245,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
 <script>
-function downloadTableAsExcel() {
+    function downloadTableAsExcel() {
         let table = document.querySelector("table");
         let rows = table.querySelectorAll("tr");
 
@@ -293,5 +310,28 @@ function downloadTableAsExcel() {
             toastr.error("{{ $error }}");
         @endforeach
     @endif
+    // 🔍 Global Table Search Function
+    // 🔍 Global Table Search + Clear Button
+    const searchInput = document.getElementById('globalSearch');
+    const clearBtn = document.getElementById('clearSearch');
+    const rows = document.querySelectorAll('table tbody tr');
+
+    searchInput.addEventListener('keyup', function() {
+        const value = this.value.toLowerCase();
+        clearBtn.style.display = value ? 'inline' : 'none';
+
+        rows.forEach(row => {
+            const rowText = row.innerText.toLowerCase();
+            row.style.display = rowText.includes(value) ? '' : 'none';
+        });
+    });
+
+    clearBtn.addEventListener('click', function() {
+        searchInput.value = '';
+        clearBtn.style.display = 'none';
+        rows.forEach(row => (row.style.display = ''));
+        searchInput.focus();
+    });
 </script>
+
 @endsection

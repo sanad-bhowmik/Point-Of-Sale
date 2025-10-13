@@ -201,7 +201,8 @@ class ReportsController extends Controller
         $totalDueAmount = $this->totalDueAmount();
         $calculateUpcoming = $this->calculateUpcoming();
         $totalOpeningBalance = $this->totalOpeningBalance();
-        $totalInvestment = $this->totalInvestment(); // 🆕 Add this line
+        $totalInvestment = $this->totalInvestment();
+        $totalInvestmentAmount = $this->totalInvestmentAmount();
 
         return view('reports::investment.index', [
             'totalStorager' => $totalStorager,
@@ -210,13 +211,18 @@ class ReportsController extends Controller
             'totalDueAmount' => $totalDueAmount,
             'calculateUpcoming' => $calculateUpcoming,
             'totalOpeningBalance' => $totalOpeningBalance,
-            'totalInvestment' => $totalInvestment, // 🆕 Pass to view
+            'totalInvestment' => $totalInvestment,
+            'totalInvestmentAmount' => $totalInvestmentAmount,
         ]);
     }
 
-    /**
-     * Calculate total investment (cumulative)
-     */
+    public function totalInvestmentAmount()
+    {
+        // Sum the 'amount' column from the investments table
+        $totalAmount = \App\Models\PartiesPayment::sum('amount');
+        return $totalAmount;
+
+    }
     private function totalInvestment()
     {
         // Using DB Facade to execute the window function query
