@@ -32,7 +32,7 @@
                     </tr>
                     <tr>
                         <td class="text-start">MUSTAQ MAMA</td>
-                        <td>{{ number_format(9014491.00, 2) }}</td>
+                        <td>{{ number_format($totalInvestment, 2) }}</td>
                     </tr>
                     <tr>
                         <td class="text-start">UPCOMING</td>
@@ -48,7 +48,7 @@
                     </tr>
                     <tr>
                         <td class="text-start">BANK AMOUNT</td>
-                        <td>{{ number_format(2563269.20, 2) }}</td>
+                        <td>{{ $totalOpeningBalance }}</td>
                     </tr>
                     <tr>
                         <td class="text-start">PAYMENT GET</td>

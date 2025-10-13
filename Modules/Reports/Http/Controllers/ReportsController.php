@@ -194,20 +194,62 @@ class ReportsController extends Controller
     {
         abort_if(Gate::denies('access_reports'), 403);
 
-        // ✅ Call the function here
+        // ✅ Call all calculation methods
         $totalStorager = $this->calculateStorageCosts();
         $totalLose = $this->totolLose();
         $totalProfit = $this->totalProfit();
         $totalDueAmount = $this->totalDueAmount();
         $calculateUpcoming = $this->calculateUpcoming();
-        // dd($calculateUpcoming);
+        $totalOpeningBalance = $this->totalOpeningBalance();
+        $totalInvestment = $this->totalInvestment(); // 🆕 Add this line
+
         return view('reports::investment.index', [
             'totalStorager' => $totalStorager,
             'totalLose' => $totalLose,
             'totalProfit' => $totalProfit,
             'totalDueAmount' => $totalDueAmount,
             'calculateUpcoming' => $calculateUpcoming,
+            'totalOpeningBalance' => $totalOpeningBalance,
+            'totalInvestment' => $totalInvestment, // 🆕 Pass to view
         ]);
+    }
+
+    /**
+     * Calculate total investment (cumulative)
+     */
+    private function totalInvestment()
+    {
+        // Using DB Facade to execute the window function query
+        $results = \DB::select("
+        SELECT
+            id,
+            investment,
+            amount,
+            SUM(
+                CASE
+                    WHEN investment = 'Invest' THEN amount
+                    WHEN investment = 'Profit' THEN amount
+                    WHEN investment = 'Cash Invest' THEN amount
+                    WHEN investment = 'Expense' THEN -amount
+                    ELSE 0
+                END
+            ) OVER (ORDER BY id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) AS cumulative_balance
+        FROM investment
+        ORDER BY id ASC
+    ");
+
+        // If there are results, get the last cumulative_balance
+        if (!empty($results)) {
+            $lastRow = end($results);
+            return $lastRow->cumulative_balance ?? 0;
+        }
+
+        return 0;
+    }
+
+    private function totalOpeningBalance()
+    {
+        return \App\Models\Bank::sum('opening_balance');
     }
     private function totalProfit()
     {
@@ -273,7 +315,7 @@ class ReportsController extends Controller
     // ✅ Define the function below
     private function calculateUpcoming()
     {
-          $containers = Container::where('status', 3)->get();
+        $containers = Container::where('status', 3)->get();
         $result = 0;
 
         foreach ($containers as $container) {

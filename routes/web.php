@@ -5,6 +5,7 @@ use App\Http\Controllers\CateringController;
 use App\Http\Controllers\ContainerController;
 use App\Http\Controllers\CostingController;
 use App\Http\Controllers\InputPermitController;
+use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\OfficeExpenseController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
@@ -106,7 +107,6 @@ Route::group(['prefix' => 'container', 'as' => 'container.', 'controller' => Con
     Route::get('/supplierTtLc', 'supplierTtLc')->name('supplierTtLc');
     Route::post('/ttPayment', 'ttPayment')->name('ttPayment');
     Route::post('/lcPayment', 'lcPayment')->name('lcPayment');
-
 });
 
 // Input Permit
@@ -144,5 +144,14 @@ Route::group(['prefix' => 'catering', 'as' => 'catering.', 'controller' => Cater
     Route::delete('/{lunch}/delete', 'destroy')->name('delete');
 });
 
+// Investment
 
+Route::group(['prefix' => 'investment', 'as' => 'investment.', 'controller' => InvestmentController::class], function () {
+    Route::get('/index', 'index')->name('index');           // Show all investments
+    Route::get('/create', 'create')->name('create');        // Show create form
+    Route::post('/store', 'store')->name('store');          // Store new investment
+    Route::get('/{id}/edit', 'edit')->name('edit');        // Show edit form
+    Route::put('/{id}/update', 'update')->name('update'); // Update investment
+    Route::delete('/{id}/delete', 'destroy')->name('delete'); // Delete investment
+});
 // routes/web.php

@@ -518,7 +518,7 @@
 @can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-catering.index') ? 'c-show' : '' }}" id="permit">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
-        <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Catering
+        <i class="c-sidebar-nav-icon bi bi-book-half" style="line-height: 1;"></i> Catering
     </a>
     <ul class="c-sidebar-nav-dropdown-items">
         <li class="c-sidebar-nav-item">
@@ -536,6 +536,31 @@
 
     </ul>
 
+</li>
+@endcan
+
+
+@can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-investment.index') ? 'c-show' : '' }}" id="permit">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi  bi-piggy-bank" style="line-height: 1;"></i> Investment
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('investment.create') ? 'c-active' : '' }}"
+                href="{{ route('investment.create') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Investment Posting
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('investment.index') ? 'c-active' : '' }}"
+                href="{{ route('investment.index') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Investment Report
+            </a>
+        </li>
+
+
+    </ul>
 </li>
 @endcan
 
@@ -599,10 +624,10 @@
                 <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Final Report
             </a>
         </li>
-        <li class="c-sidebar-nav-item">
+         <li class="c-sidebar-nav-item">
             <a class="c-sidebar-nav-link {{ request()->routeIs('investment-report.index') ? 'c-active' : '' }}"
                 href="{{ route('investment-report.index') }}">
-                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Investment
+                <i class="c-sidebar-nav-icon bi bi-journals" style="line-height: 1;"></i> Financial final Report
             </a>
         </li>
     </ul>
