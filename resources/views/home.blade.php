@@ -109,7 +109,6 @@
     </div>
     @endcan
 
-
     <!-- New Section: Bank Balance and Status Counts -->
     <div class="row mb-4">
         <!-- Left Panel: Status-wise Counts -->
@@ -157,7 +156,77 @@
                     @endphp
 
                     <div class="row g-3">
-                        <!-- Pending -->
+
+                        <!-- Arrived -->
+                        <div class="col-md-6">
+                            <div class="modern-status-card p-3 rounded position-relative h-100">
+                                <div class="d-flex align-items-start mb-2">
+                                    <div class="modern-icon-container bg-orange-soft p-2 rounded me-3">
+                                        <i class="bi bi-box-seam text-orange fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ml-2">
+                                        <div class="text-dark-600 small mb-1">Arrived</div>
+                                        <div class="fw-bold fs-3 text-dark">{{ $arrived }}</div>
+                                    </div>
+                                    <div class="text-orange fs-6 fw-semibold">{{ $arrivedPercent }}%</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="text-dark-600 small">Reached destination</div>
+                                    @if($arrivedChange > 0)
+                                    <span class="badge bg-orange-soft text-orange">
+                                        <i class="bi bi-arrow-up"></i> {{ $arrivedChange }}
+                                    </span>
+                                    @elseif($arrivedChange < 0)
+                                        <span class="badge bg-red-soft text-red">
+                                        <i class="bi bi-arrow-down"></i> {{ abs($arrivedChange) }}
+                                        </span>
+                                        @else
+                                        <span class="badge bg-gray-200 text-dark-600">
+                                            <i class="bi bi-dash"></i> 0
+                                        </span>
+                                        @endif
+                                </div>
+                                <div class="progress modern-progress mt-2">
+                                    <div class="progress-bar bg-orange" role="progressbar" style="width: {{ $arrivedPercent }}%" aria-valuenow="{{ $arrivedPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Done -->
+                        <div class="col-md-6">
+                            <div class="modern-status-card p-3 rounded position-relative h-100">
+                                <div class="d-flex align-items-start mb-2">
+                                    <div class="modern-icon-container bg-purple-soft p-2 rounded me-3">
+                                        <i class="bi bi-check-circle text-purple fs-5"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ml-2">
+                                        <div class="text-dark-600 small mb-1">Upcoming</div>
+                                        <div class="fw-bold fs-3 text-dark">{{ $customDone }}</div>
+                                    </div>
+                                    <div class="text-purple fs-6 fw-semibold">{{ $customDonePercent }}%</div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="text-dark-600 small"></div>
+                                    @if($customDoneChange > 0)
+                                    <span class="badge bg-purple-soft text-purple">
+                                        <i class="bi bi-arrow-up"></i> {{ $customDoneChange }}
+                                    </span>
+                                    @elseif($customDoneChange < 0)
+                                        <span class="badge bg-red-soft text-red">
+                                        <i class="bi bi-arrow-down"></i> {{ abs($customDoneChange) }}
+                                        </span>
+                                        @else
+                                        <span class="badge bg-gray-200 text-dark-600">
+                                            <i class="bi bi-dash"></i> 0
+                                        </span>
+                                        @endif
+                                </div>
+                                <div class="progress modern-progress mt-2">
+                                    <div class="progress-bar bg-purple" role="progressbar" style="width: {{ $customDonePercent }}%" aria-valuenow="{{ $customDonePercent }}" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                         <!-- Pending -->
                         <div class="col-md-6">
                             <div class="modern-status-card p-3 rounded position-relative h-100">
                                 <div class="d-flex align-items-start mb-2">
@@ -227,75 +296,6 @@
                             </div>
                         </div>
 
-                        <!-- Arrived -->
-                        <div class="col-md-6">
-                            <div class="modern-status-card p-3 rounded position-relative h-100">
-                                <div class="d-flex align-items-start mb-2">
-                                    <div class="modern-icon-container bg-orange-soft p-2 rounded me-3">
-                                        <i class="bi bi-box-seam text-orange fs-5"></i>
-                                    </div>
-                                    <div class="flex-grow-1 ml-2">
-                                        <div class="text-dark-600 small mb-1">Arrived</div>
-                                        <div class="fw-bold fs-3 text-dark">{{ $arrived }}</div>
-                                    </div>
-                                    <div class="text-orange fs-6 fw-semibold">{{ $arrivedPercent }}%</div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="text-dark-600 small">Reached destination</div>
-                                    @if($arrivedChange > 0)
-                                    <span class="badge bg-orange-soft text-orange">
-                                        <i class="bi bi-arrow-up"></i> {{ $arrivedChange }}
-                                    </span>
-                                    @elseif($arrivedChange < 0)
-                                        <span class="badge bg-red-soft text-red">
-                                        <i class="bi bi-arrow-down"></i> {{ abs($arrivedChange) }}
-                                        </span>
-                                        @else
-                                        <span class="badge bg-gray-200 text-dark-600">
-                                            <i class="bi bi-dash"></i> 0
-                                        </span>
-                                        @endif
-                                </div>
-                                <div class="progress modern-progress mt-2">
-                                    <div class="progress-bar bg-orange" role="progressbar" style="width: {{ $arrivedPercent }}%" aria-valuenow="{{ $arrivedPercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Custom Done -->
-                        <div class="col-md-6">
-                            <div class="modern-status-card p-3 rounded position-relative h-100">
-                                <div class="d-flex align-items-start mb-2">
-                                    <div class="modern-icon-container bg-purple-soft p-2 rounded me-3">
-                                        <i class="bi bi-check-circle text-purple fs-5"></i>
-                                    </div>
-                                    <div class="flex-grow-1 ml-2">
-                                        <div class="text-dark-600 small mb-1">Custom Done</div>
-                                        <div class="fw-bold fs-3 text-dark">{{ $customDone }}</div>
-                                    </div>
-                                    <div class="text-purple fs-6 fw-semibold">{{ $customDonePercent }}%</div>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="text-dark-600 small">Cleared by customs</div>
-                                    @if($customDoneChange > 0)
-                                    <span class="badge bg-purple-soft text-purple">
-                                        <i class="bi bi-arrow-up"></i> {{ $customDoneChange }}
-                                    </span>
-                                    @elseif($customDoneChange < 0)
-                                        <span class="badge bg-red-soft text-red">
-                                        <i class="bi bi-arrow-down"></i> {{ abs($customDoneChange) }}
-                                        </span>
-                                        @else
-                                        <span class="badge bg-gray-200 text-dark-600">
-                                            <i class="bi bi-dash"></i> 0
-                                        </span>
-                                        @endif
-                                </div>
-                                <div class="progress modern-progress mt-2">
-                                    <div class="progress-bar bg-purple" role="progressbar" style="width: {{ $customDonePercent }}%" aria-valuenow="{{ $customDonePercent }}" aria-valuemin="0" aria-valuemax="100"></div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Summary Section -->
@@ -316,7 +316,7 @@
                 <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
                     <h6 class="mb-0 d-flex align-items-center fw-bold">
                         <i class="bi bi-box me-2 fs-5 mr-2"></i>
-                        Pending Containers
+                        Upcoming Containers
                     </h6>
 
                     <a href="container/containerTbl" class="btn btn-outline-light btn-sm">
@@ -328,8 +328,8 @@
                 <div class="card-body p-0">
                     @php
                     $containers = DB::table('container')
-                    ->select('id', 'name', 'number', 'shipping_date', 'status')
-                    ->where('status', 0)
+                    ->select('id', 'name', 'qty', 'shipping_date', 'status')
+                    ->where('status', 3)
                     ->orderBy('created_at', 'desc')
                     ->limit(5)
                     ->get();
@@ -340,7 +340,7 @@
                             <thead class="table-light text-uppercase small">
                                 <tr>
                                     <th>Name</th>
-                                    <th>Number</th>
+                                    <th>Quantity</th>
                                     <th>Shipping Date</th>
                                     <th>Status</th>
                                 </tr>
@@ -349,16 +349,16 @@
                                 @forelse ($containers as $container)
                                 <tr class="align-middle animate__animated animate__fadeInUp" style="transition: all 0.3s; cursor: pointer;">
                                     <td class="fw-semibold">{{ $container->name }}</td>
-                                    <td>{{ $container->number }}</td>
+                                    <td class="fw-semibold">{{ $container->qty }}</td>
                                     <td>{{ \Carbon\Carbon::parse($container->shipping_date)->format('d M Y') }}</td>
                                     <td>
-                                        <span class="badge rounded-pill bg-warning text-dark">Pending</span>
+                                        <span class="badge rounded-pill bg-info text-light">Upcoming</span>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
                                     <td colspan="4" class="text-center text-muted py-3">
-                                        No pending containers found.
+                                        No Upcoming containers found.
                                     </td>
                                 </tr>
                                 @endforelse
@@ -369,7 +369,7 @@
 
                 <!-- Card Footer -->
                 <div class="card-footer text-end bg-light border-top">
-                    <small class="text-muted">Showing latest 5 pending containers</small>
+                    <small class="text-muted">Showing latest 5 upcoming containers</small>
                 </div>
             </div>
         </div>
@@ -568,137 +568,6 @@
     @endif
 </div>
 
-    <!-- Live Charts Section -->
-    <div class="row mb-4">
-        <!-- Container Status Chart -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold">
-                        <i class="bi bi-bar-chart-line me-2"></i> Live Container Status
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="containerChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Container Costing Chart -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 fw-bold">
-                        <i class="bi bi-currency-dollar me-2"></i> Container Costing
-                    </h6>
-                </div>
-                <div class="card-body">
-                    <canvas id="costingChart" height="100"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @php
-
-    // Container counts (already in your code)
-    $pending = DB::table('container')->where('status', 0)->count();
-    $shipped = DB::table('container')->where('status', 1)->count();
-    $arrived = DB::table('container')->where('status', 2)->count();
-    $customDone = DB::table('container')->where('status', 3)->count();
-
-    // Costing data (sum total_cost_per_box by box_type)
-    $costingData = DB::table('costing')
-    ->select('box_type', DB::raw('SUM(total_cost_per_box) as total_cost'))
-    ->groupBy('box_type')
-    ->get();
-    @endphp
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Container Status Chart
-    const containerData = {
-        pending: {{ $pending }},
-        shipped: {{ $shipped }},
-        arrived: {{ $arrived }},
-        customDone: {{ $customDone }},
-    };
-
-    new Chart(document.getElementById("containerChart").getContext("2d"), {
-        type: "bar",
-        data: {
-            labels: ["Pending", "Shipped", "Arrived", "Custom Done"],
-            datasets: [{
-                label: "Containers",
-                data: [
-                    containerData.pending,
-                    containerData.shipped,
-                    containerData.arrived,
-                    containerData.customDone
-                ],
-                backgroundColor: ["#3b82f6", "#22c55e", "#f97316", "#a855f7"],
-                borderRadius: 6,
-                barPercentage: 0.5
-            }]
-        },
-        options: {
-            indexAxis: 'y', // horizontal
-            responsive: true,
-            plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true }, y: { ticks: { font: { size: 14 } } } }
-        }
-    });
-
-    // Container Costing Chart
-    const costingLabels = @json($costingData->pluck('box_type'));
-    const costingValues = @json($costingData->pluck('total_cost'));
-
-            new Chart(document.getElementById("costingChart").getContext("2d"), {
-                type: "bar",
-                data: {
-                    labels: costingLabels,
-                    datasets: [{
-                        label: "Total Cost per Box",
-                        data: costingValues,
-                        backgroundColor: "#1552FA",
-                        borderRadius: 6,
-                        barPercentage: 0.5
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(ctx) {
-                                    return "TK " + ctx.raw;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            beginAtZero: true
-                        },
-                        y: {
-                            ticks: {
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        });
-    </script>
-
-
-</div>
 @endsection
 
 @section('third_party_scripts')
