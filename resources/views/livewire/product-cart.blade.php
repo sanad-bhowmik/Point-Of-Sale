@@ -43,7 +43,7 @@
                                 <span class="badge badge-success">
                                     {{ $cart_item->options->code }}
                                 </span>
-                                @include('livewire.includes.product-cart-modal')
+                                <!-- @include('livewire.includes.product-cart-modal') -->
                             </td>
 
                             <td x-data="{ open{{ $cart_item->id }}: false }" class="align-middle text-center">

@@ -34,10 +34,10 @@
                                     <th>City</th>
                                     <td>{{ $supplier->city }}</td>
                                 </tr>
-                                <tr>
+                                <!-- <tr>
                                     <th>Country</th>
                                     <td>{{ $supplier->country }}</td>
-                                </tr>
+                                </tr> -->
                                 <tr>
                                     <th>Address</th>
                                     <td>{{ $supplier->address }}</td>
