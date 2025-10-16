@@ -141,7 +141,9 @@ class ReportsController extends Controller
     public function cashFlow()
     {
         abort_if(Gate::denies('access_reports'), 403);
-        $containers = Container::with(['lc.costing.supplier'])->get();
+        $containers = Container::whereNot('status', 3)->where(function ($q) {
+                                    $q->whereColumn('current_qty', '<', 'qty');
+                                })->with(['lc.costing.supplier', 'lc.costing.product.sizes'])->get();
 
         return view('reports::cash-flow.index', [
             'containers'  => $containers

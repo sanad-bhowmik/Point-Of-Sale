@@ -38,73 +38,70 @@
                                             @endforeach
                                         </select>
                                     </div>
+
+                                    <!-- LC -->
+                                    <div class="form-row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="lc_id">LC Number <span class="text-danger">*</span></label>
+                                                <select name="lc_id" id="lcSelect" class="form-control select2" required>
+                                                    <option value="">Select LC</option>
+                                                    @foreach ($lcs as $lc)
+                                                        <option value="{{ $lc->id }}">
+                                                            {{ $lc->lc_name }}--({{ $lc->lc_number }})</option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- Container Name (optional, can be dynamic based on LC) -->
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="container_id">Container Name <span
+                                                        class="text-danger">*</span></label>
+                                                <select name="container_id" id="containerSelect"
+                                                    class="form-control select2" required>
+                                                    <option value="">Select Container</option>
+                                                    {{-- @foreach ($containers as $container)
+                                                        <option value="{{ $container->id }}">{{ $container->name }}</option>
+                                                    @endforeach --}}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Amount & Date -->
+                                    <div class="form-row">
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="total_amount">Total Amount</label>
+                                                <input type="text" id="total_amount" class="form-control" readonly
+                                                    value="0.00">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="date">Date <span class="text-danger">*</span></label>
+                                                <input type="date" class="form-control" name="date"
+                                                    value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12">
+                                            <div class="form-group">
+                                                <label for="note">Note (Optional)</label>
+                                                <textarea name="note" id="note" class="form-control" rows="3"></textarea>
+                                            </div>
+                                        </div>
+
+                                    </div>
                                 </div>
 
                                 <!-- Expense Name (dependent on Category) -->
                                 <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="expense_name_id">Expense Name <span class="text-danger">*</span></label>
-                                        <select name="expense_name_id" id="expense_name_id" class="form-control select2"
-                                            required>
-                                            <option value="">Select Expense Name</option>
-                                        </select>
-                                    </div>
+                                    <div id="subcategory-container" class="mb-3"></div>
                                 </div>
-                            </div>
-
-                            <!-- LC -->
-                            <div class="form-row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="lc_id">LC Number <span class="text-danger">*</span></label>
-                                        <select name="lc_id" id="lcSelect" class="form-control select2" required>
-                                            <option value="">Select LC</option>
-                                            @foreach ($lcs as $lc)
-                                                <option value="{{ $lc->id }}">
-                                                    {{ $lc->lc_name }}--({{ $lc->lc_number }})</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Container Name (optional, can be dynamic based on LC) -->
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="container_id">Container Name <span class="text-danger">*</span></label>
-                                        <select name="container_id" id="containerSelect" class="form-control select2" required>
-                                            <option value="">Select Container</option>
-                                            @foreach ($containers as $container)
-                                                <option value="{{ $container->id }}">{{ $container->name }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Amount & Date -->
-                            <div class="form-row">
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="amount">Amount <span class="text-danger">*</span></label>
-                                        <input id="amount" type="text" class="form-control" name="amount" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="date">Date <span class="text-danger">*</span></label>
-                                        <input type="date" class="form-control" name="date"
-                                            value="{{ \Carbon\Carbon::now()->format('Y-m-d') }}" required>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-6">
-                                    <div class="form-group">
-                                        <label for="note">Note (Optional)</label>
-                                        <textarea name="note" id="note" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-
                             </div>
                         </div>
                     </div>
@@ -122,32 +119,60 @@
 
     <script>
         $(document).ready(function() {
-            $('.select2').select2({
-                width: '100%',
-                placeholder: 'Select an option'
+            $('.select2').select2();
+
+            // When category changes -> load subcategories
+            $('#category_id').on('change', function() {
+                const categoryId = $(this).val();
+                const container = $('#subcategory-container');
+                container.empty();
+                $('#total_amount').val('0.00');
+
+                if (!categoryId) return;
+
+                $.get('/expenses/expense-names/' + categoryId, function(data) {
+                    if (!data.length) {
+                        container.html('<p class="text-muted">No subcategories found.</p>');
+                        return;
+                    }
+
+                    let html = '<table class="table table-bordered">';
+                    html += '<thead><tr><th>Subcategory</th><th>Amount</th></tr></thead><tbody>';
+
+                    data.forEach(function(item) {
+                        html += `
+                    <tr>
+                        <td>${item.expense_name}</td>
+                        <td>
+                            <input 
+                                type="number" 
+                                step="0.01" 
+                                min="0" 
+                                name="subcategory_amounts[${item.id}]" 
+                                class="form-control subamount" 
+                                placeholder="Enter amount">
+                        </td>
+                    </tr>`;
+                    });
+
+                    html += '</tbody></table>';
+                    container.html(html);
+                });
             });
 
-            // When Category changes, load Expense Names
-            $('#category_id').on('change', function() {
-                var categoryId = $(this).val();
-                $('#expense_name_id').html('<option value="">Loading...</option>');
+            // Calculate total dynamically
+            $(document).on('input', '.subamount', function() {
+                let total = 0;
+                $('.subamount').each(function() {
+                    total += parseFloat($(this).val()) || 0;
+                });
+                $('#total_amount').val(total.toFixed(2));
+            });
 
-                if (categoryId) {
-                    $.ajax({
-                        url: '/expenses/expense-names/' + categoryId,
-                        type: 'GET',
-                        success: function(data) {
-                            var options = '<option value="">Select Expense Name</option>';
-                            data.forEach(function(expense) {
-                                options +=
-                                    `<option value="${expense.id}">${expense.expense_name}</option>`;
-                            });
-                            $('#expense_name_id').html(options).trigger('change');
-                        }
-                    });
-                } else {
-                    $('#expense_name_id').html('<option value="">Select Expense Name</option>');
-                }
+            // If category changes again -> clear subcategories
+            $('#category_id').on('change', function() {
+                $('#subcategory-container').empty();
+                $('#total_amount').val('0.00');
             });
 
             $('#lcSelect').on('change', function() {
@@ -168,7 +193,7 @@
                         'change');
                 }
             });
-
         });
+
     </script>
 @endpush

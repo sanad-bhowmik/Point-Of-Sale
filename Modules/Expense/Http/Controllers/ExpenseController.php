@@ -42,24 +42,26 @@ class ExpenseController extends Controller
         // Validate the request
         $request->validate([
             'category_id' => 'required|exists:expense_categories,id',
-            'expense_name_id' => 'required|exists:expense_names,id',
+            'subcategory_amounts' => 'required|array',
             'lc_id' => 'required',
             'container_id' => 'required',
-            'amount' => 'required|numeric',
-            'date' => 'required|date',
+            'date' => 'nullable|date',
             'note' => 'nullable|string',
         ]);
 
-        // Create expense
-        Expense::create([
-            'category_id' => $request->category_id,
-            'expense_name_id' => $request->expense_name_id,
-            'lc_id' => $request->lc_id,
-            'container_id' => $request->container_id,
-            'amount' => $request->amount,
-            'date' => $request->date,
-            'note' => $request->note,
-        ]);
+        foreach ($request->subcategory_amounts as $expenseNameId => $amount) {
+            if ($amount > 0) {
+                Expense::create([
+                    'category_id' => $request->category_id,
+                    'expense_name_id' => $expenseNameId,
+                    'amount' => $amount,
+                    'date' => $request->date ?? now(),
+                    'note' => $request->note,
+                    'lc_id' => $request->lc_id,
+                    'container_id' => $request->container_id,
+                ]);
+            }
+        }
 
         toast('Expense Created!', 'success');
 
