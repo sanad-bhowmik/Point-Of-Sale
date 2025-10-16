@@ -264,6 +264,12 @@
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> Costing List
             </a>
         </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('costing.viewCosting') ? 'c-active' : '' }}"
+                href="{{ route('costing.viewCosting') }}">
+                <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> LC Report
+            </a>
+        </li>
 
     </ul>
 </li>
