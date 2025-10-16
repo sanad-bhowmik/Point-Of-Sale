@@ -17,7 +17,7 @@
 
 @foreach ($find_containers as $index => $container)
     @php
-        $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id',$container->lc_id,)->where('container_id', $container->id)->sum('amount');
+        $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id', $container->lc_id,)->where('container_id', $container->id)->sum('amount');
 
         $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
 
