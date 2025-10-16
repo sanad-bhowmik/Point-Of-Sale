@@ -15,31 +15,55 @@ class ContainerController extends Controller
     {
         $validated = $request->validate([
             'lc_id' => 'required|exists:lc,id',
-            'lc_value' => 'nullable|numeric',
-            'lc_exchange_rate' => 'nullable|numeric',
-            'tt_value' => 'nullable|numeric',
-            'tt_exchange_rate' => 'nullable|numeric',
             'name' => 'required|string|max:255',
             'number' => 'required|string|max:100',
             'shipping_date' => 'nullable|date',
             'arriving_date' => 'nullable|date',
-            'lc_date' => 'nullable|date',
-            'tt_date' => 'nullable|date',
             'status' => 'nullable|numeric|in:0,1,2,3',
             'qty' => 'nullable|numeric',
             'current_qty' => 'nullable|numeric',
         ]);
 
-        // If qty is set, also set current_qty
-        if (isset($validated['qty'])) {
-            $validated['current_qty'] = $validated['qty'];
+        // 🔹 Fetch LC record
+        $lc = \App\Models\Lc::find($validated['lc_id']);
+
+        if (!$lc) {
+            return back()->with('error', 'LC record not found.');
         }
 
-        \App\Models\Container::create($validated);
+        // 🔹 Quantity (default 0 if null)
+        $qty = $validated['qty'] ?? 0;
 
-        return redirect()->route('container.view')->with('success', 'Container added successfully!');
+        // 🔹 Calculate totals
+        $lc_total_amount = $qty * ($lc->lc_exchange_rate ?? 0);
+        $tt_total_amount = $qty * ($lc->tt_exchange_rate ?? 0);
+
+        // 🔹 Update LC table totals
+        $lc->update([
+            'lc_total_amount' => $lc_total_amount,
+            'tt_total_amount' => $tt_total_amount,
+        ]);
+
+        // 🔹 Create new Container
+        \App\Models\Container::create([
+            'lc_id' => $lc->id,
+            'name' => $validated['name'],
+            'number' => $validated['number'],
+            'shipping_date' => $validated['shipping_date'] ?? null,
+            'arriving_date' => $validated['arriving_date'] ?? null,
+            'status' => $validated['status'] ?? 0,
+            'qty' => $qty,
+            'current_qty' => $qty,
+            'lc_value' => $lc->lc_value,
+            'lc_exchange_rate' => $lc->lc_exchange_rate,
+            'lc_date' => $lc->lc_date,
+            'tt_value' => $lc->tt_value,
+            'tt_exchange_rate' => $lc->tt_exchange_rate,
+            'tt_date' => $lc->tt_date,
+        ]);
+
+        return redirect()->route('container.view')->with('success', 'Container added successfully !');
     }
-
 
     public function containerTbl()
     {

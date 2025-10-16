@@ -24,6 +24,13 @@ class Lc extends Model
         'bill_of_entry_amount',
         'eta_date',
         'etd_date',
+        'lc_value',
+        'lc_exchange_rate',
+        'lc_total_amount',
+        'tt_value',
+        'tt_exchange_rate',
+        'tt_total_amount',
+        'tt_date',
     ];
 
     public $timestamps = true;

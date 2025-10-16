@@ -62,7 +62,8 @@ Route::group(['prefix' => 'costing', 'controller' => CostingController::class], 
     Route::post('/update', 'updateCosting')->name('costing.update');
     Route::delete('/{id}', 'destroy')->name('costing.destroy');
     Route::post('/lc/store', 'storeLc')->name('costing.lc.store');
-    Route::get('/{id}/lc', 'getLc')->name('getLc');
+    Route::get('/{id}/lc', action: 'getLc')->name('getLc');
+     Route::get('/lcCostingReport', 'lcCostingReport')->name('costing.lcCostingReport');
 });
 
 // Bank

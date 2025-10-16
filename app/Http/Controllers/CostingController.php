@@ -15,6 +15,11 @@ class CostingController extends Controller
         // return the view
         return view('costing.addCosting');
     }
+    public function lcCostingReport()
+    {
+        return view('costing.lcCostingReport');
+    }
+
     public function storeCosting(Request $request)
     {
         // Validation
@@ -94,6 +99,12 @@ class CostingController extends Controller
                 'costing_id'           => 'required|exists:costing,id',
                 'lc_name'              => 'required|string|max:255',
                 'lc_number'            => 'required|string|max:255',
+                'lc_date'              => 'nullable|date',
+                'lc_value'             => 'nullable|numeric',
+                'lc_exchange_rate'     => 'nullable|numeric',
+                'tt_date'              => 'nullable|date',
+                'tt_value'             => 'nullable|numeric',
+                'tt_exchange_rate'     => 'nullable|numeric',
                 'dhl_number'           => 'nullable|string|max:255',
                 'bl_number'            => 'nullable|string|max:255',
                 'doc_status'           => 'nullable|string|max:255',
@@ -112,42 +123,35 @@ class CostingController extends Controller
         // Check if LC already exists for this costing_id
         $lc = \App\Models\Lc::where('costing_id', $request->costing_id)->first();
 
+        $lcData = [
+            'lc_name'           => $request->lc_name,
+            'lc_date'           => $request->lc_date,
+            'lc_number'         => $request->lc_number,
+            'lc_value'          => $request->lc_value,
+            'lc_exchange_rate'  => $request->lc_exchange_rate,
+            'shipment_date'     => $request->shipment_date,
+            'arriving_date'     => $request->arriving_date,
+            'dhl_number'        => $request->dhl_number,
+            'bl_number'         => $request->bl_number,
+            'doc_status'        => $request->doc_status,
+            'bill_of_entry_amount' => $request->bill_of_entry_amount,
+            'etd_date'          => $request->etd_date,
+            'eta_date'          => $request->eta_date,
+            'tt_date'           => $request->tt_date,
+            'tt_value'          => $request->tt_value,
+            'tt_exchange_rate'  => $request->tt_exchange_rate,
+        ];
+
         if ($lc) {
             // Update existing LC
-            $lc->update([
-                'lc_name'              => $request->lc_name,
-                'lc_date'              => $request->lc_date,
-                'lc_number'            => $request->lc_number,
-                'shipment_date'        => $request->shipment_date,
-                'arriving_date'        => $request->arriving_date,
-                'dhl_number'           => $request->dhl_number,
-                'bl_number'            => $request->bl_number,
-                'doc_status'           => $request->doc_status,
-                'bill_of_entry_amount' => $request->bill_of_entry_amount,
-                'etd_date'             => $request->etd_date,
-                'eta_date'             => $request->eta_date,
-            ]);
+            $lc->update($lcData);
         } else {
             // Create new LC
-            $lc = \App\Models\Lc::create([
-                'costing_id'           => $request->costing_id,
-                'lc_name'              => $request->lc_name,
-                'lc_date'              => $request->lc_date,
-                'lc_number'            => $request->lc_number,
-                'shipment_date'        => $request->shipment_date,
-                'arriving_date'        => $request->arriving_date,
-                'dhl_number'           => $request->dhl_number,
-                'bl_number'            => $request->bl_number,
-                'doc_status'           => $request->doc_status,
-                'bill_of_entry_amount' => $request->bill_of_entry_amount,
-                'etd_date'             => $request->etd_date,
-                'eta_date'             => $request->eta_date,
-            ]);
+            $lc = \App\Models\Lc::create(array_merge(['costing_id' => $request->costing_id], $lcData));
         }
-
         // Update costing record
         $costing = \App\Models\Costing::findOrFail($request->costing_id);
-        $costing->lc_id    = $lc->id;
+        $costing->lc_id     = $lc->id;
         $costing->tt_amount = $request->tt_amount ?? 0;
         $costing->save();
 
@@ -159,6 +163,7 @@ class CostingController extends Controller
             'lc_id'   => $lc->id
         ]);
     }
+
 
 
 

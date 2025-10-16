@@ -203,6 +203,8 @@ class ReportsController extends Controller
         $totalOpeningBalance = $this->totalOpeningBalance();
         $totalInvestment = $this->totalInvestment();
         $totalInvestmentAmount = $this->totalInvestmentAmount();
+        $totalDamagerInvestmentAmount = $this->totalDamagerInvestmentAmount();
+        $officeExpense = $this->officeExpense();
 
         return view('reports::investment.index', [
             'totalStorager' => $totalStorager,
@@ -213,7 +215,22 @@ class ReportsController extends Controller
             'totalOpeningBalance' => $totalOpeningBalance,
             'totalInvestment' => $totalInvestment,
             'totalInvestmentAmount' => $totalInvestmentAmount,
+            'totalDamagerInvestmentAmount' => $totalDamagerInvestmentAmount,
+            'officeExpense' => $officeExpense,
         ]);
+    }
+    public function officeExpense()
+    {
+        // Sum the 'amount' column from the investments table
+        $totalAmount = \App\Models\OfficeExpense::sum('amount');
+        return $totalAmount;
+    }
+    public function totalDamagerInvestmentAmount()
+    {
+        $totalAmount = \App\Models\PartiesPayment::sum('amount');
+        $totalDamarage = \App\Models\PartiesPayment::sum('damarage_amount');
+
+        return $totalAmount + $totalDamarage;
     }
 
     public function totalInvestmentAmount()
@@ -221,7 +238,6 @@ class ReportsController extends Controller
         // Sum the 'amount' column from the investments table
         $totalAmount = \App\Models\PartiesPayment::sum('amount');
         return $totalAmount;
-
     }
     private function totalInvestment()
     {

@@ -18,6 +18,7 @@ class PartiesPayment extends Model
         'usd_amount',
         'exchange_rate',
         'amount',
+        'damarage_amount',
         'description',
         'date',
         'status',

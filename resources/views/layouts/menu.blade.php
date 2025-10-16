@@ -265,8 +265,8 @@
             </a>
         </li>
         <li class="c-sidebar-nav-item">
-            <a class="c-sidebar-nav-link {{ request()->routeIs('costing.viewCosting') ? 'c-active' : '' }}"
-                href="{{ route('costing.viewCosting') }}">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('costing.lcCostingReport') ? 'c-active' : '' }}"
+                href="{{ route('costing.lcCostingReport') }}">
                 <i class="c-sidebar-nav-icon bi bi-bar-chart" style="line-height: 1;"></i> LC Report
             </a>
         </li>

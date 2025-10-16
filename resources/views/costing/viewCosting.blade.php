@@ -16,7 +16,28 @@
             <div class="card shadow-sm rounded-3">
                 <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="mb-0">Costing Records</h5>
+
+                        <div class="row">
+                            <div class="col-md-6" style="display:flex; flex-direction:column;">
+                                <label for="supplierFilter" class="form-label">Filter by Supplier</label>
+                                <select id="supplierFilter" class="form-control" style="width: 100%; max-width: 500px;">
+                                    <option value="">All Suppliers</option>
+                                    @php
+                                    $uniqueSuppliers = $costings->pluck('supplier.supplier_name')->unique();
+                                    @endphp
+                                    @foreach($uniqueSuppliers as $supplierName)
+                                    @if($supplierName)
+                                    <option value="{{ $supplierName }}">{{ $supplierName }}</option>
+                                    @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4" style="display:flex; align-items:flex-end; gap:4px; margin-top:24px;">
+                                <button id="supplierSearchBtn" class="btn btn-primary" style="flex:1; max-width:120px;">Search</button>
+                                <button id="supplierClearBtn" class="btn btn-secondary" style="flex:1; max-width:120px;">Clear</button>
+                            </div>
+                        </div>
+
                         <div>
                             <button class="btn btn-secondary buttons-excel" onclick="downloadTableAsExcel()">
                                 <i class="bi bi-file-earmark-excel-fill"></i> Excel
@@ -159,9 +180,7 @@
         </div>
     </div>
 </div>
-<!-- Status Modal -->
 <!-- LC / Shipment Modal -->
-<!-- Modal -->
 <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -173,6 +192,7 @@
                 <form id="statusForm">
                     @csrf
                     <input type="hidden" name="costing_id" id="status_costing_id">
+
                     <div class="row">
                         <!-- Existing fields -->
                         <div class="col-md-6 mb-3">
@@ -184,6 +204,31 @@
                             <input type="number" class="form-control input" name="lc_number">
                         </div>
 
+                        <!-- New fields -->
+                        <div class="col-md-6 mb-3">
+                            <label>LC Date</label>
+                            <input type="date" class="form-control input" name="lc_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>LC Value</label>
+                            <input type="number" step="0.01" class="form-control input" name="lc_value">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>LC Exchange Rate</label>
+                            <input type="number" step="0.01" class="form-control input" name="lc_exchange_rate">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>TT Date</label>
+                            <input type="date" class="form-control input" name="tt_date">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>TT Value</label>
+                            <input type="number" step="0.01" class="form-control input" name="tt_value">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label>TT Exchange Rate</label>
+                            <input type="number" step="0.01" class="form-control input" name="tt_exchange_rate">
+                        </div>
                     </div>
                 </form>
             </div>
@@ -345,6 +390,36 @@
 
             // Show modal
             statusModal.show();
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        const supplierFilter = document.getElementById('supplierFilter');
+        const searchBtn = document.getElementById('supplierSearchBtn');
+        const clearBtn = document.getElementById('supplierClearBtn');
+        const table = document.querySelector('.table tbody');
+        const rows = table.querySelectorAll('tr');
+
+        // Search button click
+        searchBtn.addEventListener('click', function() {
+            const filter = supplierFilter.value.toLowerCase();
+
+            rows.forEach(row => {
+                const supplierCell = row.cells[3]; // supplier column (0-based)
+                if (!supplierCell) return;
+                const supplierName = supplierCell.textContent.toLowerCase();
+
+                if (filter === '' || supplierName === filter) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
+
+        // Clear button click
+        clearBtn.addEventListener('click', function() {
+            supplierFilter.value = ''; // reset dropdown
+            rows.forEach(row => row.style.display = ''); // show all rows
         });
     });
 </script>

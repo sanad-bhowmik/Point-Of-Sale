@@ -36,41 +36,51 @@
                             <tbody>
                                 @php $serialNumber = 1; @endphp
                                 @forelse($payments as $payment)
-                                    <tr>
-                                        <td class="text-center">{{ $serialNumber++ }}</td>
-                                        <td>{{ \Carbon\Carbon::parse($payment->date)->format('d/m/Y') }}</td>
-                                        <td>{{ $payment->name }}</td>
-                                        <td class="text-end">{{ number_format($payment->usd_amount, 2) }}</td>
-                                        <td class="text-end">{{ number_format($payment->exchange_rate, 4) }}</td>
-                                        <td class="text-end">{{ number_format($payment->amount, 2) }}</td>
-                                        <td>{{ $payment->description ?? '-' }}</td>
-                                        <td class="text-center">
-                                            <!-- Edit Button -->
-                                            <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPaymentModal"
-                                                    data-id="{{ $payment->id }}"
-                                                    data-date="{{ \Carbon\Carbon::parse($payment->date)->format('Y-m-d') }}"
-                                                    data-name="{{ $payment->name }}"
-                                                    data-usd-amount="{{ $payment->usd_amount }}"
-                                                    data-exchange-rate="{{ $payment->exchange_rate }}"
-                                                    data-amount="{{ $payment->amount }}"
-                                                    data-description="{{ $payment->description ?? '' }}">
-                                                Edit
-                                            </button>
+                                <tr>
+                                    <td class="text-center">{{ $serialNumber++ }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($payment->date)->format('d/m/Y') }}</td>
+                                    <td>{{ $payment->name }}</td>
+                                    <td class="text-end">{{ number_format($payment->usd_amount, 2) }}</td>
+                                    <td class="text-end">{{ number_format($payment->exchange_rate, 4) }}</td>
 
-                                            <!-- Delete Form -->
-                                            <form action="{{ route('partiesPayment.delete', $payment->id) }}" method="POST" style="display:inline-block;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
-                                            </form>
-                                        </td>
-                                    </tr>
+                                    <!-- Modified Amount Column -->
+                                    <td class="text-end">
+                                        @if(!empty($payment->damarage_amount))
+                                        {{ number_format($payment->damarage_amount, 2) }} <span class="text-danger fw-bold">(Damarage)</span>
+                                        @else
+                                        {{ number_format($payment->amount, 2) }}
+                                        @endif
+                                    </td>
+
+                                    <td>{{ $payment->description ?? '-' }}</td>
+                                    <td class="text-center">
+                                        <!-- Edit Button -->
+                                        <button type="button" class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editPaymentModal"
+                                            data-id="{{ $payment->id }}"
+                                            data-date="{{ \Carbon\Carbon::parse($payment->date)->format('Y-m-d') }}"
+                                            data-name="{{ $payment->name }}"
+                                            data-usd-amount="{{ $payment->usd_amount }}"
+                                            data-exchange-rate="{{ $payment->exchange_rate }}"
+                                            data-amount="{{ $payment->amount }}"
+                                            data-description="{{ $payment->description ?? '' }}">
+                                            Edit
+                                        </button>
+
+                                        <!-- Delete Form -->
+                                        <form action="{{ route('partiesPayment.delete', $payment->id) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="8" class="text-center py-4">No payments found.</td>
-                                    </tr>
+                                <tr>
+                                    <td colspan="8" class="text-center py-4">No payments found.</td>
+                                </tr>
                                 @endforelse
                             </tbody>
+
                         </table>
                     </div>
                 </div>
@@ -101,6 +111,7 @@
                             <input type="text" class="form-control" id="edit_name" name="name" required>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="edit_usd_amount" class="form-label">USD Amount</label>
@@ -111,17 +122,23 @@
                             <input type="number" step="0.0001" class="form-control" id="edit_exchange_rate" name="exchange_rate" required>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="edit_amount" class="form-label">Amount (Tk)</label>
-                            <input type="number" step="0.01" class="form-control" id="edit_amount" name="amount" required>
+                            <input type="number" step="0.01" class="form-control" id="edit_amount" name="amount">
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label for="edit_damarage_amount" class="form-label">Damarage Amount (Tk)</label>
+                            <input type="number" step="0.01" class="form-control" id="edit_damarage_amount" name="damarage_amount">
+                        </div>
+                        <div class="col-md-12 mb-3">
                             <label for="edit_description" class="form-label">Description</label>
-                            <textarea class="form-control" id="edit_description" name="description" rows="1"></textarea>
+                            <textarea class="form-control" id="edit_description" name="description" rows="2"></textarea>
                         </div>
                     </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="submit" class="btn btn-primary">Update Payment</button>
@@ -130,6 +147,7 @@
         </div>
     </div>
 </div>
+
 
 <!-- CSS & JS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
@@ -161,35 +179,36 @@
     @endif
 
     // Edit Payment Modal Script
-    document.addEventListener('DOMContentLoaded', function() {
+      document.addEventListener('DOMContentLoaded', function() {
         const editModal = document.getElementById('editPaymentModal');
+        if (!editModal) return;
 
-        if(editModal) {
-            editModal.addEventListener('show.bs.modal', function(event) {
-                const button = event.relatedTarget;
+        editModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
 
-                // Get data attributes
-                const id = button.getAttribute('data-id');
-                const date = button.getAttribute('data-date');
-                const name = button.getAttribute('data-name');
-                const usd = button.getAttribute('data-usd-amount');
-                const rate = button.getAttribute('data-exchange-rate');
-                const amount = button.getAttribute('data-amount');
-                const description = button.getAttribute('data-description');
+            // Get data attributes from the table row
+            const id = button.getAttribute('data-id');
+            const date = button.getAttribute('data-date');
+            const name = button.getAttribute('data-name');
+            const usd = button.getAttribute('data-usd-amount');
+            const rate = button.getAttribute('data-exchange-rate');
+            const amount = button.getAttribute('data-amount');
+            const damarageAmount = button.getAttribute('data-damarage-amount') || '';
+            const description = button.getAttribute('data-description') || '';
 
-                // Set form action
-                const form = editModal.querySelector('#editPaymentForm');
-                form.action = `/parties-payment/${id}/update`;
+            // Set form action
+            const form = editModal.querySelector('#editPaymentForm');
+            form.action = `/parties-payment/${id}/update`;
 
-                // Populate fields
-                editModal.querySelector('#edit_date').value = date;
-                editModal.querySelector('#edit_name').value = name;
-                editModal.querySelector('#edit_usd_amount').value = usd;
-                editModal.querySelector('#edit_exchange_rate').value = rate;
-                editModal.querySelector('#edit_amount').value = amount;
-                editModal.querySelector('#edit_description').value = description;
-            });
-        }
+            // Populate input fields
+            document.getElementById('edit_date').value = date;
+            document.getElementById('edit_name').value = name;
+            document.getElementById('edit_usd_amount').value = usd;
+            document.getElementById('edit_exchange_rate').value = rate;
+            document.getElementById('edit_amount').value = amount;
+            document.getElementById('edit_damarage_amount').value = damarageAmount;
+            document.getElementById('edit_description').value = description;
+        });
     });
 </script>
 
@@ -198,9 +217,11 @@
         font-weight: 600;
         font-size: 0.875rem;
     }
+
     .table td {
         vertical-align: middle;
     }
+
     .table-responsive {
         border-radius: 0.375rem;
     }

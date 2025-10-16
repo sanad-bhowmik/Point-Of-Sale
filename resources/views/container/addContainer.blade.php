@@ -20,11 +20,12 @@
                         @csrf
 
                         <div class="form-row">
-                            <!-- LC Section -->
+
+                            <!-- Container Information -->
                             <div class="col-md-12 mb-4">
-                                <h5 class="section-title mb-3">LC Information</h5>
+                                <h5 class="section-title mb-3">Container Information</h5>
                                 <div class="row">
-                                    <div class="col-lg-4 mb-3">
+                                    <div class="col-lg-3 mb-3">
                                         <label for="lc_id">LC Name <span class="text-danger">*</span></label>
                                         <select name="lc_id" id="lc_id" class="form-control" required>
                                             <option value="">Select LC</option>
@@ -33,74 +34,17 @@
                                             @endforeach
                                         </select>
                                     </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="lc_date">LC Date</label>
-                                        <div class="input-group">
-                                            <input type="text" name="lc_date" id="lc_date" class="form-control flatpickr" placeholder="Select LC date" data-date-format="Y-m-d">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="lc_date_icon">
-                                                    <i class="bi bi-calendar"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="lc_value">LC Value</label>
-                                        <input type="text" step="0.01" name="lc_value" id="lc_value" class="form-control" placeholder="Enter LC value">
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="lc_exchange_rate">LC Exchange Rate</label>
-                                        <input type="text" step="0.0001" name="lc_exchange_rate" id="lc_exchange_rate" class="form-control" placeholder="Enter LC exchange rate">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- TT Section -->
-                            <div class="col-md-12 mb-4">
-                                <h5 class="section-title mb-3">TT Information</h5>
-                                <div class="row">
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="tt_date">TT Date</label>
-                                        <div class="input-group">
-                                            <input type="text" name="tt_date" id="tt_date" class="form-control flatpickr" placeholder="Select TT date" data-date-format="Y-m-d">
-                                            <div class="input-group-append">
-                                                <span class="input-group-text" id="tt_date_icon">
-                                                    <i class="bi bi-calendar"></i>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="tt_value">TT Value</label>
-                                        <input type="text" step="0.01" name="tt_value" id="tt_value" class="form-control" placeholder="Enter TT value">
-                                    </div>
-
-                                    <div class="col-lg-4 mb-3">
-                                        <label for="tt_exchange_rate">TT Exchange Rate</label>
-                                        <input type="text" step="0.0001" name="tt_exchange_rate" id="tt_exchange_rate" class="form-control" placeholder="Enter TT exchange rate">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Container Information -->
-                            <div class="col-md-12 mb-4">
-                                <h5 class="section-title mb-3">Container Information</h5>
-                                <div class="row">
-                                    <div class="col-lg-4 mb-3">
+                                    <div class="col-lg-3 mb-3">
                                         <label for="name">Container Name <span class="text-danger">*</span></label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="Enter container name" required>
                                     </div>
 
-                                    <div class="col-lg-4 mb-3">
+                                    <div class="col-lg-3 mb-3">
                                         <label for="number">Container Number <span class="text-danger">*</span></label>
                                         <input type="text" name="number" id="number" class="form-control" placeholder="Enter container number" required>
                                     </div>
 
-                                    <div class="col-lg-4 mb-3">
+                                    <div class="col-lg-3 mb-3">
                                         <label for="qty">Quantity <span class="text-danger">*</span></label>
                                         <input type="number" name="qty" id="qty" class="form-control" placeholder="Enter quantity" required>
                                     </div>
