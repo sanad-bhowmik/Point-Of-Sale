@@ -81,7 +81,7 @@
                                     @foreach($sizes as $size)
                                     <option value="{{ $size->id }}">{{ $size->size }}</option>
                                     @endforeach
-                                </select>
+                                </select>b
                             </td>
 
                             <!-- Unit -->
