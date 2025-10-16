@@ -25,7 +25,11 @@ public function index()
         $purchase_returns = PurchaseReturn::completed()->sum('total_amount');
         $product_costs = 0;
 
-        $containers = Container::whereNot('status', 3)->with(['lc.costing.supplier', 'lc.costing.product.sizes'])->get();
+        $containers = Container::whereNot('status', 3)
+                                ->where(function ($q) {
+                                    $q->whereColumn('current_qty', '<', 'qty');
+                                })
+                                ->with(['lc.costing.supplier', 'lc.costing.product.sizes'])->get();
         $container_ids = Container::whereNot('status', 3)->with(['lc.costing.supplier', 'lc.costing.product.sizes'])->pluck('id');
         
         $container_cost = 0;

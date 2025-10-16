@@ -168,6 +168,24 @@
                 }
             });
 
+            $('#lc_id').on('change', function() {
+                var lcId = $(this).val();
+                var $containerSelect = $('#container_id');
+                $containerSelect.html('<option value="">Loading...</option>');
+                if (lcId) {
+                    $.get('/get-containers-by-lc/' + lcId, function(data) {
+                        var options = '<option value="">-- Select Container --</option>';
+                        data.forEach(function(container) {
+                            options +=
+                                `<option value="${container.id}">${container.name} (${container.number})</option>`;
+                        });
+                        $containerSelect.html(options).trigger('change');
+                    });
+                } else {
+                    $containerSelect.html('<option value="">-- Select Container --</option>').trigger(
+                        'change');
+                }
+            });
         });
     </script>
 @endpush

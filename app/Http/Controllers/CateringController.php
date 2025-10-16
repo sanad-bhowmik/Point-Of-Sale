@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\CateringLunchImport;
 use App\Models\CateringLunch;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CateringController extends Controller
 {
@@ -39,12 +41,27 @@ class CateringController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->hasFile('excel_file')) {
+            $request->validate([
+                'excel_file' => 'required|mimes:xlsx,xls,csv|max:2048',
+            ]);
+
+            try {
+                Excel::import(new CateringLunchImport, $request->file('excel_file'));
+
+                 return redirect()->route('catering.index')->with('success', 'Catering lunches imported successfully from Excel!');
+            } catch (\Throwable $th) {
+                return redirect()->back()->with('error', 'An error occurred while saving the lunch entry: ' . $th->getMessage())->withInput();
+            }
+
+        }
+
         $request->validate([
             'date' => 'required|date',
             'note' => 'nullable|string',
-            'quantity' => 'required|string|min:0',
-            'unit_price' => 'required|string|min:0',
-            'total' => 'required|numeric|min:0',
+            'quantity' => 'required|string',
+            'unit_price' => 'required|string',
+            'total' => 'required|numeric|min:1',
         ]);
 
         try {

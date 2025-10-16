@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\OfficeExpenseCategoryImport;
+use App\Imports\OfficeExpenseImport;
 use Illuminate\Http\Request;
 use App\Models\OfficeExpense;
 use App\Models\OfficeExpenseCategory;
+use Maatwebsite\Excel\Facades\Excel;
 
 class OfficeExpenseController extends Controller
 {
@@ -37,7 +40,7 @@ class OfficeExpenseController extends Controller
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $expenses->whereBetween('date', [$request->from_date, $request->to_date]);
         }
-        $expenses = $expenses->orderBy('date', 'desc')->get();
+        $expenses = $expenses->orderBy('date', 'asc')->get();
 
         return view('officeExpnese.cashInHistory', compact('expenses'));
     }
@@ -55,6 +58,22 @@ class OfficeExpenseController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->hasFile('excel_file')) {
+            $request->validate([
+                'excel_file' => 'required|mimes:xlsx,xls,csv',
+            ]);
+
+            try {
+                Excel::import(new OfficeExpenseImport, $request->file('excel_file'));
+
+                return redirect()->route('office_expense.view')->with('success', 'Office Expense imported successfully from Excel!');
+
+            } catch (\Throwable $th) {
+                return back()->with('error', $th->getMessage());
+            }
+
+        }
+
         $validated = $request->validate([
             'category_id'    => 'required|exists:office_expense_categories,id',
             'employee_name'  => 'nullable|string|max:255',
@@ -208,6 +227,22 @@ class OfficeExpenseController extends Controller
     }
     public function storeOfficeExpenseCategory(Request $request)
     {
+        if ($request->hasFile('excel_file')) {
+            $request->validate([
+                'excel_file' => 'required|mimes:xlsx,xls,csv',
+            ]);
+
+            try {
+                Excel::import(new OfficeExpenseCategoryImport, $request->file('excel_file'));
+
+                return redirect()->route('office_expense.view_names')->with('success', 'Expense Category imported successfully from Excel!');
+
+            } catch (\Throwable $th) {
+                return back()->with('error', $th->getMessage());
+            }
+
+        }
+
         $request->validate([
             'category_name' => 'required|string|max:255',
             'category_description' => 'nullable|string|max:255',
