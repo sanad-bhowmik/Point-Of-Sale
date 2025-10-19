@@ -34,7 +34,7 @@
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="col-lg-3 mb-3">
+                                    <div class="col-lg-3 mb-3 ">
                                         <label for="name">Container Name <span class="text-danger">*</span></label>
                                         <input type="text" name="name" id="name" class="form-control" placeholder="Enter container name" required>
                                     </div>
