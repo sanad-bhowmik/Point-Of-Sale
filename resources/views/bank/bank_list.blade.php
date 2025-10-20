@@ -60,23 +60,29 @@
                                     <td>{{ number_format($bank->current_balance, 2) }}</td>
                                     <td>{{ $bank->disclaimer }}</td>
                                     <td>
-                                        <a href="{{ route('bank.edit', $bank->id) }}"
-                                            class="btn btn-sm btn-warning">Edit</a>
-                                        <form action="{{ route('bank.destroy', $bank->id) }}" method="POST"
-                                            class="d-block mt-1">
+                                        <a href="{{ route('bank.edit', $bank->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                                        <form action="{{ route('bank.destroy', $bank->id) }}" method="POST" class="d-block mt-1">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-sm btn-danger"
-                                                onclick="return confirm('Are you sure?')">Delete</button>
+                                            <button class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
                                         </form>
                                     </td>
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="10" class="text-center">No Banks found.</td>
+                                    <td colspan="11" class="text-center">No Banks found.</td>
                                 </tr>
                                 @endforelse
                             </tbody>
+
+                            <!-- ✅ Total Current Balance Row -->
+                            <tfoot>
+                                <tr>
+                                    <th colspan="8" class="text-end">Total Current Balance:</th>
+                                    <th id="totalCurrentBalance">0.00</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -105,72 +111,33 @@
         }
 
         @if (session('success'))
-                showToast(@json(session('success')), 'success');
-            @endif
+            showToast(@json(session('success')), 'success');
+        @endif
 
-            // Laravel validation errors
-            @if ($errors->any())
-                @foreach ($errors->all() as $error)
-                    showToast(@json($error), 'error');
-                @endforeach
-            @endif
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                showToast(@json($error), 'error');
+            @endforeach
+        @endif
 
+        // ✅ Calculate Total Current Balance
+        const rows = document.querySelectorAll("#reportTable tbody tr");
+        let total = 0;
+
+        rows.forEach(row => {
+            const cell = row.cells[8]; // 9th column = Current Balance
+            if (cell && !isNaN(parseFloat(cell.textContent.replace(/,/g, '')))) {
+                total += parseFloat(cell.textContent.replace(/,/g, ''));
+            }
+        });
+
+        document.getElementById("totalCurrentBalance").textContent =
+            total.toLocaleString(undefined, { minimumFractionDigits: 2 });
     });
-
-
-    //  @if (session('success'))
-    //     showToast(@json(session('success')), 'success');
-    // @endif
-
-    // // Laravel validation errors
-    // @if ($errors->any())
-    //     @foreach ($errors->all() as $error)
-    //         showToast(@json($error), 'error');
-    //     @endforeach
-    // @endif
-
-    // });
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-    // document.getElementById('downloadExcel').addEventListener('click', function() {
-    //     var table = document.querySelector('.table');
-
-    //     // Clone table to avoid altering original
-    //     var clone = table.cloneNode(true);
-
-    //     // Remove the last column (Actions)
-    //     clone.querySelectorAll('tr').forEach(tr => {
-    //         tr.removeChild(tr.lastElementChild);
-    //     });
-
-    //     // Convert to worksheet
-    //     var wb = XLSX.utils.book_new();
-    //     var ws = XLSX.utils.table_to_sheet(clone, {
-    //         raw: true
-    //     });
-
-    //     // Optional: adjust column widths
-    //     var colWidths = [];
-    //     clone.querySelectorAll('th').forEach(th => {
-    //         colWidths.push({
-    //             wch: th.innerText.length + 5
-    //         });
-    //     });
-    //     ws['!cols'] = colWidths;
-
-    //     // Increase row height for all rows
-    //     ws['!rows'] = [];
-    //     for (let i = 0; i < clone.rows.length; i++) {
-    //         ws['!rows'].push({
-    //             hpt: 28
-    //         }); // 28 points height
-    //     }
-
-    //     XLSX.utils.book_append_sheet(wb, ws, 'Banks');
-    //     XLSX.writeFile(wb, 'banks.xlsx');
-    // });
     document.getElementById("downloadExcel").addEventListener("click", function() {
         let table = document.getElementById("reportTable");
         if (!table) {
@@ -199,14 +166,14 @@
             }
             th, td {
                 padding: 10px;
-                height: 35px; /* row height */
+                height: 35px;
                 vertical-align: middle;
             }
             th {
                 font-weight: bold;
             }
         </style>
-    `;
+        `;
 
         // Combine styling with modified table HTML
         let tableHTML = style + clonedTable.outerHTML;
@@ -229,6 +196,7 @@
 </script>
 
 @endsection
+
 <style>
     .toast {
         background-color: #333;
@@ -255,5 +223,11 @@
 
     .toast.error {
         background-color: #dc3545;
+    }
+
+    tfoot th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        font-size: 1rem;
     }
 </style>

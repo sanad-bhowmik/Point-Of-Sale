@@ -30,16 +30,13 @@
                                 <div class="col-md-3">
                                     <div class="form-group mb-0">
                                         <label for="from_date">From Date</label>
-                                        <input type="date" name="from_date" value="{{ request('from_date') }}"
-                                            class="form-control">
-
+                                        <input type="date" name="from_date" value="{{ request('from_date') }}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group mb-0">
                                         <label for="to_date">To Date</label>
-                                        <input type="date" name="to_date" value="{{ request('to_date') }}"
-                                            class="form-control">
+                                        <input type="date" name="to_date" value="{{ request('to_date') }}" class="form-control">
                                     </div>
                                 </div>
                                 <div class="col-md-3 mt-4">
@@ -69,27 +66,26 @@
                                         <td>{{ number_format($expense->amount, 2) }}</td>
                                         <td>{{ $expense->note ?? 'N/A' }}</td>
                                         <td>
-                                            <a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}"
-                                                class="btn btn-sm btn-warning">
+                                            <a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}" class="btn btn-sm btn-warning">
                                                 Edit
                                             </a>
-                                            {{-- <form action="{{ route('office_expense.destroy', $expense->id) }}"
-                                                method="POST" class="d-inline"
-                                                onsubmit="return confirm('Are you sure you want to delete this expense?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-sm btn-danger">
-                                                    Delete
-                                                </button>
-                                            </form> --}}
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="text-center text-muted">No office expenses found.</td>
+                                        <td colspan="6" class="text-center text-muted">No office expenses found.</td>
                                     </tr>
                                 @endforelse
                             </tbody>
+
+                            <!-- ✅ Total Amount Row -->
+                            <tfoot>
+                                <tr>
+                                    <th colspan="3" class="text-end">Total Amount:</th>
+                                    <th id="totalAmount">0.00</th>
+                                    <th colspan="2"></th>
+                                </tr>
+                            </tfoot>
                         </table>
 
                     </div>
@@ -98,7 +94,7 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS (for modal) -->
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- Toastr CSS & JS -->
@@ -131,6 +127,22 @@
                 toastr.error("{{ $error }}");
             @endforeach
         @endif
+
+        // ✅ Calculate Total Amount
+        document.addEventListener("DOMContentLoaded", function() {
+            const rows = document.querySelectorAll("#officeExpenseTable tbody tr");
+            let total = 0;
+
+            rows.forEach(row => {
+                const amountCell = row.cells[3]; // 4th column (index 3)
+                if (amountCell && !isNaN(parseFloat(amountCell.textContent.replace(/,/g, '')))) {
+                    total += parseFloat(amountCell.textContent.replace(/,/g, ''));
+                }
+            });
+
+            document.getElementById("totalAmount").textContent =
+                total.toLocaleString(undefined, { minimumFractionDigits: 2 });
+        });
     </script>
 @endsection
 
@@ -145,11 +157,10 @@
 
             let clone = table.cloneNode(true);
 
-            // Remove from thead
+            // Remove "Actions" column from header and rows
             if (clone.tHead && clone.tHead.rows[0].cells.length > 0) {
                 clone.tHead.rows[0].deleteCell(-1);
             }
-            // Remove from tbody
             for (let row of clone.tBodies[0].rows) {
                 if (row.cells.length > 0) {
                     row.deleteCell(-1);
@@ -158,38 +169,24 @@
 
             // Excel styling
             let style = `
-        <style>
-            * {
-                font-family: Roboto, Arial, sans-serif;
-            }
-            table, th, td {
-                border: 1px solid #000;
-                border-collapse: collapse;
-                text-align: center;
-            }
-            th, td {
-                padding: 10px;
-                height: 35px; /* row height */
-                vertical-align: middle;
-            }
-            th {
-                font-weight: bold;
-            }
-        </style>
-    `;
+            <style>
+                * { font-family: Roboto, Arial, sans-serif; }
+                table, th, td { border: 1px solid #000; border-collapse: collapse; text-align: center; }
+                th, td { padding: 10px; height: 35px; vertical-align: middle; }
+                th { font-weight: bold; }
+            </style>
+            `;
 
-            let tableHTML = style + table.outerHTML;
+            let tableHTML = style + clone.outerHTML;
 
-            let blob = new Blob(
-                ['\ufeff' + tableHTML], {
-                    type: "application/vnd.ms-excel"
-                }
-            );
+            let blob = new Blob(['\ufeff' + tableHTML], {
+                type: "application/vnd.ms-excel"
+            });
 
             let url = URL.createObjectURL(blob);
             let a = document.createElement("a");
             a.href = url;
-            a.download = "expense-ledger.xls";
+            a.download = "cash_in_history.xls";
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -197,3 +194,11 @@
         });
     </script>
 @endpush
+
+<style>
+    tfoot th {
+        background-color: #f8f9fa;
+        font-weight: bold;
+        font-size: 1rem;
+    }
+</style>

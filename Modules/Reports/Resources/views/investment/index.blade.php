@@ -34,9 +34,9 @@
                             $totalLose,
                             $totalOpeningBalance,
                             $totalInvestmentAmount,
-                            $totalProfit
+
                             ];
-                            $leftTotal = array_sum($leftValues);
+                            $leftTotal = array_sum($leftValues) - $totalProfit;
                             $subTotal = $leftTotal + $officeExpense;
                             @endphp
 
@@ -100,7 +100,7 @@
 
         <!-- Right Table -->
         <div class="flex-fill">
-            <h2 class="mb-3 text-center fw-bold">Total Asset</h2>
+            <h2 class="mb-3 text-center fw-bold">TAIFA TRADERSE - TOTAL ASSET</h2>
             <div class="card shadow-sm border-0">
                 <div class="card-body p-0">
                     <table class="table table-hover table-bordered align-middle text-center mb-0">
@@ -112,72 +112,48 @@
                         </thead>
                         <tbody>
                             @php
-                            $rightValues = [
-                            $totalStorager,
-                            $totalInvestment,
-                            $calculateUpcoming,
-                            $totalDueAmount,
-                            $totalOpeningBalance,
-                            $totalDamagerInvestmentAmount,
-                            311436.00,
-                            $totalProfit,
-                            $totalLose,
-                            57117256.92
-                            ];
-                            $rightTotal = array_sum($rightValues);
+                            use Illuminate\Support\Facades\DB;
+
+                            // Step 1: Get sum of parties_payment.amount and damage_amount directly
+                            $partiesPaymentAmount = DB::table('parties_payment')->sum('amount');
+                            $damageAmount = DB::table('parties_payment')->sum('damarage_amount');
+
+                            // Step 2: Apply your formula
+                            $v1 = $partiesPaymentAmount + $damageAmount; // sum of both
+                            $v2 = $v1 + 311436; // add fixed value
+                            $totalGet = $v2 - $totalInvestmentAmount; // subtract Payment Get (left column)
+
+                            // Step 3: Other existing values
+                            $totalInvestmentValue = $leftTotal;
+                            $totalLossValue = $totalLose;
+
+                            // Step 4: Calculate Total Value
+                            $totalValue = $totalInvestmentValue + $totalGet - $totalLossValue;
                             @endphp
 
                             <tr>
-                                <td class="text-start">Total Storager</td>
-                                <td>{{ number_format($totalStorager, 2) }}</td>
+                                <td class="text-start">Total Investment</td>
+                                <td>{{ number_format($totalInvestmentValue, 2) }}</td>
                             </tr>
                             <tr>
-                                <td class="text-start">Mustaq Mama</td>
-                                <td>{{ number_format($totalInvestment, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Upcoming</td>
-                                <td>{{ number_format($calculateUpcoming, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Total Market Due</td>
-                                <td>{{ number_format($totalDueAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Bank Amount</td>
-                                <td>{{ $totalOpeningBalance }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Payment Get</td>
-                                <td>{{ number_format($totalDamagerInvestmentAmount, 2) }}</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Payment Get - Fair</td>
-                                <td>311,436.00</td>
-                            </tr>
-                            <tr>
-                                <td class="text-start">Total Profit</td>
-                                <td>{{ number_format($totalProfit, 2) }}</td>
+                                <td class="text-start">Total Get</td>
+                                <td>{{ number_format($totalGet, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-start">Total Loss</td>
-                                <td>{{ number_format($totalLose, 2) }}</td>
+                                <td>{{ number_format($totalLossValue, 2) }}</td>
                             </tr>
-                            <tr class="fw-bold fs-5">
-                                <td class="text-start">Total Assets</td>
-                                <td>57,117,256.92</td>
-                            </tr>
-
-                            <!-- Total Row -->
                             <tr class="fw-bold fs-5 table-success">
-                                <td class="text-end">Total</td>
-                                <td>{{ number_format($rightTotal, 2) }}</td>
+                                <td class="text-end">Total Value</td>
+                                <td>{{ number_format($totalValue, 2) }}</td>
                             </tr>
                         </tbody>
+
                     </table>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

@@ -259,6 +259,27 @@
     </div>
 </div>
 @endsection
+<script>
+document.querySelector("form").addEventListener("submit", function (e) {
+    // If form is invalid, prevent submission
+    if (!this.checkValidity()) {
+        e.preventDefault();
+
+        // Find first invalid input
+        const firstInvalid = this.querySelector(":invalid");
+        if (firstInvalid) {
+            // Smoothly scroll to it
+            firstInvalid.scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+
+            // Optionally, focus on it
+            firstInvalid.focus({ preventScroll: true });
+        }
+    }
+}, false);
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

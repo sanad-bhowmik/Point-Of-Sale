@@ -23,164 +23,132 @@
             <div class="table-responsive">
                 <table id="costingTable" class="table table-bordered align-middle text-center mb-0">
                     <thead class="table-dark">
-                        <thead class="table-warning">
-                            <tr>
-                                <th>Supplier Name</th>
-                                <th>LC Number</th>
-                                <th>Product ID</th>
-                                <th>Box Type</th>
-                                <th>Size</th>
-                                <th>Currency</th>
-                                <th>Base Value</th>
-                                <th>Quantity</th>
-                                <th>Exchange Rate</th>
-                                <th>Total (Foreign)</th>
-                                <th>Total (BDT)</th>
-                                <th>Insurance</th>
-                                <th>Insurance (Tk)</th>
-                                <th>Landing Charge</th>
-                                <th>Landing Charge (Tk)</th>
-                                <th>CD</th>
-                                <th>RD</th>
-                                <th>SD</th>
-                                <th>VAT</th>
-                                <th>AIT</th>
-                                <th>AT</th>
-                                <th>ATV</th>
-                                <th>TT Amount</th>
-                                <th>Total Tax</th>
-                                <th>Transport</th>
-                                <th>Arot</th>
-                                <th>C&F Charge</th>
-                                <th>Others Total</th>
-                                <th>Total Tariff (LC)</th>
-                                <th>Tariff per Ton (LC)</th>
-                                <th>Tariff per Kg (LC)</th>
-                                <th>Actual Cost per Kg</th>
-                                <th>Total Cost per Kg</th>
-                                <th>Total Cost per Box</th>
-                                <th>Container Number</th>
-                                <th>Total Costing</th>
-                                <th>Profit / Loss</th>
-                                <th>Created At</th>
-                                <th>Updated At</th>
-                            </tr>
-                        </thead>
-
+                        <tr>
+                            <th>Supplier Name</th>
+                            <th>LC Number</th>
+                            <th>LC Amount</th>
+                            <th>Container Number</th>
+                            <th>Bank Cost</th>
+                            <th>Duty</th>
+                            <th>C&F</th>
+                            <th>Car Rent</th>
+                            <th>Arrot</th>
+                            <th>Other</th>
+                            <th>Total Costing</th>
+                            <th>Total Sales</th>
+                            <th>Total Deposit</th>
+                            <th>Due</th>
+                        </tr>
                     </thead>
                     <tbody>
                         @php
-                        $costings = \App\Models\Costing::with(['lc.containers', 'supplier'])->get();
+                        $costings = \App\Models\Costing::with(['supplier', 'lc.containers'])->get();
                         @endphp
 
                         @foreach($costings as $costing)
-                        @php
-                        $lc = $costing->lc;
-                        $supplierName = optional($costing->supplier)->supplier_name ?? 'N/A';
-                        $containers = $lc?->containers ?? collect([]);
+                            @php
+                                $supplierName = optional($costing->supplier)->supplier_name ?? 'N/A';
+                                $lcNumber = optional($costing->lc)->lc_number ?? '—';
+                                $containers = $costing->lc?->containers ?? collect([]);
+                                $totalTk = (int)$costing->total_tk;
+                            @endphp
 
-                        $totalCost =
-                        $costing->total_tk +
-                        $costing->insurance_tk +
-                        $costing->landing_charge_tk +
-                        $costing->total_tax +
-                        $costing->transport +
-                        $costing->arrot +
-                        $costing->cns_charge +
-                        $costing->others_total;
+                            @forelse($containers as $container)
+                                @php
+                                    $lcId = $costing->lc_id;
+                                    $containerId = $container->id;
 
-                        $profitLoss = -$totalCost; // adjust when you have sales/deposit data
-                        @endphp
+                                    $bankCost = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 5)
+                                        ->sum('amount');
 
-                        @forelse($containers as $container)
-                        <tr>
-                            <td>{{ $supplierName }}</td>
-                            <td>{{ $lc?->lc_number ?? '—' }}</td>
-                            <td>{{ $costing->product_id }}</td>
-                            <td>{{ $costing->box_type }}</td>
-                            <td>{{ $costing->size }}</td>
-                            <td>{{ $costing->currency }}</td>
-                            <td>{{ number_format($costing->base_value, 2) }}</td>
-                            <td>{{ $costing->qty }}</td>
-                            <td>{{ number_format($costing->exchange_rate, 2) }}</td>
-                            <td>{{ number_format($costing->total, 2) }}</td>
-                            <td>{{ number_format($costing->total_tk, 2) }}</td>
-                            <td>{{ number_format($costing->insurance, 2) }}</td>
-                            <td>{{ number_format($costing->insurance_tk, 2) }}</td>
-                            <td>{{ number_format($costing->landing_charge, 2) }}</td>
-                            <td>{{ number_format($costing->landing_charge_tk, 2) }}</td>
-                            <td>{{ number_format($costing->cd, 2) }}</td>
-                            <td>{{ number_format($costing->rd, 2) }}</td>
-                            <td>{{ number_format($costing->sd, 2) }}</td>
-                            <td>{{ number_format($costing->vat, 2) }}</td>
-                            <td>{{ number_format($costing->ait, 2) }}</td>
-                            <td>{{ number_format($costing->at, 2) }}</td>
-                            <td>{{ number_format($costing->atv, 2) }}</td>
-                            <td>{{ number_format($costing->tt_amount, 2) }}</td>
-                            <td>{{ number_format($costing->total_tax, 2) }}</td>
-                            <td>{{ number_format($costing->transport, 2) }}</td>
-                            <td>{{ number_format($costing->arrot, 2) }}</td>
-                            <td>{{ number_format($costing->cns_charge, 2) }}</td>
-                            <td>{{ number_format($costing->others_total, 2) }}</td>
-                            <td>{{ number_format($costing->total_tariff_lc, 2) }}</td>
-                            <td>{{ number_format($costing->tariff_per_ton_lc, 2) }}</td>
-                            <td>{{ number_format($costing->tariff_per_kg_lc, 2) }}</td>
-                            <td>{{ number_format($costing->actual_cost_per_kg, 2) }}</td>
-                            <td>{{ number_format($costing->total_cost_per_kg, 2) }}</td>
-                            <td>{{ number_format($costing->total_cost_per_box, 2) }}</td>
-                            <td>{{ $container->number ?? '—' }}</td>
-                            <td class="fw-bold text-primary">{{ number_format($totalCost, 2) }}</td>
-                            <td class="{{ $profitLoss < 0 ? 'text-danger' : 'text-success' }} fw-bold">
-                                {{ number_format($profitLoss, 2) }}
-                            </td>
-                            <td>{{ $costing->created_at?->format('d-M-Y') }}</td>
-                            <td>{{ $costing->updated_at?->format('d-M-Y') }}</td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td>{{ $supplierName }}</td>
-                            <td>{{ $lc?->lc_number ?? '—' }}</td>
-                            <td>{{ $costing->product_id }}</td>
-                            <td>{{ $costing->box_type }}</td>
-                            <td>{{ $costing->size }}</td>
-                            <td>{{ $costing->currency }}</td>
-                            <td>{{ number_format($costing->base_value, 2) }}</td>
-                            <td>{{ $costing->qty }}</td>
-                            <td>{{ number_format($costing->exchange_rate, 2) }}</td>
-                            <td>{{ number_format($costing->total, 2) }}</td>
-                            <td>{{ number_format($costing->total_tk, 2) }}</td>
-                            <td>{{ number_format($costing->insurance, 2) }}</td>
-                            <td>{{ number_format($costing->insurance_tk, 2) }}</td>
-                            <td>{{ number_format($costing->landing_charge, 2) }}</td>
-                            <td>{{ number_format($costing->landing_charge_tk, 2) }}</td>
-                            <td>{{ number_format($costing->cd, 2) }}</td>
-                            <td>{{ number_format($costing->rd, 2) }}</td>
-                            <td>{{ number_format($costing->sd, 2) }}</td>
-                            <td>{{ number_format($costing->vat, 2) }}</td>
-                            <td>{{ number_format($costing->ait, 2) }}</td>
-                            <td>{{ number_format($costing->at, 2) }}</td>
-                            <td>{{ number_format($costing->atv, 2) }}</td>
-                            <td>{{ number_format($costing->tt_amount, 2) }}</td>
-                            <td>{{ number_format($costing->total_tax, 2) }}</td>
-                            <td>{{ number_format($costing->transport, 2) }}</td>
-                            <td>{{ number_format($costing->arrot, 2) }}</td>
-                            <td>{{ number_format($costing->cns_charge, 2) }}</td>
-                            <td>{{ number_format($costing->others_total, 2) }}</td>
-                            <td>{{ number_format($costing->total_tariff_lc, 2) }}</td>
-                            <td>{{ number_format($costing->tariff_per_ton_lc, 2) }}</td>
-                            <td>{{ number_format($costing->tariff_per_kg_lc, 2) }}</td>
-                            <td>{{ number_format($costing->actual_cost_per_kg, 2) }}</td>
-                            <td>{{ number_format($costing->total_cost_per_kg, 2) }}</td>
-                            <td>{{ number_format($costing->total_cost_per_box, 2) }}</td>
-                            <td>—</td>
-                            <td class="fw-bold text-primary">{{ number_format($totalCost, 2) }}</td>
-                            <td class="{{ $profitLoss < 0 ? 'text-danger' : 'text-success' }} fw-bold">
-                                {{ number_format($profitLoss, 2) }}
-                            </td>
-                            <td>{{ $costing->created_at?->format('d-M-Y') }}</td>
-                            <td>{{ $costing->updated_at?->format('d-M-Y') }}</td>
-                        </tr>
-                        @endforelse
+                                    $duty = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 4)
+                                        ->sum('amount');
+
+                                    $cnf = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 3)
+                                        ->sum('amount');
+
+                                    $carRent = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 6)
+                                        ->where('expense_name_id', 21)
+                                        ->sum('amount');
+
+                                    $arrot = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 6)
+                                        ->where('expense_name_id', 23)
+                                        ->sum('amount');
+
+                                    $other = \DB::table('expenses')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->where('category_id', 6)
+                                        ->where('expense_name_id', 24)
+                                        ->sum('amount');
+
+                                    // Total Costing default 0
+                                    $totalCosting = 0;
+
+                                    // Total Sales from sales table
+                                    $totalSales = \DB::table('sales')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->sum('total_amount');
+
+                                    // Total Deposit default 0
+                                    $totalDeposit = 0;
+
+                                    // Due from sales table
+                                    $due = \DB::table('sales')
+                                        ->where('lc_id', $lcId)
+                                        ->where('container_id', $containerId)
+                                        ->sum('due_amount');
+                                @endphp
+                                <tr>
+                                    <td>{{ $supplierName }}</td>
+                                    <td>{{ $lcNumber }}</td>
+                                    <td class="fw-bold text-primary">{{ $totalTk }}</td>
+                                    <td>{{ $container->number ?? '—' }}</td>
+                                    <td>{{ (int)$bankCost }}</td>
+                                    <td>{{ (int)$duty }}</td>
+                                    <td>{{ (int)$cnf }}</td>
+                                    <td>{{ (int)$carRent }}</td>
+                                    <td>{{ (int)$arrot }}</td>
+                                    <td>{{ (int)$other }}</td>
+                                    <td>{{ (int)$totalCosting }}</td>
+                                    <td>{{ (int)$totalSales }}</td>
+                                    <td>{{ (int)$totalDeposit }}</td>
+                                    <td>{{ (int)$due }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td>{{ $supplierName }}</td>
+                                    <td>{{ $lcNumber }}</td>
+                                    <td class="fw-bold text-primary">{{ $totalTk }}</td>
+                                    <td>—</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                    <td>0</td>
+                                </tr>
+                            @endforelse
                         @endforeach
                     </tbody>
                 </table>
@@ -202,25 +170,14 @@
 </script>
 
 <style>
-    .table-warning th {
-        background-color: #FFFDE9 !important;
-        color: #000;
-        text-transform: uppercase;
-        font-size: 12px;
-    }
-
-    .table td,
-    .table th {
+    .table th,
+    .table td {
         vertical-align: middle !important;
-        padding: 6px;
+        padding: 8px;
     }
 
-    .text-success {
-        color: #2e7d32 !important;
-    }
-
-    .text-danger {
-        color: #c62828 !important;
+    .text-primary {
+        color: #0d6efd !important;
     }
 
     h4 {

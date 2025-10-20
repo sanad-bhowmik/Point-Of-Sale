@@ -138,10 +138,10 @@ class ReportsController extends Controller
         ]);
     }
 
-    public function cashFlow()
+  public function cashFlow()
     {
         abort_if(Gate::denies('access_reports'), 403);
-        $containers = Container::whereNot('status', 3)->where(function ($q) {
+        $containers = Container::whereNotIn('status', [3,4])->where(function ($q) {
                                     $q->whereColumn('current_qty', '<', 'qty');
                                 })->with(['lc.costing.supplier', 'lc.costing.product.sizes'])->get();
 
@@ -192,35 +192,43 @@ class ReportsController extends Controller
         return view('reports::purchases-return.index');
     }
 
-    public function investmentReport()
-    {
-        abort_if(Gate::denies('access_reports'), 403);
+  public function investmentReport()
+{
+    abort_if(Gate::denies('access_reports'), 403);
 
-        // ✅ Call all calculation methods
-        $totalStorager = $this->calculateStorageCosts();
-        $totalLose = $this->totolLose();
-        $totalProfit = $this->totalProfit();
-        $totalDueAmount = $this->totalDueAmount();
-        $calculateUpcoming = $this->calculateUpcoming();
-        $totalOpeningBalance = $this->totalOpeningBalance();
-        $totalInvestment = $this->totalInvestment();
-        $totalInvestmentAmount = $this->totalInvestmentAmount();
-        $totalDamagerInvestmentAmount = $this->totalDamagerInvestmentAmount();
-        $officeExpense = $this->officeExpense();
+    // ✅ Call all calculation methods
+    $totalStorager = $this->calculateStorageCosts();
+    $totalLose = $this->totolLose();
+    $totalProfit = $this->totalProfit();
+    $totalDueAmount = $this->totalDueAmount();
+    $calculateUpcoming = $this->calculateUpcoming();
+    $totalOpeningBalance = $this->totalOpeningBalance();
+    $totalInvestment = $this->totalInvestment();
+    $totalInvestmentAmount = $this->totalInvestmentAmount();
+    $totalDamagerInvestmentAmount = $this->totalDamagerInvestmentAmount();
+    $officeExpense = $this->officeExpense();
 
-        return view('reports::investment.index', [
-            'totalStorager' => $totalStorager,
-            'totalLose' => $totalLose,
-            'totalProfit' => $totalProfit,
-            'totalDueAmount' => $totalDueAmount,
-            'calculateUpcoming' => $calculateUpcoming,
-            'totalOpeningBalance' => $totalOpeningBalance,
-            'totalInvestment' => $totalInvestment,
-            'totalInvestmentAmount' => $totalInvestmentAmount,
-            'totalDamagerInvestmentAmount' => $totalDamagerInvestmentAmount,
-            'officeExpense' => $officeExpense,
-        ]);
-    }
+    // ✅ Total Get = sum(amount + damarage_amount) - totalInvestmentAmount
+    $totalGetValue = \DB::table('parties_payment')
+        ->selectRaw('SUM(amount + damarage_amount) - ? as total', [$totalInvestmentAmount])
+        ->value('total');
+
+    return view('reports::investment.index', [
+        'totalStorager' => $totalStorager,
+        'totalLose' => $totalLose,
+        'totalProfit' => $totalProfit,
+        'totalDueAmount' => $totalDueAmount,
+        'calculateUpcoming' => $calculateUpcoming,
+        'totalOpeningBalance' => $totalOpeningBalance,
+        'totalInvestment' => $totalInvestment,
+        'totalInvestmentAmount' => $totalInvestmentAmount,
+        'totalDamagerInvestmentAmount' => $totalDamagerInvestmentAmount,
+        'officeExpense' => $officeExpense,
+        'totalGetValue' => $totalGetValue, // pass to view
+    ]);
+}
+
+
     public function officeExpense()
     {
         // Sum the 'amount' column from the investments table
@@ -277,7 +285,7 @@ class ReportsController extends Controller
     }
     private function totalProfit()
     {
-        $containers = Container::where('status', '!=', 3)->where("current_qty", "=", 0)->get();
+        $containers = Container::whereNotIn('status', [3,4])->where("current_qty", "=", 0)->get();
         $totalLose = 0;
 
         foreach ($containers as $key => $container) {
@@ -369,7 +377,7 @@ class ReportsController extends Controller
     }
     private function calculateStorageCosts()
     {
-        $containers = Container::where('status', '!=', 3)->where("current_qty", ">", 0)->get();
+        $containers = Container::whereNotIn('status', [3,4])->where("current_qty", ">", 0)->get();
 
         $result = 0;
 
