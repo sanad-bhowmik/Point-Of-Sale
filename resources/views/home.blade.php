@@ -7,7 +7,6 @@
     <li class="breadcrumb-item active">Home</li>
 </ol>
 @endsection
-
 @php
     $last_totalProfit = 0;
     $last_totalLoss = 0;
@@ -17,15 +16,16 @@
 
 @foreach ($find_containers as $index => $container)
     @php
-        $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id', $container->lc_id,)->where('container_id', $container->id)->sum('amount');
+        $totalCostAmount = \Modules\Expense\Entities\Expense::where('lc_id', $container->lc_id)
+            ->where('container_id', $container->id)
+            ->sum('amount');
 
         $lcCost = $container?->lc_value * $container?->lc_exchange_rate * $container->qty;
-
         $ttCost = $container?->tt_value * $container?->tt_exchange_rate * $container->qty;
 
         $totalSale = \Modules\Sale\Entities\SaleDetails::where('lc_id', $container->lc_id)
-                ->where('container_id', $container->id)
-                ->sum('sub_total');
+            ->where('container_id', $container->id)
+            ->sum('sub_total');
 
         $totalCost = $lcCost + $ttCost + $totalCostAmount;
 
@@ -46,7 +46,9 @@
 <div class="container-fluid">
     @can('show_total_stats')
     <div class="row">
-        <div class="col-md-6 col-lg-4">
+
+        <!-- Total Cost -->
+        <div class="col-md-6 col-lg-3">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-primary p-4 mfe-3 rounded-left">
@@ -60,7 +62,8 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
+        <!-- Total Sales -->
+        <div class="col-md-6 col-lg-3">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-warning p-4 mfe-3 rounded-left">
@@ -74,37 +77,35 @@
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-3 d-none">
+        <!-- Total Profit -->
+        <div class="col-md-6 col-lg-3">
             <div class="card border-0">
                 <div class="card-body p-0 d-flex align-items-center shadow-sm">
                     <div class="bg-gradient-success p-4 mfe-3 rounded-left">
-                        <i class="bi bi-arrow-return-right font-2xl"></i>
+                        <i class="bi bi-trophy font-2xl"></i>
                     </div>
                     <div>
-                        <div class="text-value text-success">{{ format_currency($purchase_returns) }}</div>
-                        <div class="text-muted text-uppercase font-weight-bold small">Purchases Return</div>
+                        <div class="text-value text-success">{{ format_currency(round($last_totalProfit)) }}</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Total Profit</div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6 col-lg-4">
-    <div class="card border-0">
-        <div class="card-body p-0 d-flex align-items-center shadow-sm">
-            <div class="bg-gradient-info p-4 mfe-3 rounded-left">
-                <i class="bi bi-trophy font-2xl"></i>
-            </div>
-            <div>
-                <div class="text-value {{ $profit >= 0 ? 'text-success' : 'text-danger' }}">
-                    {{ format_currency(round($last_totalProfit - $last_totalLoss)) }}
-                </div>
-                <div class="text-muted text-uppercase font-weight-bold small">
-                    {{ $last_totalProfit - $last_totalLoss >= 0 ? 'Profit' : 'Loss' }}
+        <!-- Total Loss -->
+        <div class="col-md-6 col-lg-3">
+            <div class="card border-0">
+                <div class="card-body p-0 d-flex align-items-center shadow-sm">
+                    <div class="bg-gradient-danger p-4 mfe-3 rounded-left">
+                        <i class="bi bi-graph-down font-2xl"></i>
+                    </div>
+                    <div>
+                        <div class="text-value text-danger">{{ format_currency(round($last_totalLoss)) }}</div>
+                        <div class="text-muted text-uppercase font-weight-bold small">Total Loss</div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
     </div>
     @endcan
@@ -309,74 +310,89 @@
             </div>
         </div>
 
-        <!-- Right Panel: Bank-wise Balances -->
-        <div class="col-lg-6">
-            <div class="card border-0 shadow-sm h-100">
-                <!-- Card Header -->
-                <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
-                    <h6 class="mb-0 d-flex align-items-center fw-bold">
-                        <i class="bi bi-box me-2 fs-5 mr-2"></i>
-                        Upcoming Containers
-                    </h6>
+       <!-- Right Panel: Bank-wise Balances -->
+<div class="col-lg-6">
+    <div class="card border-0 shadow-sm h-100">
+        <!-- Card Header -->
+        <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
+            <h6 class="mb-0 d-flex align-items-center fw-bold">
+                <i class="bi bi-box me-2 fs-5 mr-2"></i>
+                Upcoming Containers
+            </h6>
 
-                    <a href="container/containerTbl" class="btn btn-outline-light btn-sm">
-                        <i class="bi bi-eye me-1"></i> View Container
-                    </a>
-                </div>
+            <a href="container/containerTbl" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-eye me-1"></i> View Container
+            </a>
+        </div>
 
-                <!-- Card Body -->
-                <div class="card-body p-0">
-                    @php
-                    $containers = DB::table('container')
-                    ->select('id', 'name', 'qty', 'shipping_date', 'status')
-                    ->where('status', 3)
-                    ->orderBy('created_at', 'desc')
-                    ->limit(5)
-                    ->get();
-                    @endphp
+        <!-- Card Body -->
+        <div class="card-body p-0">
+            @php
+            $containers = DB::table('container')
+                ->leftJoin('lc', 'lc.id', '=', 'container.lc_id')
+                ->leftJoin('costing', 'costing.lc_id', '=', 'container.lc_id')
+                ->leftJoin('products', 'products.id', '=', 'costing.product_id')
+                ->select(
+                    'container.id',
+                    'container.name',
+                    'container.qty',
+                    'container.shipping_date',
+                    'container.status',
+                    'lc.lc_name',
+                    'products.product_name'
+                )
+                ->where('container.status', 3)
+                ->orderBy('container.created_at', 'desc')
+                ->limit(5)
+                ->get();
+            @endphp
 
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0 align-middle">
-                            <thead class="table-light text-uppercase small">
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Quantity</th>
-                                    <th>Shipping Date</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @forelse ($containers as $container)
-                                <tr class="align-middle animate__animated animate__fadeInUp" style="transition: all 0.3s; cursor: pointer;">
-                                    <td class="fw-semibold">{{ $container->name }}</td>
-                                    <td class="fw-semibold">{{ $container->qty }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($container->shipping_date)->format('d M Y') }}</td>
-                                    <td>
-                                        <span class="badge rounded-pill bg-info text-light">Upcoming</span>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="4" class="text-center text-muted py-3">
-                                        No Upcoming containers found.
-                                    </td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- Card Footer -->
-                <div class="card-footer text-end bg-light border-top">
-                    <small class="text-muted">Showing latest 5 upcoming containers</small>
-                </div>
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light text-uppercase small">
+                        <tr>
+                            <th>Container Name</th>
+                            <th>LC Name</th>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Shipping Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($containers as $container)
+                        <tr class="align-middle animate__animated animate__fadeInUp" style="transition: all 0.3s; cursor: pointer;">
+                            <td class="fw-semibold">{{ $container->name }}</td>
+                            <td>{{ $container->lc_name ?? 'N/A' }}</td>
+                            <td>{{ $container->product_name ?? 'N/A' }}</td>
+                            <td class="fw-semibold">{{ $container->qty }}</td>
+                            <td>{{ \Carbon\Carbon::parse($container->shipping_date)->format('d M Y') }}</td>
+                            <td>
+                                <span class="badge rounded-pill bg-info text-light">Upcoming</span>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-3">
+                                No Upcoming containers found.
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
 
-        <!-- Animate.css CDN for animations -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+        <!-- Card Footer -->
+        <div class="card-footer text-end bg-light border-top">
+            <small class="text-muted">Showing latest 5 upcoming containers</small>
+        </div>
     </div>
+</div>
+
+<!-- Animate.css CDN for animations -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
 
 
 

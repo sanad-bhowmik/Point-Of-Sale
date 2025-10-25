@@ -66,7 +66,7 @@
                                         <td>{{ number_format($expense->amount, 2) }}</td>
                                         <td>{{ $expense->note ?? 'N/A' }}</td>
                                         <td>
-                                            <a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}" class="btn btn-sm btn-warning">
+<a href="{{ route('office_expense.edit', ['id' =>$expense->id, 'page' => 'cashInHistory']) }}" class="btn btn-sm btn-warning">
                                                 Edit
                                             </a>
                                         </td>
