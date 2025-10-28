@@ -40,15 +40,16 @@ class SalesDataTable extends DataTable
                 return view('sale::partials.actions', compact('data'));
             });
     }
-public function query(Sale $model) {
-    $query = $model->newQuery()->with(['lc', 'container']);
+    public function query(Sale $model)
+    {
+        $query = $model->newQuery()->with(['lc', 'container']);
 
-    if (request()->has('date') && !empty(request('date'))) {
-        $query->whereDate('date', request('date'));
+        if (request()->has('date') && !empty(request('date'))) {
+            $query->whereDate('date', request('date'));
+        }
+
+        return $query;
     }
-
-    return $query;
-}
 
 
     public function html()

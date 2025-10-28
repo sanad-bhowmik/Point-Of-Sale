@@ -33,16 +33,24 @@
                         </thead>
                         <tbody>
                             @forelse($products as $index => $product)
+                            @php
+                                // Sort sizes numerically
+                                $sortedSizes = $product->sizes->sortBy(function($size) {
+                                    // Extract numbers from size string for sorting
+                                    preg_match('/(\d+)/', $size->size, $matches);
+                                    return isset($matches[1]) ? (int)$matches[1] : 0;
+                                });
+                            @endphp
                             <tr>
                                 <td>{{ $index + 1 }}</td>
                                 <td>{{ $product->product_name }}</td>
                                 <td>
-                                    @foreach($product->sizes as $size)
+                                    @foreach($sortedSizes as $size)
                                     <span class="badge bg-secondary mb-1">{{ $size->size }}</span>
                                     @endforeach
                                 </td>
                                 <td>
-                                    @foreach($product->sizes as $size)
+                                    @foreach($sortedSizes as $size)
                                     <!-- Edit Button -->
                                     <button class="btn btn-sm btn-info mb-1" data-bs-toggle="modal" data-bs-target="#editSizeModal{{ $size->id }}" style="font-size: 14px;" title="Click to Edit">
                                         Edit {{ $size->size }}
@@ -95,9 +103,7 @@
                             </tr>
                             @endforelse
                         </tbody>
-
                     </table>
-
                 </div>
             </div>
         </div>
