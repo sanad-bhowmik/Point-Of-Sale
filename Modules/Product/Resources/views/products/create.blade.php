@@ -101,7 +101,7 @@
                                         <select class="form-control" name="product_unit" id="product_unit">
                                             <option value="" selected >Select Unit</option>
                                             @foreach(\Modules\Setting\Entities\Unit::all() as $unit)
-                                                <option value="{{ $unit->short_name }}">{{ $unit->name . ' | ' . $unit->short_name }}</option>
+                                                <option value="{{ $unit->name }}">{{ $unit->name . ' | ' . $unit->short_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>

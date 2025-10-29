@@ -88,7 +88,7 @@ class ContainerController extends Controller
             'number' => 'required|string|max:100',
             'shipping_date' => 'nullable|date',
             'arriving_date' => 'nullable|date',
-            'status' => 'required|integer|in:0,1,2',
+            'status' => 'required|integer|in:0,1,2,3',
         ]);
 
         $container->update($validated);

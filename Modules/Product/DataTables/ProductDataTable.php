@@ -33,7 +33,7 @@ class ProductDataTable extends DataTable
                 return format_currency($data->product_cost);
             })
             ->addColumn('product_quantity', function ($data) {
-                return $data->product_unit;
+                return $data->product_unit . ' Kg';
             })
             ->rawColumns(['product_image', 'product_name', 'action']);
     }

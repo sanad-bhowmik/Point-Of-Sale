@@ -3,7 +3,6 @@
 namespace Modules\Sale\DataTables;
 
 use Modules\Sale\Entities\Sale;
-use Yajra\DataTables\Html\Button;
 use Yajra\DataTables\Html\Column;
 use Yajra\DataTables\Services\DataTable;
 
@@ -30,9 +29,6 @@ class SalesDataTable extends DataTable
                 // Show Container Name instead of ID
                 return $data->container ? $data->container->name : '-';
             })
-            ->addColumn('status', function ($data) {
-                return view('sale::partials.status', compact('data'));
-            })
             ->addColumn('payment_status', function ($data) {
                 return view('sale::partials.payment-status', compact('data'));
             })
@@ -40,6 +36,7 @@ class SalesDataTable extends DataTable
                 return view('sale::partials.actions', compact('data'));
             });
     }
+
     public function query(Sale $model)
     {
         $query = $model->newQuery()->with(['lc', 'container']);
@@ -51,7 +48,6 @@ class SalesDataTable extends DataTable
         return $query;
     }
 
-
     public function html()
     {
         return $this->builder()
@@ -61,7 +57,7 @@ class SalesDataTable extends DataTable
             ->dom("<'row'<'col-md-3'l><'col-md-5 mb-2'><'col-md-4'f>> .
                    'tr' .
                    <'row'<'col-md-5'i><'col-md-7 mt-2'p>>")
-            ->orderBy(10); // ✅ removed the buttons()
+            ->orderBy(9); // Adjusted index since one column was removed
     }
 
     protected function getColumns()
@@ -72,9 +68,6 @@ class SalesDataTable extends DataTable
 
             Column::make('customer_name')
                 ->title('Customer')
-                ->className('text-center align-middle'),
-
-            Column::computed('status')
                 ->className('text-center align-middle'),
 
             Column::computed('total_amount')

@@ -150,20 +150,27 @@
                     </div>
                     <div class="mb-2">
                         <label>Bank</label>
-                        <select class="form-select" name="bank_id" required
+                        <select class="form-select" name="bank_id" id="lcBankSelect" required
                             style="width:100%;height:38px;padding:6px 12px;border:1px solid #ced4da;border-radius:4px;font-size:14px;">
                             <option value="" disabled selected>Select Bank</option>
                             @foreach($banks as $bank)
-                            <option value="{{ $bank->id }}">{{ $bank->bank_name }}</option>
+                            <option value="{{ $bank->id }}" data-balance="{{ $bank->last_balance }}">
+                                {{ $bank->bank_name }} ({{ $bank->branch_name }})
+                            </option>
                             @endforeach
                         </select>
+                        <div id="lcBankBalance" class="text-info small mt-1">
+                            Available Balance: <span id="lcAvailableBalance">0.00</span>
+                        </div>
                     </div>
 
                     <div class="mb-2">
                         <label>Amount</label>
-                        <input type="number" class="form-control" name="amount" id="lcAmount" placeholder="Enter amount">
+                        <input type="number" class="form-control" name="amount" id="lcAmount" placeholder="Enter amount" step="0.01">
+                        <div id="lcAmountError" class="text-danger small mt-1" style="display: none;">
+                            <!-- Error message will be inserted here -->
+                        </div>
                     </div>
-
 
                     <div class="mb-2">
                         <label>Date</label>
@@ -173,7 +180,7 @@
                     <input type="hidden" name="container_id" id="lcContainerId">
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-success">Submit LC Payment</button>
+                    <button type="submit" class="btn btn-success" id="lcSubmitBtn">Submit LC Payment</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -198,20 +205,27 @@
 
                     <div class="mb-2">
                         <label>Bank</label>
-                        <select class="form-select" name="bank_id" required
+                        <select class="form-select" name="bank_id" id="ttBankSelect" required
                             style="width:100%;height:38px;padding:6px 12px;border:1px solid #ced4da;border-radius:4px;font-size:14px;">
                             <option value="" disabled selected>Select Bank</option>
                             @foreach($banks as $bank)
-                            <option value="{{ $bank->id }}">{{ $bank->bank_name }}</option>
+                            <option value="{{ $bank->id }}" data-balance="{{ $bank->last_balance }}">
+                                  {{ $bank->bank_name }} ({{ $bank->branch_name }}) 
+                            </option>
                             @endforeach
                         </select>
+                        <div id="ttBankBalance" class="text-info small mt-1">
+                            Available Balance: <span id="ttAvailableBalance">0.00</span>
+                        </div>
                     </div>
 
                     <div class="mb-2">
                         <label>Amount</label>
-                        <input type="number" class="form-control" name="amount" id="ttAmount" placeholder="Enter amount">
+                        <input type="number" class="form-control" name="amount" id="ttAmount" placeholder="Enter amount" step="0.01">
+                        <div id="ttAmountError" class="text-danger small mt-1" style="display: none;">
+                            <!-- Error message will be inserted here -->
+                        </div>
                     </div>
-
 
                     <div class="mb-2">
                         <label>Date</label>
@@ -221,7 +235,7 @@
                     <input type="hidden" name="container_id" id="ttContainerId">
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-primary">Submit TT Payment</button>
+                    <button type="submit" class="btn btn-primary" id="ttSubmitBtn">Submit TT Payment</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
@@ -234,84 +248,10 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-    document.getElementById('ttPaymentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        let formData = new FormData(this);
-
-        fetch("{{ route('container.ttPayment') }}", {
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: 'top-end'
-                    });
-
-                    // Hide modal
-                    let modal = bootstrap.Modal.getInstance(document.getElementById('ttPaymentModal'));
-                    modal.hide();
-
-                    // Reload page after 2 seconds
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }
-            })
-            .catch(error => console.error(error));
-    });
-
-    document.getElementById('lcPaymentForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        let formData = new FormData(this);
-
-        fetch("{{ route('container.lcPayment') }}", {
-                method: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Success',
-                        text: data.message,
-                        timer: 2000,
-                        showConfirmButton: false,
-                        toast: true,
-                        position: 'top-end'
-                    });
-
-                    // Hide modal
-                    let modal = bootstrap.Modal.getInstance(document.getElementById('lcPaymentModal'));
-                    modal.hide();
-
-                    // Reload page after 2 seconds
-                    setTimeout(() => {
-                        location.reload();
-                    }, 2000);
-                }
-            })
-            .catch(error => console.error(error));
-    });
-
-
     document.addEventListener('DOMContentLoaded', function() {
+        // Store bank data for validation
+        const banks = @json($banks->pluck('last_balance', 'id'));
+
         // LC Payment Button
         document.querySelectorAll('.lcPaymentBtn').forEach(button => {
             button.addEventListener('click', function() {
@@ -321,6 +261,12 @@
                 document.getElementById('lcContainerId').value = containerId;
                 document.getElementById('lcDueAmount').value = lcDue.toFixed(2);
                 document.getElementById('lcAmount').value = '';
+                document.getElementById('lcAmountError').style.display = 'none';
+                document.getElementById('lcSubmitBtn').disabled = false;
+
+                // Reset bank selection and balance display
+                document.getElementById('lcBankSelect').selectedIndex = 0;
+                document.getElementById('lcAvailableBalance').textContent = '0.00';
 
                 let lcModal = new bootstrap.Modal(document.getElementById('lcPaymentModal'));
                 lcModal.show();
@@ -336,32 +282,187 @@
                 document.getElementById('ttContainerId').value = containerId;
                 document.getElementById('ttDueAmount').value = ttDue.toFixed(2);
                 document.getElementById('ttAmount').value = '';
+                document.getElementById('ttAmountError').style.display = 'none';
+                document.getElementById('ttSubmitBtn').disabled = false;
+
+                // Reset bank selection and balance display
+                document.getElementById('ttBankSelect').selectedIndex = 0;
+                document.getElementById('ttAvailableBalance').textContent = '0.00';
 
                 let ttModal = new bootstrap.Modal(document.getElementById('ttPaymentModal'));
                 ttModal.show();
             });
         });
 
-        // LC Payment Form
-        document.getElementById('lcPaymentForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('LC Payment:', new FormData(this));
-            let modal = bootstrap.Modal.getInstance(document.getElementById('lcPaymentModal'));
-            modal.hide();
+        // LC Bank Selection Change
+        document.getElementById('lcBankSelect').addEventListener('change', function() {
+            updateBankBalance('lc');
+            validateAmount('lc');
         });
 
-        // TT Payment Form
+        // TT Bank Selection Change
+        document.getElementById('ttBankSelect').addEventListener('change', function() {
+            updateBankBalance('tt');
+            validateAmount('tt');
+        });
+
+        // LC Amount Validation
+        document.getElementById('lcAmount').addEventListener('input', function() {
+            validateAmount('lc');
+        });
+
+        // TT Amount Validation
+        document.getElementById('ttAmount').addEventListener('input', function() {
+            validateAmount('tt');
+        });
+
+        function updateBankBalance(type) {
+            const bankSelect = document.getElementById(type + 'BankSelect');
+            const selectedOption = bankSelect.options[bankSelect.selectedIndex];
+            const balanceSpan = document.getElementById(type + 'AvailableBalance');
+
+            if (selectedOption && selectedOption.value) {
+                const balance = parseFloat(selectedOption.getAttribute('data-balance'));
+                balanceSpan.textContent = balance.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+            } else {
+                balanceSpan.textContent = '0.00';
+            }
+        }
+
+        function validateAmount(type) {
+            const dueAmount = parseFloat(document.getElementById(type + 'DueAmount').value);
+            const inputAmount = parseFloat(document.getElementById(type + 'Amount').value) || 0;
+            const bankSelect = document.getElementById(type + 'BankSelect');
+            const selectedOption = bankSelect.options[bankSelect.selectedIndex];
+            const bankBalance = selectedOption && selectedOption.value ?
+                parseFloat(selectedOption.getAttribute('data-balance')) : 0;
+            const errorElement = document.getElementById(type + 'AmountError');
+            const submitBtn = document.getElementById(type + 'SubmitBtn');
+
+            let errorMessage = '';
+
+            if (inputAmount > dueAmount && inputAmount > bankBalance) {
+                errorMessage = `Amount cannot exceed due amount (${dueAmount.toLocaleString()}) and bank balance (${bankBalance.toLocaleString()})!`;
+            } else if (inputAmount > dueAmount) {
+                errorMessage = `Amount cannot exceed due amount (${dueAmount.toLocaleString()})!`;
+            } else if (inputAmount > bankBalance) {
+                errorMessage = `Amount cannot exceed bank balance (${bankBalance.toLocaleString()})!`;
+            }
+
+            if (errorMessage) {
+                errorElement.innerHTML = errorMessage;
+                errorElement.style.display = 'block';
+                submitBtn.disabled = true;
+            } else {
+                errorElement.style.display = 'none';
+                submitBtn.disabled = false;
+            }
+        }
+
+        // LC Payment Form Submission
+        document.getElementById('lcPaymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const dueAmount = parseFloat(document.getElementById('lcDueAmount').value);
+            const inputAmount = parseFloat(document.getElementById('lcAmount').value) || 0;
+            const bankSelect = document.getElementById('lcBankSelect');
+            const selectedOption = bankSelect.options[bankSelect.selectedIndex];
+            const bankBalance = selectedOption && selectedOption.value ?
+                parseFloat(selectedOption.getAttribute('data-balance')) : 0;
+
+            if (inputAmount > dueAmount || inputAmount > bankBalance) {
+                validateAmount('lc');
+                return;
+            }
+
+            let formData = new FormData(this);
+
+            fetch("{{ route('container.lcPayment') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+
+                        let modal = bootstrap.Modal.getInstance(document.getElementById('lcPaymentModal'));
+                        modal.hide();
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }
+                })
+                .catch(error => console.error(error));
+        });
+
+        // TT Payment Form Submission
         document.getElementById('ttPaymentForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            console.log('TT Payment:', new FormData(this));
-            let modal = bootstrap.Modal.getInstance(document.getElementById('ttPaymentModal'));
-            modal.hide();
+
+            const dueAmount = parseFloat(document.getElementById('ttDueAmount').value);
+            const inputAmount = parseFloat(document.getElementById('ttAmount').value) || 0;
+            const bankSelect = document.getElementById('ttBankSelect');
+            const selectedOption = bankSelect.options[bankSelect.selectedIndex];
+            const bankBalance = selectedOption && selectedOption.value ?
+                parseFloat(selectedOption.getAttribute('data-balance')) : 0;
+
+            if (inputAmount > dueAmount || inputAmount > bankBalance) {
+                validateAmount('tt');
+                return;
+            }
+
+            let formData = new FormData(this);
+
+            fetch("{{ route('container.ttPayment') }}", {
+                    method: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: data.message,
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
+
+                        let modal = bootstrap.Modal.getInstance(document.getElementById('ttPaymentModal'));
+                        modal.hide();
+
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }
+                })
+                .catch(error => console.error(error));
         });
     });
 </script>
 
 <!-- jQuery & Toastr -->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>

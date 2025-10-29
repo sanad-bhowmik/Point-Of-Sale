@@ -188,6 +188,7 @@ class ExpenseController extends Controller
         $fromDate = null;
         $toDate   = null;
 
+        // Date range filter
         if ($request->date_range) {
             $dates = explode(' - ', $request->date_range);
 
@@ -199,19 +200,32 @@ class ExpenseController extends Controller
             }
         }
 
+        // LC filter
+        if ($request->lc_id) {
+            $query->where('lc_id', $request->lc_id);
+        }
+
+        // Uncomment if you want to filter by category as well
         // if ($request->category_id) {
         //     $query->where('category_id', $request->category_id);
         // }
 
         $expenses = $query->get();
 
-        // Opening balanc
+        // Opening balance (all expenses before the start date)
         $openingBalance = 0;
         if ($fromDate) {
-            $openingBalance = Expense::where('date', '<', $fromDate)->sum('amount');
+            $openingBalanceQuery = Expense::query();
+
+            if ($request->lc_id) {
+                $openingBalanceQuery->where('lc_id', $request->lc_id);
+            }
+
+            // Calculate opening balance only for expenses before fromDate
+            $openingBalance = $openingBalanceQuery->where('date', '<', $fromDate)->sum('amount');
         }
 
-        // Period total
+        // Period total (sum of filtered expenses)
         $periodTotal = $expenses->sum('amount');
 
         // Ledger balance (opening + period)
