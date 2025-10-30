@@ -595,6 +595,30 @@
 @endcan
 
 @can('access_reports')
+<li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-withdraw.index') ? 'c-show' : '' }}" id="permit">
+    <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
+        <i class="c-sidebar-nav-icon bi  bi-capslock" style="line-height: 1;"></i> Withdraw
+    </a>
+    <ul class="c-sidebar-nav-dropdown-items">
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('withdraw.index') ? 'c-active' : '' }}"
+                href="{{ route('withdraw.index') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Withdraw Posting
+            </a>
+        </li>
+        <li class="c-sidebar-nav-item">
+            <a class="c-sidebar-nav-link {{ request()->routeIs('withdraw.show') ? 'c-active' : '' }}"
+                href="{{ route('withdraw.show') }}">
+                <i class="c-sidebar-nav-icon " style="line-height: 1;"></i>Withdraw Report
+            </a>
+        </li>
+
+
+    </ul>
+</li>
+@endcan
+
+@can('access_reports')
 <li class="c-sidebar-nav-item c-sidebar-nav-dropdown {{ request()->routeIs('*-transaction.index') ? 'c-show' : '' }}" id="permit">
     <a class="c-sidebar-nav-link c-sidebar-nav-dropdown-toggle" href="#">
         <i class="c-sidebar-nav-icon bi bi-blockquote-right" style="line-height: 1;"></i> Import Permit

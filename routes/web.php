@@ -11,6 +11,7 @@ use App\Http\Controllers\PartiesPaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SeasonalFruitController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\WithdrawController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -63,8 +64,7 @@ Route::group(['prefix' => 'costing', 'controller' => CostingController::class], 
     Route::delete('/{id}', 'destroy')->name('costing.destroy');
     Route::post('/lc/store', 'storeLc')->name('costing.lc.store');
     Route::get('/{id}/lc', action: 'getLc')->name('getLc');
-     Route::get('/lcCostingReport', 'lcCostingReport')->name('costing.lcCostingReport');
-
+    Route::get('/lcCostingReport', 'lcCostingReport')->name('costing.lcCostingReport');
 });
 
 // Bank
@@ -167,5 +167,15 @@ Route::group(['prefix' => 'parties-payment', 'as' => 'partiesPayment.', 'control
     Route::get('/{id}/edit', 'edit')->name('edit');         // Show edit form
     Route::put('/{id}/update', 'update')->name('update');   // Update payment
     Route::delete('/{id}/delete', 'destroy')->name('delete'); // Delete payment
+});
+
+
+// withdraw
+Route::group(['prefix' => 'withdraw', 'as' => 'withdraw.', 'controller' => WithdrawController::class], function () {
+    Route::get('/index', 'index')->name('index');
+    Route::post('/store', 'store')->name('store');
+    Route::get('/show', 'show')->name('show');
+    Route::delete('/{id}/delete', 'destroy')->name('delete');
+    Route::put('/{id}/update', 'update')->name('update');
 });
 // routes/web.php

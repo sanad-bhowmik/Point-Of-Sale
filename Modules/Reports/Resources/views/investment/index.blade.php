@@ -26,17 +26,22 @@
                         </thead>
                         <tbody>
                             @php
+                            // Calculate all relevant values
                             $leftValues = [
-                            $totalStorager,
-                            $totalInvestment,
-                            $calculateUpcoming,
-                            $totalDueAmount,
-                            $totalLose,
-                            $totalOpeningBalance,
-                            $totalInvestmentAmount,
-
+                                $totalStorager,
+                                $totalInvestment,
+                                $calculateUpcoming,
+                                $totalDueAmount,
+                                $totalLose,
+                                $totalOpeningBalance,
+                                $totalInvestmentAmount,
+                                $cashInOutsite, // add cash in
                             ];
-                            $leftTotal = array_sum($leftValues) - $totalProfit;
+
+                            // Subtract total profit and cash withdraw
+                            $leftTotal = array_sum($leftValues) - $totalProfit - $cashWithdraw;
+
+                            // Add office expense to get subtotal
                             $subTotal = $leftTotal + $officeExpense;
                             @endphp
 
@@ -62,11 +67,19 @@
                             </tr>
                             <tr>
                                 <td class="text-start">Bank Amount</td>
-                                <td>{{ $totalOpeningBalance }}</td>
+                                <td>{{ number_format($totalOpeningBalance, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-start">Payment Get</td>
                                 <td>{{ number_format($totalInvestmentAmount, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Cash in From out site</td>
+                                <td>{{ number_format($cashInOutsite, 2) }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-start">Cash Withdraw</td>
+                                <td>{{ number_format($cashWithdraw, 2) }}</td>
                             </tr>
                             <tr>
                                 <td class="text-start">Total Profit</td>
@@ -97,7 +110,6 @@
             </div>
         </div>
 
-
         <!-- Right Table -->
         <div class="flex-fill">
             <h2 class="mb-3 text-center fw-bold">TAIFA TRADERSE - TOTAL ASSET</h2>
@@ -119,15 +131,15 @@
                             $damageAmount = DB::table('parties_payment')->sum('damarage_amount');
 
                             // Step 2: Apply your formula
-                            $v1 = $partiesPaymentAmount + $damageAmount; // sum of both
+                            $v1 = $partiesPaymentAmount + $damageAmount;
                             $v2 = $v1 + 311436; // add fixed value
-                            $totalGet = $v2 - $totalInvestmentAmount; // subtract Payment Get (left column)
+                            $totalGet = $v2 - $totalInvestmentAmount;
 
-                            // Step 3: Other existing values
+                            // Step 3: Other existing values (including new leftTotal)
                             $totalInvestmentValue = $leftTotal;
                             $totalLossValue = $totalLose;
 
-                            // Step 4: Calculate Total Value
+                            // Step 4: Calculate Total Value (reflects updated leftTotal)
                             $totalValue = $totalInvestmentValue + $totalGet - $totalLossValue;
                             @endphp
 
@@ -148,7 +160,6 @@
                                 <td>{{ number_format($totalValue, 2) }}</td>
                             </tr>
                         </tbody>
-
                     </table>
                 </div>
             </div>

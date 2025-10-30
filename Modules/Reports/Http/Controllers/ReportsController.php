@@ -207,6 +207,8 @@ class ReportsController extends Controller
         $totalInvestmentAmount = $this->totalInvestmentAmount();
         $totalDamagerInvestmentAmount = $this->totalDamagerInvestmentAmount();
         $officeExpense = $this->officeExpense();
+        $cashInOutsite = $this->cashInOutsite();
+        $cashWithdraw = $this->cashWithdraw();
 
         // ✅ Total Get = sum(amount + damarage_amount) - totalInvestmentAmount
         $totalGetValue = \DB::table('parties_payment')
@@ -225,6 +227,8 @@ class ReportsController extends Controller
             'totalDamagerInvestmentAmount' => $totalDamagerInvestmentAmount,
             'officeExpense' => $officeExpense,
             'totalGetValue' => $totalGetValue, // pass to view
+            'cashInOutsite' => $cashInOutsite, // pass to view
+            'cashWithdraw' => $cashWithdraw, // pass to view
         ]);
     }
 
@@ -413,5 +417,19 @@ class ReportsController extends Controller
         $totalDue = \Modules\Sale\Entities\Sale::sum('due_amount');
 
         return $totalDue;
+    }
+    private function cashInOutsite()
+    {
+        // Sum the due_amount column from the sales table
+        $totalamount = \App\Models\Withdraw::sum('cash_in_amount');
+
+        return $totalamount;
+    }
+    private function cashWithdraw()
+    {
+        // Sum the due_amount column from the sales table
+        $totalamount = \App\Models\Withdraw::sum('cash_withdraw_amount');
+
+        return $totalamount;
     }
 }
